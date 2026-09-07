@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { VideoPlayButton } from '@/components/video-play-button'
+import { withBasePath } from '@/lib/paths'
 
 const TABS = [
   {
@@ -31,7 +32,9 @@ const TABS = [
       ],
       ctaButton: "Découvrir nos offres"
     },
-    videos: ['h9PUPFVQnCw'],
+    mediaList: [
+      { video: '/maitresse-explique.mp4', photo: '/couverture-maitresse-explique.jpg' }
+    ],
   },
   {
     id: 'Collège',
@@ -57,7 +60,9 @@ const TABS = [
       ],
       ctaButton: "Découvrir nos offres"
     },
-    videos: ['gHUpG7URmts'],
+    mediaList: [
+      { video: '/college.mp4', photo: '/couverture-college.jpg' }
+    ],
   },
   {
     id: 'Lycée',
@@ -70,7 +75,7 @@ const TABS = [
           title: "Découverte Immersion/ adaptation",
           desc: "Une préparation ludique pour les lycéens.",
           subDesc: "Plusieurs séances de travail en co-organisation avec l'enseignant.",
-          videoId: 'FnSRfW1HKck',
+          media: { video: '/lycée-module-1.mp4', photo: '/couverture-lycée-module-1.jpg' },
           objectives: [
             "Découvrir une œuvre cinématographique, Histoire des Arts",
             "S’entraîner à la lecture : rythme, intonation, fluence",
@@ -82,7 +87,7 @@ const TABS = [
           prefix: "Module 2",
           title: "Découverte Immersion/ adaptation",
           desc: "Plusieurs séances de travail en co- organisation avec les professeurs d’anglais et de français",
-          videoId: 'FnSRfW1HKck',
+          media: { video: '/lycée-module-1.mp4', photo: '/couverture-lycée-module-1.jpg' },
           objectives: [
             "Travailler à la traduction de dialogues et à leur adaptation",
             "Découvrir un métier",
@@ -93,7 +98,7 @@ const TABS = [
           prefix: "Module 3",
           title: "Préparation au grand oral du bac",
           desc: "Une préparation ludique reservée au classes de Terminale",
-          videoId: '-tBG28oNqAU',
+          media: { video: '/lycée-module-2.mp4', photo: '/couverture-lycée-module-2.jpg' },
           objectives: [
             "Travailler la posture",
             "Gagner en aisance à l’oral",
@@ -106,6 +111,7 @@ const TABS = [
           title: "Classes avec option cinéma",
           desc: "Découvrir un métier de la post production : adaptateur dialoguiste",
           subDesc: "Création d'une œuvre commune finale.",
+          media: { video: '/lycée-module-3.mp4', photo: '/couverture-lycée-module-3.jpg' },
           objectives: [
             "Explorer le jeu d'acteur et l'interprétation face au micro",
             "S'entraîner à la lecture rigoureuse de textes et de scripts",
@@ -118,7 +124,9 @@ const TABS = [
       ],
       ctaButton: "Découvrir nos offres"
     },
-    videos: ['bChA-kDtfhA'],
+    mediaList: [
+      { video: '/video-lycee-main.mp4', photo: '/photo-lycee-main.jpg' }
+    ],
   },
 ]
 
@@ -161,8 +169,8 @@ export function FactoryView() {
     setIsModuleVideoPlaying(false)
   }, [moduleIndex])
 
-  const nextVideo = () => setVideoIndex((prev) => (prev + 1) % current.videos.length)
-  const prevVideo = () => setVideoIndex((prev) => (prev - 1 + current.videos.length) % current.videos.length)
+  const nextVideo = () => setVideoIndex((prev) => (prev + 1) % current.mediaList.length)
+  const prevVideo = () => setVideoIndex((prev) => (prev - 1 + current.mediaList.length) % current.mediaList.length)
 
   const totalModules = current.additionalContent?.modules?.length ?? 0
 
@@ -264,8 +272,10 @@ export function FactoryView() {
             
             if (!tabData.additionalContent || !moduleData) return null;
 
-            const modVideoId = 'videoId' in moduleData ? moduleData.videoId : undefined;
-            const actVideoId = modVideoId || tabData.videos[isGhost ? 0 : videoIndex];
+            // Récupère les infos media du module en cours, sinon fallback sur la mediaList globale de l'onglet
+            const modMedia = 'media' in moduleData ? moduleData.media : undefined;
+            const actMedia = modMedia || tabData.mediaList[isGhost ? 0 : videoIndex];
+            
             const tModulesCount = current.additionalContent?.modules.length ?? tabData.additionalContent.modules.length;
             const multModules = tModulesCount > 1;
 
@@ -288,10 +298,10 @@ export function FactoryView() {
                   {/* VIDÉO */}
                   <div className="flex w-full flex-col bg-neutral-950/80 border border-white/10 shadow-2xl">
                     <div className="relative w-full aspect-video overflow-hidden bg-black flex items-center justify-center cursor-pointer group">
-                      {((modVideoId && !isModuleVideoPlaying) || (!modVideoId && !isVideoPlaying) || isGhost) ? (
+                      {((modMedia && !isModuleVideoPlaying) || (!modMedia && !isVideoPlaying) || isGhost) ? (
                         <>
                           <img
-                            src={`https://i.ytimg.com/vi/${actVideoId}/maxresdefault.jpg`}
+                            src={withBasePath(actMedia.photo)}
                             alt="Lancer la vidéo"
                             className="absolute inset-0 h-full w-full object-cover opacity-85"
                           />
@@ -299,29 +309,28 @@ export function FactoryView() {
                           <VideoPlayButton
                             onClick={() => {
                               if (!isGhost) {
-                                if (modVideoId) setIsModuleVideoPlaying(true)
+                                if (modMedia) setIsModuleVideoPlaying(true)
                                 else setIsVideoPlaying(true)
                               }
                             }}
                           />
                         </>
                       ) : (
-                        <iframe
-                          className="absolute inset-0 h-full w-full bg-black"
-                          src={`https://www.youtube.com/embed/${actVideoId}?autoplay=1&rel=0`}
-                          title="Vidéo de présentation"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                          allowFullScreen
+                        <video
+                          src={withBasePath(actMedia.video)}
+                          className="absolute inset-0 h-full w-full object-cover"
+                          controls
+                          autoPlay
                         />
                       )}
                     </div>
 
-                    {!modVideoId && tabData.videos.length > 1 && (
+                    {!modMedia && tabData.mediaList.length > 1 && (
                       <div className="flex items-center justify-between px-4 py-3 bg-black/40 mt-auto">
                         <button type="button" onClick={!isGhost ? prevVideo : undefined} className="flex items-center gap-1 text-xs text-neutral-400 hover:text-white cursor-pointer">
                           <SharpLeftArrow className="w-4 h-4" /> Précédente
                         </button>
-                        <span className="text-xs text-neutral-500">{isGhost ? 1 : videoIndex + 1} / {tabData.videos.length}</span>
+                        <span className="text-xs text-neutral-500">{isGhost ? 1 : videoIndex + 1} / {tabData.mediaList.length}</span>
                         <button type="button" onClick={!isGhost ? nextVideo : undefined} className="flex items-center gap-1 text-xs text-neutral-400 hover:text-white cursor-pointer">
                           Suivante <SharpRightArrow className="w-4 h-4" />
                         </button>
@@ -370,7 +379,7 @@ export function FactoryView() {
 
                     <div className="pt-6 mt-auto flex justify-center">
                       <Link
-                        href="/formules"
+                        href={withBasePath('/formules')}
                         className="inline-flex w-full max-w-[350px] items-center justify-center px-6 py-3 rounded-full border border-neutral-400 bg-neutral-900 text-white font-medium text-xs tracking-wide shadow-md transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white cursor-pointer"
                         tabIndex={isGhost ? -1 : 0}
                       >

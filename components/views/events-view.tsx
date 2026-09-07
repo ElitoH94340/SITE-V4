@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { X, Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react'
 import { VideoPlayButton } from '@/components/video-play-button'
 import { FormulaFrame } from '@/components/formula-frame'
+import { withBasePath } from '@/lib/paths'
 
 interface EventItem {
   id: string
@@ -153,7 +154,7 @@ const FACTORY_EVENTS: EventItem[] = [
     date: '17/07/2022',
     desc: 'Présentation du métier d’adaptateur de doublage',
     longText: 'Conférence ESRA Paris.\nPrésentation du métier d’adaptateur de doublage.\nLe 17 juillet 2022.',
-    image: '/Conférence-ESRA école-de-cinéma-2021-22.jpg',
+    image: '/conference-esra-ecole-de-cinema-2021-22.jpg',
   },
   {
     id: 'f3',
@@ -294,7 +295,7 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
     if (ev.image) {
       return (
         <Image
-          src={ev.image}
+          src={withBasePath(ev.image)}
           alt={ev.title}
           fill
           className="object-cover scale-110 origin-center transition-opacity duration-300"
@@ -385,9 +386,19 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
           </p>
         </header>
 
+        <div className="mt-8 flex justify-center animate-text-sweep" style={{ animationDelay: '100ms' }}>
+<a
+          href="https://www.youtube.com/@TournezBobines"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex cursor-pointer items-center justify-center rounded-full border border-white/20 bg-white/5 px-8 py-4 text-sm font-medium tracking-wide text-neutral-200 shadow-2xl backdrop-blur-md transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white hover:shadow-[0_0_30px_rgba(220,38,38,0.4)]"
+        >
+          Découvrez notre chaîne YouTube
+        </a>
+      </div>
+
         <div className="mt-14 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
-          {/* COLONNE 1 - ANIMATIONS */}
-          <div className="animate-text-sweep h-full">
+          <div className="animate-text-sweep h-full" style={{ animationDelay: '150ms' }}>
             <FormulaFrame hover={false}>
               <div className="flex h-full flex-col">
                 <div className="text-center mb-8">
@@ -401,8 +412,7 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
             </FormulaFrame>
           </div>
 
-          {/* COLONNE 2 - PÉDAGOGIE */}
-          <div className="animate-text-sweep h-full" style={{ animationDelay: '200ms' }}>
+          <div className="animate-text-sweep h-full" style={{ animationDelay: '250ms' }}>
             <FormulaFrame hover={false}>
               <div className="flex h-full flex-col">
                 <div className="text-center mb-8">
@@ -417,7 +427,6 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
           </div>
         </div>
 
-        {/* MODAL */}
         {activeEvent && (
           <div 
             className="fixed inset-0 z-[99999] flex items-center justify-center p-0 bg-black/85 backdrop-blur-md"
@@ -427,7 +436,6 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
               className="relative w-full max-w-4xl mx-6 my-6 sm:mx-10 sm:my-8 p-5 sm:p-8 bg-neutral-950 rounded-none shadow-2xl flex flex-col justify-between overflow-visible border border-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Bouton Fermer */}
               <button
                 onClick={handleCloseModal}
                 className="absolute top-5 right-5 p-2 text-neutral-400 hover:text-white bg-neutral-900/80 hover:bg-red-600 rounded-full transition-colors z-40 cursor-pointer shadow-lg"
@@ -445,11 +453,10 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
 
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 w-full max-w-3xl mx-auto">
-                  {/* Photo / Affiche (sans zoom) */}
                   {activeEvent.image && (
                     <div className="relative h-[220px] sm:h-[280px] w-[200px] sm:w-[240px] shrink-0 flex items-center justify-center">
                       <Image
-                        src={activeEvent.image}
+                        src={withBasePath(activeEvent.image)}
                         alt={activeEvent.title}
                         fill
                         className="object-contain shadow-lg"
@@ -457,7 +464,6 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
                     </div>
                   )}
 
-                  {/* Lecteur Vidéo Épuré Personnalisé */}
                   {activeEvent.videoId && (
                     <div
                       ref={videoContainerRef}
@@ -482,7 +488,6 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
                         </div>
                       ) : (
                         <div className="relative w-full h-full overflow-hidden bg-black flex items-center justify-center">
-                          {/* Iframe YouTube sans interactions directes */}
                           <iframe
                             ref={iframeRef}
                             className="w-full h-full pointer-events-none select-none"
@@ -491,13 +496,11 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
                             title={activeEvent.title}
                           />
 
-                          {/* Zone de clic centrale Play/Pause */}
                           <div
                             className="absolute inset-0 z-10 cursor-pointer"
                             onClick={togglePlay}
                           />
 
-                          {/* Bouton Play au centre lors d'une pause */}
                           {!isPlaying && (
                             <VideoPlayButton
                               onClick={togglePlay}
@@ -505,7 +508,6 @@ export function EventsView({ onOpenContact }: EventsViewProps) {
                             />
                           )}
 
-                          {/* Barre de contrôle personnalisée au survol */}
                           <div className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-2.5 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover/player:opacity-100 transition-opacity duration-300 pointer-events-auto">
                             <div className="flex items-center gap-3">
                               <button

@@ -70,7 +70,7 @@ export function AboutView() {
           opacity: 0;
         }
 
-        /* Trajectoires multiples, chaotiques et multidirectionnelles (ralenties) */
+        {/* Trajectoires multiples, chaotiques et multidirectionnelles (ralenties) */}
         @keyframes thermalChaos1 {
           0% { transform: translate(-10%, -10%) rotate(0deg) scale(1); }
           25% { transform: translate(80vw, 30vh) rotate(90deg) scale(1.4); }
@@ -114,7 +114,7 @@ export function AboutView() {
         .animate-thermal-4 { animation: thermalChaos4 62s infinite ease-in-out; }
         .animate-thermal-5 { animation: thermalChaos5 48s infinite ease-in-out; }
 
-        /* Texture de papier mat / grain subtil (très clair et froid) */
+        {/* Texture de papier mat / grain subtil (très clair et froid) */}
         .bg-textured-paper {
           background-color: #f3f4f6;
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
@@ -171,7 +171,7 @@ export function AboutView() {
                 {!isVideoPlaying ? (
                   <>
                     <img 
-                      src="https://i.ytimg.com/vi/BVycG1JWfW4/maxresdefault.jpg" 
+                      src={withBasePath('/couverture-le-principe.jpg')} 
                       alt="Présentation Vidéo" 
                       className="absolute inset-0 h-full w-full object-cover opacity-80 md:scale-105"
                     />
@@ -179,14 +179,12 @@ export function AboutView() {
                     <VideoPlayButton />
                   </>
                 ) : (
-                  <iframe
-                    className="absolute top-0 left-0 h-full w-full bg-black md:scale-105"
-                    src="https://www.youtube.com/embed/BVycG1JWfW4?autoplay=1&rel=0"
-                    title="Lecteur vidéo YouTube"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  ></iframe>
+                  <video
+                    src={withBasePath('/le-principe.mp4')}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    controls
+                    autoPlay
+                  />
                 )}
               </div>
             </div>

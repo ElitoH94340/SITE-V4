@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { FORMULAS } from '@/lib/formulas'
+import { withBasePath } from '@/lib/paths'
 
 export function FormulasView() {
   const [activeFormulaId, setActiveFormulaId] = useState<string>(FORMULAS[0]?.id || '')
@@ -82,18 +83,22 @@ export function FormulasView() {
         {FORMULAS.map((formula, index) => {
           const isActive = activeFormulaId === formula.id
           const isVideoPlaying = isPlaying[formula.id] || false
-          
-const videoSrc = index === 0
-  ? `${basePath}/T-B-Immersion.mov`
-  : index === 1
-  ? `${basePath}/T-B-Immersion-filmee.mov`
-  : `${basePath}/T-B-Captation.mov`
 
-const coverSrc = index === 0
-  ? `${basePath}/couverture-immersion.png`
-  : index === 1
-  ? `${basePath}/couverture-immersion-filmee.png`
-  : `${basePath}/couverture-captation.png`
+          const videoSrc = withBasePath(
+            index === 0
+              ? '/T-B-Immersion.mp4'
+              : index === 1
+                ? '/T-B-Immersion-filmée.mp4'
+                : '/T-B-Captation.mp4',
+          )
+
+          const coverSrc = withBasePath(
+            index === 0
+              ? '/couverture-immersion.png'
+              : index === 1
+                ? '/couverture-immersion-filmée.png'
+                : '/couverture-captation.png',
+          )
 
           let colTheme = {
             bg: 'bg-black text-white',

@@ -46,7 +46,6 @@ export function DubbingView() {
             animation: pulseGlow 2s ease-in-out infinite;
           }
 
-          /* Trajectoires multiples, chaotiques et multidirectionnelles (ralenties) */
           @keyframes thermalChaos1 {
             0% { transform: translate(-10%, -10%) rotate(0deg) scale(1); }
             25% { transform: translate(80vw, 30vh) rotate(90deg) scale(1.4); }
@@ -90,13 +89,6 @@ export function DubbingView() {
           .animate-thermal-4 { animation: thermalChaos4 62s infinite ease-in-out; }
           .animate-thermal-5 { animation: thermalChaos5 48s infinite ease-in-out; }
 
-          .gpu-layer {
-            backface-visibility: hidden;
-            -webkit-font-smoothing: antialiased;
-            transform: translateZ(0);
-          }
-
-          /* Texture de papier mat / grain subtil (très clair et froid) */
           .bg-textured-paper {
             background-color: #f3f4f6;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
@@ -107,7 +99,6 @@ export function DubbingView() {
         {/* CONTENEUR PRINCIPAL */}
         <div className="relative z-10 mx-auto max-w-7xl px-5 pt-8 sm:px-8 w-full">
           
-          {/* HEADER */}
           <header className="text-center animate-text-sweep mb-8">
             <p className="mb-2.5 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-red-500">
               Doublage pour tous
@@ -117,10 +108,8 @@ export function DubbingView() {
             </h1>
           </header>
 
-          {/* CONTENEUR RESTREINT */}
           <div className="mx-auto max-w-4xl w-full">
             
-            {/* TRIPTYQUE PHOTO HEADER */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 w-full animate-text-sweep" style={{ animationDelay: '200ms' }}>
               <div className="relative w-full aspect-[3/4] md:aspect-auto md:h-full border border-white/10 bg-neutral-900/40 p-2 sm:p-3 shadow-2xl backdrop-blur-md">
                 <div className="relative h-full w-full overflow-hidden border border-white/10 bg-black">
@@ -147,7 +136,6 @@ export function DubbingView() {
               </div>
             </div>
 
-            {/* TEXTE EXPLICATIF */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 pb-0 text-pretty text-base leading-relaxed text-neutral-300 w-full animate-text-sweep" style={{ animationDelay: '400ms' }}>
               <p>
                 Plongez dans l&apos;univers étonnant du doublage et vivez cette expérience unique dans les conditions d&apos;un véritable studio.
@@ -159,7 +147,7 @@ export function DubbingView() {
           </div>
         </div>
 
-        {/* SECTION NOS OBJECTIFS (BLANC UNI) */}
+        {/* SECTION NOS OBJECTIFS */}
         <div className="w-full mt-12 bg-white py-14 px-5 sm:px-8 border-t border-neutral-200 relative">
           <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center w-full">
             
@@ -168,21 +156,20 @@ export function DubbingView() {
                 Nos objectifs
               </h2>
               
-<ul className="flex flex-col items-center gap-5 text-black font-serif italic text-2xl sm:text-3xl tracking-normal text-balance list-none mb-0">
-  <li>
-    <span className="text-black mr-3">—</span> 
-    Fédérer un groupe de <span className="text-red-500 font-medium">collaborateurs</span> 
-    <span className="text-black ml-3">—</span>
-  </li>
-  <li>
-    <span className="text-black mr-3">—</span> 
-    Donner une dimension <span className="text-red-500 font-medium">festive et cinématographique</span> à un événement 
-    <span className="text-black ml-3">—</span>
-  </li>
-</ul>
+              <ul className="flex flex-col items-center gap-5 text-black font-serif italic text-2xl sm:text-3xl tracking-normal text-balance list-none mb-0">
+                <li>
+                  <span className="text-black mr-3">—</span> 
+                  Fédérer un groupe de <span className="text-red-500 font-medium">collaborateurs</span> 
+                  <span className="text-black ml-3">—</span>
+                </li>
+                <li>
+                  <span className="text-black mr-3">—</span> 
+                  Donner une dimension <span className="text-red-500 font-medium">festive et cinématographique</span> à un événement 
+                  <span className="text-black ml-3">—</span>
+                </li>
+              </ul>
             </div>
 
-            {/* VIDÉO OBJECTIFS DE RÉFÉRENCE */}
             <div className="w-full">
               <div className="relative w-full border border-neutral-300 bg-neutral-900/10 p-2 sm:p-3 shadow-xl backdrop-blur-md">
                 <div 
@@ -192,7 +179,7 @@ export function DubbingView() {
                   {!isVideoPlaying ? (
                     <>
                       <img 
-                        src="https://i.ytimg.com/vi/ejoMCZcqU_s/maxresdefault.jpg?v=2" 
+                        src={withBasePath('/couverture-doublage-pour-tous.jpg')} 
                         alt="Présentation Vidéo" 
                         className="absolute inset-0 h-full w-full object-cover opacity-90 md:scale-105"
                       />
@@ -200,14 +187,12 @@ export function DubbingView() {
                       <VideoPlayButton />
                     </>
                   ) : (
-                    <iframe
-                      className="absolute top-0 left-0 h-full w-full bg-black md:scale-105"
-                      src="https://www.youtube.com/embed/ejoMCZcqU_s?autoplay=1&rel=0"
-                      title="Lecteur vidéo YouTube"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    ></iframe>
+                    <video
+                      src={withBasePath('/Doublage-Pour-Tous.mp4')}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      controls
+                      autoPlay
+                    />
                   )}
                 </div>
               </div>
@@ -239,7 +224,7 @@ export function DubbingView() {
                 {!isVideo1Playing ? (
                   <>
                     <img 
-                      src="https://i.ytimg.com/vi/573IoaBcqlU/maxresdefault.jpg?v=2" 
+                      src={withBasePath('/couverture-s-amuser-a-doubler.webp')} 
                       alt="S'amuser à doubler" 
                       className="absolute inset-0 h-full w-full object-cover opacity-90 md:scale-105"
                     />
@@ -247,33 +232,28 @@ export function DubbingView() {
                     <VideoPlayButton />
                   </>
                 ) : (
-                  <iframe
-                    className="absolute top-0 left-0 h-full w-full bg-black md:scale-105"
-                    src="https://www.youtube.com/embed/573IoaBcqlU?autoplay=1&rel=0"
-                    title="S'amuser à doubler"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  ></iframe>
+                  <video
+                    src={withBasePath('/s-amuser-a-doubler.mp4')}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    controls
+                    autoPlay
+                  />
                 )}
               </div>
             </div>
           </div>
         </div>
 
-        {/* COMMENT ÇA MARCHE ? - AVEC LA MIRE RÉCUPÉRÉE */}
+        {/* COMMENT ÇA MARCHE ? */}
         <div className="w-full py-14 px-5 sm:px-8">
           <div className="relative z-15 max-w-4xl mx-auto">
             
-            {/* MIRE INTÉGRÉE : Encadrement avec coins de visée et repères cardinaux */}
             <div className="relative w-full p-6 sm:p-10 overflow-hidden backdrop-blur-[2px] mb-8">
-              {/* 4 Coins de visée */}
               <div className="absolute top-3 left-3 w-10 h-10 border-t-2 border-l-2 border-neutral-400/70 pointer-events-none" />
               <div className="absolute top-3 right-3 w-10 h-10 border-t-2 border-r-2 border-neutral-400/70 pointer-events-none" />
               <div className="absolute bottom-3 left-3 w-10 h-10 border-b-2 border-l-2 border-neutral-400/70 pointer-events-none" />
               <div className="absolute bottom-3 right-3 w-10 h-10 border-b-2 border-r-2 border-neutral-400/70 pointer-events-none" />
 
-              {/* Réticules et repères de centrage sur les bords */}
               <div className="absolute top-1/2 left-0 w-3 h-px bg-neutral-500/50 -translate-y-1/2 pointer-events-none" />
               <div className="absolute top-1/2 right-0 w-3 h-px bg-neutral-500/50 -translate-y-1/2 pointer-events-none" />
               <div className="absolute top-0 left-1/2 w-px h-3 bg-neutral-500/50 -translate-x-1/2 pointer-events-none" />
@@ -318,7 +298,6 @@ export function DubbingView() {
               </div>
             </div>
 
-            {/* VIDÉO DÉMO COMMENT ÇA MARCHE */}
             <div className="max-w-4xl mx-auto w-full">
               <div className="relative w-full border border-white/10 bg-neutral-900/40 p-2 sm:p-3 shadow-2xl backdrop-blur-md">
                 <div 
@@ -328,7 +307,7 @@ export function DubbingView() {
                   {!isHowItWorksVideoPlaying ? (
                     <>
                       <img 
-                        src="https://i.ytimg.com/vi/gl0dyMWsEo0/maxresdefault.jpg?v=2"
+                        src={withBasePath('/couverture-le-deroule.jpg')}
                         alt="Comment ça marche"
                         className="absolute inset-0 h-full w-full object-cover opacity-80 md:scale-105"
                       />
@@ -336,14 +315,12 @@ export function DubbingView() {
                       <VideoPlayButton />
                     </>
                   ) : (
-                    <iframe
-                      className="absolute top-0 left-0 h-full w-full bg-black md:scale-105"
-                      src="https://www.youtube.com/embed/gl0dyMWsEo0?autoplay=1&rel=0"
-                      title="Comment ça marche"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    ></iframe>
+                    <video
+                      src={withBasePath('/le-deroule.mp4')}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      controls
+                      autoPlay
+                    />
                   )}
                 </div>
               </div>
@@ -352,7 +329,7 @@ export function DubbingView() {
           </div>
         </div>
 
-        {/* SECTION NOTRE MATÉRIEL (BLANC UNI) */}
+        {/* SECTION NOTRE MATÉRIEL */}
         <div className="w-full bg-white py-14 border-y border-neutral-200 relative">
           <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-8">
             <div className="mb-8 text-center">
@@ -398,7 +375,7 @@ export function DubbingView() {
           </div>
         </div>
 
-        {/* SECTION ISOLÉE DU TRIPTYQUE MATÉRIEL SUR LE FOND GRIS TEXTURÉ AVEC FORMES EN NUANCES DE GRIS */}
+        {/* SECTION TRIPTYQUE MATÉRIEL */}
         <div className="w-full bg-textured-paper py-14 relative z-10 border-t-0 overflow-hidden">
           <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden opacity-65">
             <div className="absolute top-0 left-0 w-[290px] h-[290px] bg-gradient-to-br from-neutral-500/50 via-neutral-600/45 to-neutral-400/50 rounded-[40%_60%_70%_30%/50%_40%_60%_50%] blur-[45px] animate-thermal-3" />
@@ -481,7 +458,6 @@ export function DubbingView() {
         </div>
 
       </section>
-
     </>
   )
 }

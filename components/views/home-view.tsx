@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Volume2, VolumeX, ArrowDown, ArrowUp } from 'lucide-react'
+import { Volume2, VolumeX, ChevronDown, ChevronUp } from 'lucide-react'
 import { FormulaFrame } from '@/components/formula-frame'
 import { withBasePath } from '@/lib/paths'
 
@@ -27,6 +27,7 @@ export function HomeView() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isMuted, setIsMuted] = useState(true)
   const [isAtTop, setIsAtTop] = useState(true)
+  const [hasScrolled, setHasScrolled] = useState(false)
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -53,7 +54,14 @@ export function HomeView() {
       const contenuElement = document.getElementById('contenu')
       if (contenuElement) {
         const rect = contenuElement.getBoundingClientRect()
-        setIsAtTop(rect.top > 100)
+        const currentIsAtTop = rect.top > 100
+        
+        setIsAtTop(currentIsAtTop)
+        
+        // Dès qu'on quitte le haut de la page, on mémorise qu'on a déjà scrollé
+        if (!currentIsAtTop) {
+          setHasScrolled(true)
+        }
       }
     }
 
@@ -268,31 +276,38 @@ export function HomeView() {
           </div>
         </div>
 
-        {/* BOUTON SON : Positionné en bas à droite de la section */}
-        <div className="absolute bottom-10 right-10 z-50">
+        {/* BOUTON SON */}
+        <div className="absolute top-[100px] right-10 z-50">
           <button
             onClick={toggleMute}
-            className="group flex h-[42px] w-[42px] items-center justify-center rounded-full border border-white bg-transparent text-white backdrop-blur-[2px] transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)] animate-fade-in-delay"
+            className="group flex h-[52px] w-[52px] items-center justify-center rounded-full border-2 border-white bg-transparent text-white backdrop-blur-[2px] transition-all duration-300 hover:bg-white hover:text-black cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)] animate-fade-in-delay"
             aria-label={isMuted ? "Activer le son" : "Coupure son"}
             style={{ animationDelay: '2.5s' }}
           >
             {isMuted ? (
-              <VolumeX className="size-4 transition-transform duration-300" />
+              <VolumeX className="size-5 transition-transform duration-300" />
             ) : (
-              <Volume2 className="size-4 transition-transform duration-300" />
+              <Volume2 className="size-5 transition-transform duration-300" />
             )}
           </button>
         </div>
 
-        {/* BOUTON SCROLL INITIAL */}
+        {/* BOUTON SCROLL INITIAL (Chevron strict) */}
         {isAtTop && (
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+          <div 
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 pointer-events-auto animate-fade-in-delay"
+            style={{ animationDelay: hasScrolled ? '0s' : '3.3s' }}
+          >
             <button
               onClick={handleScrollButtonClick}
-              className="group flex h-[42px] w-[42px] items-center justify-center rounded-full border border-white bg-transparent text-white backdrop-blur-[2px] transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+              className="group flex items-center justify-center text-white cursor-pointer drop-shadow-md"
               aria-label="Descendre au contenu"
             >
-              <ArrowDown className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
+              <ChevronDown 
+                className="size-12 transition-all duration-300 group-hover:translate-y-2 group-active:translate-y-3 [stroke-width:1px] group-hover:[stroke-width:2px]" 
+                strokeLinecap="square"
+                strokeLinejoin="miter"
+              />
             </button>
           </div>
         )}
@@ -304,10 +319,14 @@ export function HomeView() {
         <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 pointer-events-auto animate-fade-in-delay">
           <button
             onClick={handleScrollButtonClick}
-            className="group flex h-[42px] w-[42px] items-center justify-center rounded-full border border-neutral-700 bg-black/80 text-white backdrop-blur-md transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+            className="group flex h-[42px] w-[42px] items-center justify-center rounded-full border border-neutral-700 bg-black/80 text-white backdrop-blur-md transition-all duration-300 hover:border-white hover:bg-white/20 cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
             aria-label="Remonter en haut"
           >
-            <ArrowUp className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
+            <ChevronUp 
+              className="size-5 transition-all duration-300 group-hover:-translate-y-0.5 [stroke-width:1px] group-hover:[stroke-width:2px]" 
+              strokeLinecap="square"
+              strokeLinejoin="miter"
+            />
           </button>
         </div>
       )}
