@@ -27,7 +27,6 @@ export function SiteHeader() {
     }
 
     document.body.style.overflow = 'hidden'
-
     window.addEventListener('keydown', onKeyDown)
 
     return () => {
@@ -40,44 +39,6 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="site-header-bar">
         <div className="site-header-desktop-group">
-          <nav
-            aria-label="Navigation principale"
-            className="site-nav-desktop site-nav-desktop-left"
-          >
-            <ul>
-              {NAV_ITEMS.slice(0, Math.floor(NAV_ITEMS.length / 2)).map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  pathname === `${item.href}/`
-
-                return (
-                  <li key={item.id}>
-                    <Link
-                      href={item.href}
-                      aria-current={isActive ? 'page' : undefined}
-                      className={cn(
-                        'site-nav-link',
-                        isActive && 'is-active'
-                      )}
-                    >
-                      {item.label}
-
-                      {isActive && (
-                        <span
-                          className="site-nav-cross"
-                          aria-hidden
-                        >
-                          <span />
-                          <span />
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </nav>
-
           <Link
             href="/"
             aria-label="Retour à l'accueil"
@@ -90,14 +51,20 @@ export function SiteHeader() {
                 alt="Logo Tournez Bobines"
               />
             </span>
+
+            <span className="site-header-title" aria-hidden="true">
+              <span>tournez</span>
+              <span>bobines</span>
+              <span className="site-header-title-association">association</span>
+            </span>
           </Link>
 
           <nav
             aria-label="Navigation principale"
-            className="site-nav-desktop site-nav-desktop-right"
+            className="site-nav-desktop"
           >
             <ul>
-              {NAV_ITEMS.slice(Math.floor(NAV_ITEMS.length / 2)).map((item) => {
+              {NAV_ITEMS.map((item) => {
                 const isActive =
                   pathname === item.href ||
                   pathname === `${item.href}/`

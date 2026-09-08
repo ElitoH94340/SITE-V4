@@ -260,9 +260,7 @@
   z-index: 50;
 
   background: #000000;
-
   border: none;
-
   overflow: visible;
 }
 
@@ -271,16 +269,15 @@
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 
   width: 100%;
   height: 150px;
 
   margin: 0;
-  padding: 0 clamp(32px, 5vw, 80px);
+  padding-left: 0 15px;
 
   box-sizing: border-box;
-
   overflow: visible;
 
   background: #000000;
@@ -288,7 +285,7 @@
 }
 
 /* =========================================================
-   GROUPE LOGO + NAVIGATION
+   BLOC LOGO + NOM + NAVIGATION
    ========================================================= */
 
 .site-header-desktop-group {
@@ -296,57 +293,47 @@
 
   display: flex;
   align-items: center;
-  justify-content: center;
 
   width: 100%;
-  max-width: none;
   height: 150px;
 
   margin: 0;
   padding: 0;
 
   overflow: visible;
-
   background: transparent;
   border: none;
 }
 
 /* =========================================================
-   LOGO
-   Desktop : 115.2px (50% plus petit)
-   Mobile  : 72px
-   Position desktop : centre du menu
-   Marge haute desktop : 15px
-   Ratio naturel conservé
+   LOGO + NOM DE L'ASSOCIATION
    ========================================================= */
 
 .site-header-brand {
   position: relative;
 
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  align-items: center;
+  justify-content: flex-start;
 
-  width: 115.2px;
+  width: auto;
   height: 150px;
 
   margin: 0;
-  padding: 15px 0 0;
+  padding-left: 15px 0 0;
+  padding-top: 0px;
 
-  flex: 0 0 115.2px;
-  order: 2;
+  flex: 0 0 auto;
 
   color: #ffffff;
   text-decoration: none;
 
   z-index: 60;
-
-  transform: none;
 }
 
 .site-header-logo {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
 
   width: 115.2px;
@@ -355,7 +342,7 @@
   margin: 0;
   padding: 0;
 
-  flex-shrink: 0;
+  flex: 0 0 115.2px;
 
   animation: none !important;
   transform: none !important;
@@ -381,10 +368,6 @@
   transition: none !important;
 }
 
-/* =========================================================
-   AUCUNE ROTATION DU LOGO
-   ========================================================= */
-
 .site-header-logo:hover,
 .site-header-logo:hover img,
 .site-header-brand:hover .site-header-logo,
@@ -394,9 +377,33 @@
   transition: none !important;
 }
 
-/* Ancien texte supprimé */
 .site-header-title {
-  display: none !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  width: auto;
+  height: 115.2px;
+
+  margin-left: 15px;
+
+  color: #ffffff;
+
+  font-size: clamp(19.5px, 1.76vw, 28.5px);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+.site-header-title span {
+  display: block;
+}
+
+.site-header-title-association {
+  color: #f58220;
 }
 
 /* =========================================================
@@ -404,27 +411,20 @@
    ========================================================= */
 
 .site-nav-desktop {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 50%;
 
   display: none;
 
-  flex: 1 1 0;
-
-  min-width: 0;
-
   align-self: stretch;
 
-  justify-content: center;
+  transform: translateX(-50%);
 }
 
-.site-nav-desktop-left {
-  order: 1;
-  justify-content: flex-end;
-}
-
+.site-nav-desktop-left,
 .site-nav-desktop-right {
-  order: 3;
-  justify-content: flex-start;
+  display: none !important;
 }
 
 .site-nav-desktop ul {
@@ -432,7 +432,8 @@
   align-items: center;
   justify-content: center;
 
-  gap: clamp(50px, 5.2vw, 75px);
+  /* Espacement précédent augmenté de 25 % */
+  gap: clamp(44px, 5vw, 81px);
 
   height: 150px;
 
@@ -440,16 +441,6 @@
   padding: 0;
 
   list-style: none;
-}
-
-.site-nav-desktop-left ul {
-  justify-content: flex-end;
-  padding-right: 10px;
-}
-
-.site-nav-desktop-right ul {
-  justify-content: flex-start;
-  padding-left: 10px;
 }
 
 .site-nav-desktop .site-nav-link {
@@ -462,8 +453,8 @@
 
   color: #ffffff;
 
-  font-size: clamp(9px, 0.78vw, 11px);
-  font-weight: 400;
+  font-size: clamp(10px, 0.88vw, 12px);
+  font-weight: 600;
   letter-spacing: 0.12em;
 
   text-transform: uppercase;
@@ -479,17 +470,20 @@
   color: #ffffff;
 }
 
-/* Barre blanche sous le menu choisi */
+/* =========================================================
+   LIGNE BLANCHE SOUS LE MENU
+   ========================================================= */
+
 .site-nav-desktop .site-nav-link::after {
   content: '';
 
   position: absolute;
 
-  top: calc(50% + 26px);
+  top: 113px;
   left: 50%;
 
   width: 100%;
-  height: 2px;
+  height: 3px;
 
   background: #ffffff;
 
@@ -503,75 +497,69 @@
     background-color 0.22s ease;
 }
 
-/* La barre reste invisible au repos et n'apparaît qu'au survol. */
 .site-nav-desktop .site-nav-link:not(.is-active):hover::after {
   opacity: 1;
   transform: translateX(-50%) scaleX(1);
 }
 
-/* Quand le lien est actif, la barre reste la barre horizontale de la croix. */
+/* =========================================================
+   CROIX ORANGE ACTIVE
+   ========================================================= */
+
+/*
+ * Les deux bras ont exactement :
+ * - 28px de longueur
+ * - 3px d'épaisseur
+ *
+ * Ils sont tous les deux centrés exactement sur
+ * left: 50% / top: 113px.
+ */
+
+/* Barre horizontale */
 .site-nav-desktop .site-nav-link.is-active::after {
-  width: 1.25rem;
-  height: 2px;
+  width: 28px;
+  height: 3px;
+
+  top: 113px;
+  left: 50%;
 
   background: #f58220;
 
   opacity: 1;
-  transform: translateX(-50%) scaleX(1);
-
-  transition:
-    width 0.2s ease,
-    background-color 0.2s ease,
-    opacity 0.15s ease;
+  transform: translate(-50%, -50%);
 }
 
-/*
- * Le deuxième bras est celui qui permet à la barre de devenir
- * la croix orange originale, sans changer son épaisseur.
- */
+/* Barre verticale */
 .site-nav-desktop .site-nav-link.is-active::before {
   content: '';
 
   position: absolute;
 
-  top: calc(50% + 26px);
+  top: 113px;
   left: 50%;
 
-  width: 2px;
-  height: 1.25rem;
+  width: 3px;
+  height: 28px;
 
   background: #f58220;
 
-  opacity: 0;
-  transform: translate(-50%, -50%) scaleY(0);
-  transform-origin: center;
-
-  transition:
-    opacity 0.12s ease,
-    transform 0.2s ease;
-}
-
-.site-nav-desktop .site-nav-link.is-active::before {
   opacity: 1;
-  transform: translate(-50%, -50%) scaleY(1);
+  transform: translate(-50%, -50%);
+
+  transform-origin: center;
 }
 
-/* Croix orange originale : fine, légère et positionnée sous le titre. */
+/* Élément conservé pour le HTML existant */
 .site-nav-cross {
   position: absolute;
 
-  top: calc(50% + 26px);
+  top: 113px;
   left: 50%;
 
   z-index: 10;
 
-  display: flex;
-
-  width: 1.25rem;
-  height: 1.25rem;
-
-  align-items: center;
-  justify-content: center;
+  width: 28px;
+  height: 28px;
 
   transform: translate(-50%, -50%);
 
@@ -627,7 +615,6 @@
 
 .site-nav-burger-icon span {
   position: absolute;
-
   left: 0;
 
   display: block;
@@ -649,7 +636,6 @@
 
 .site-nav-burger-icon span:nth-child(2) {
   top: 50%;
-
   transform: translateY(-50%);
 }
 
@@ -659,7 +645,6 @@
 
 .site-nav-burger-icon.is-open span:nth-child(1) {
   top: 50%;
-
   transform: translateY(-50%) rotate(45deg);
 }
 
@@ -670,7 +655,6 @@
 .site-nav-burger-icon.is-open span:nth-child(3) {
   top: 50%;
   bottom: auto;
-
   transform: translateY(-50%) rotate(-45deg);
 }
 
@@ -680,7 +664,6 @@
 
 .site-nav-mobile {
   position: fixed;
-
   inset: 90px 0 0 0;
 
   z-index: 40;
@@ -690,7 +673,6 @@
   overflow-y: auto;
 
   background: #f58220;
-
   border: none;
 }
 
@@ -703,7 +685,6 @@
   flex-direction: column;
 
   margin: 0;
-
   padding: 1.5rem 1.25rem 2.5rem;
 
   list-style: none;
@@ -753,6 +734,11 @@
   background: #f58220;
 }
 
+.site-nav-mobile .site-nav-link::before,
+.site-nav-mobile .site-nav-link::after {
+  content: none;
+}
+
 /* =========================================================
    TABLET
    ========================================================= */
@@ -760,7 +746,7 @@
 @media (min-width: 640px) and (max-width: 1023px) {
   .site-header-bar {
     height: 90px;
-    padding: 0;
+    padding: 0 15px;
     background: #000000;
   }
 
@@ -770,15 +756,16 @@
   }
 
   .site-header-brand {
-    width: 115.2px;
+    width: auto;
     height: 90px;
-    flex: 0 0 115.2px;
-    padding-top: 10px;
+    flex: 0 0 auto;
+    padding-top: 0px;
   }
 
   .site-header-logo {
-    width: 115.2px;
+    width: 80px;
     height: 80px;
+    flex-basis: 80px;
   }
 
   .site-header-logo img {
@@ -786,13 +773,15 @@
     height: 80px !important;
   }
 
+  .site-header-title {
+    width: auto;
+    height: 80px;
+    margin-left: 10px;
+    font-size: 23px;
+  }
+
   .site-nav-desktop {
     display: none !important;
-  }
-  
-  .site-nav-mobile .site-nav-link::before,
-  .site-nav-mobile .site-nav-link::after {
-    content: none;
   }
 }
 
@@ -803,7 +792,7 @@
 @media (min-width: 1024px) {
   .site-header-bar {
     height: 150px;
-    padding: 0 clamp(32px, 5vw, 80px);
+    padding: 0 15px;
   }
 
   .site-header-desktop-group {
@@ -812,15 +801,14 @@
   }
 
   .site-header-brand {
-    width: 115.2px;
     height: 150px;
-    flex: 0 0 115.2px;
-    padding-top: 15px;
+    padding-top: 0px;
   }
 
   .site-header-logo {
     width: 115.2px;
     height: 115.2px;
+    flex-basis: 115.2px;
   }
 
   .site-header-logo img {
@@ -830,14 +818,6 @@
 
   .site-nav-desktop {
     display: flex;
-  }
-
-  .site-nav-desktop ul {
-    height: 150px;
-  }
-
-  .site-nav-desktop .site-nav-link {
-    height: 150px;
   }
 
   .site-nav-burger,
@@ -853,7 +833,7 @@
 @media (max-width: 639px) {
   .site-header-bar {
     height: 90px;
-    padding: 0;
+    padding: 0 15px;
   }
 
   .site-header-desktop-group {
@@ -864,26 +844,35 @@
   }
 
   .site-header-brand {
-    position: absolute;
-    top: 15px;
-    right: 15px;
+    position: relative;
+
+    top: auto;
+    right: auto;
     left: auto;
 
     width: auto;
-    height: 72px;
+    height: 90px;
     flex: 0 0 auto;
-    order: initial;
-    padding: 0;
+
+    padding: 15px 0 0;
   }
 
   .site-header-logo {
-    width: auto;
-    height: 72px;
+    width: 60px;
+    height: 60px;
+    flex-basis: 60px;
   }
 
   .site-header-logo img {
     width: auto !important;
-    height: 72px !important;
+    height: 60px !important;
+  }
+
+  .site-header-title {
+    width: auto;
+    height: 60px;
+    margin-left: 8px;
+    font-size: 12px;
   }
 
   .site-nav-desktop {
