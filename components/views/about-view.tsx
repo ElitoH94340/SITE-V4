@@ -8,33 +8,42 @@ import { withBasePath } from '@/lib/paths'
 const dubbingRoles = [
   {
     id: 'spectateur',
-    subtitle: (
-      <>
-        Pour<br />le <span className="border-b-2 border-orange-500 pb-0.5">spectateur</span>
-      </>
-    ),
+    titleLines: ['Pour', 'le spectateur'],
     summary:
       'C’est croire naturellement que tous les personnages d’une série ou d’un film étranger parlent français.',
   },
   {
     id: 'comedien',
-    subtitle: (
-      <>
-        Pour<br />le <span className="border-b-2 border-orange-500 pb-0.5">comédien</span>
-      </>
-    ),
+    titleLines: ['Pour', 'le comédien'],
     summary:
       'C’est suivre au plus près le jeu de l’acteur à l’image, respecter le rythme, les émotions, les intentions et la synchronisation labiale.',
   },
   {
     id: 'adaptateur',
-    subtitle: (
-      <>
-        Pour<br />l’<span className="border-b-2 border-orange-500 pb-0.5">adaptateur</span>
-      </>
-    ),
+    titleLines: ['Pour', 'l’adaptateur'],
     summary:
       'C’est être au plus près du dialogue en langue étrangère, être le plus synchrone possible en respectant le mouvement des lèvres des comédiens à l’image.',
+  },
+]
+
+const principleCards = [
+  {
+    id: 'experience',
+    titleLines: ['Expérience', 'sur mesure'],
+    summary:
+      'Un véritable auditorium de doublage se déplace pour vous proposer de vivre en direct une expérience cinématographique dans les meilleures conditions.',
+  },
+  {
+    id: 'immersion',
+    titleLines: ['Immersion', 'totale'],
+    summary:
+      'À partir de nombreux extraits de films cultes, nous offrons au public la possibilité de se mettre, pendant un temps, dans la peau des comédiens à l’image.',
+  },
+  {
+    id: 'moyens',
+    titleLines: ['Moyens', 'professionnels'],
+    summary:
+      'Grâce à des moyens techniques professionnels, le public peut choisir parmi plus de 200 extraits de films. La projection et la mise en situation sont alors possibles grâce au texte qui défile sous l’image sur une bande rythmo synchrone.',
   },
 ]
 
@@ -42,7 +51,7 @@ export function AboutView() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
   return (
-    <section className="relative w-full bg-[#050505] text-neutral-50 pt-20 border-t border-white/20 select-none">
+    <section className="relative w-full bg-[#050505] text-neutral-50 pt-[90px] lg:pt-[150px] border-t border-white/20 select-none">
       <style jsx>{`
         @keyframes fadeUp {
           from {
@@ -59,82 +68,87 @@ export function AboutView() {
           animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
         }
-
-        @keyframes slowMove1 {
-          0% { transform: translate(0px, 0px) scale(1); }
-          50% { transform: translate(30px, -20px) scale(1.2); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-
-        @keyframes slowMove2 {
-          0% { transform: translate(0px, 0px) scale(1); }
-          50% { transform: translate(-30px, 20px) scale(1.1); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-
-        .animated-blob-1 {
-          animation: slowMove1 12s ease-in-out infinite;
-        }
-
-        .animated-blob-2 {
-          animation: slowMove2 15s ease-in-out infinite;
-        }
       `}</style>
 
       {/* =========================================================
           SECTION 1 : QU'EST-CE QUE LE DOUBLAGE ?
           ========================================================= */}
 
-      <section className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 flex flex-col justify-center border-b border-white/10">
+      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
-          
-          {/* Titre à gauche (4 colonnes) - En majuscules (uppercase) */}
-          <div 
+          <div
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-semibold tracking-tight text-white leading-[1.1] flex flex-col items-start space-y-1 uppercase">
-              <span className="inline-block border-b-2 border-white pb-1.5">Qu’est-ce</span>
-              <span className="inline-block border-b-2 border-white pb-1.5">que le</span>
-              <span className="inline-block border-b-2 border-white pb-1.5">doublage ?</span>
+            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                Qu’est-ce
+              </span>
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                que le
+              </span>
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                doublage{'\u00A0'}?
+              </span>
             </div>
           </div>
 
-          {/* Contenu principal (8 colonnes) */}
-          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0">
-            <div className="grid grid-cols-1 items-stretch gap-8 md:grid-cols-3 w-full">
-              {dubbingRoles.map((role) => (
-                <div
-                  key={role.id}
-                  className="relative p-8 sm:p-10 flex flex-col text-left overflow-visible min-h-[380px]"
-                >
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute -top-12 -left-12 w-48 h-48 bg-white/5 rounded-full blur-2xl animated-blob-1" />
-                    <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-neutral-300/5 rounded-full blur-2xl animated-blob-2" />
-                  </div>
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
+            <div
+              className="relative w-full animate-text-sweep"
+              style={{ animationDelay: '200ms' }}
+            >
+              <div className="relative w-full aspect-video overflow-hidden bg-black">
+                <img
+                  src={withBasePath('/doublage-5.png')}
+                  alt="Qu’est-ce que le doublage"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+            </div>
 
-                  <div className="relative z-10 flex flex-col h-full">
-                    <h3 
-                      className="font-semibold tracking-tight text-white leading-[1.1] shrink-0"
-                      style={{ fontSize: '25.888px' }}
+            <div
+              className="mt-10 sm:mt-14 lg:mt-16 relative w-full max-w-[92%] mx-auto animate-text-sweep cursor-default pointer-events-none"
+              style={{ animationDelay: '400ms' }}
+            >
+              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-14 lg:gap-16 w-full">
+                {dubbingRoles.map((role) => (
+                  <div
+                    key={role.id}
+                    className="relative flex flex-col text-left justify-start"
+                  >
+                    <div
+                      className="flex flex-col items-start gap-[5px] shrink-0"
+                      style={{
+                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                        lineHeight: 1.15,
+                        minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
+                      }}
                     >
-                      {role.subtitle}
-                    </h3>
-
-                    <div className="flex-grow flex items-start pt-8 sm:pt-10">
-                      <p 
-                        className="leading-relaxed text-neutral-400 font-light"
-                        style={{ fontSize: '16px' }}
-                      >
-                        {role.summary}
-                      </p>
+                      {role.titleLines.map((line) => (
+                        <span
+                          key={line}
+                          className="inline-block w-fit bg-black text-[#f3f4f6] font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px"
+                        >
+                          {line}
+                        </span>
+                      ))}
                     </div>
+
+                    <p
+                      className="mt-6 font-bold tracking-[0.01em] text-black"
+                      style={{
+                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                        lineHeight: 1.25,
+                      }}
+                    >
+                      {role.summary}
+                    </p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -144,142 +158,92 @@ export function AboutView() {
 
       <section className="relative w-full py-16 lg:py-24 px-4 sm:px-6 lg:px-0 bg-[#050505]">
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
-          
-          {/* Titre à gauche (4 colonnes) - En majuscules (uppercase) */}
-          <div 
+          <div
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-semibold tracking-tight text-white leading-[1.1] flex flex-col items-start space-y-1 uppercase">
-              <span className="inline-block border-b-2 border-white pb-1.5">Le</span>
-              <span className="inline-block border-b-2 border-white pb-1.5">principe</span>
+            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+                Le
+              </span>
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+                principe
+              </span>
             </div>
           </div>
 
-          {/* Contenu principal : Vidéo + Cartes (8 colonnes) */}
           <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
-            
-            {/* Bloc Vidéo */}
             <div
               className="relative w-full animate-text-sweep"
               style={{ animationDelay: '200ms' }}
             >
-              <div className="relative w-full shadow-2xl rounded-none">
-                <div
-                  className="relative h-full w-full aspect-video overflow-hidden bg-black flex items-center justify-center cursor-pointer group rounded-none"
-                  onClick={() => setIsVideoPlaying(true)}
-                >
-                  {!isVideoPlaying ? (
-                    <>
-                      <img
-                        src={withBasePath('/couverture-le-principe.jpg')}
-                        alt="Présentation Vidéo"
-                        className="absolute inset-0 h-full w-full object-cover opacity-80 md:scale-105"
-                      />
-
-                      <div className="absolute inset-0 bg-black/20 transition-colors duration-300 group-hover:bg-transparent" />
-
-                      <VideoPlayButton />
-                    </>
-                  ) : (
-                    <video
-                      src={withBasePath('/le-principe.mp4')}
-                      className="absolute inset-0 h-full w-full object-cover"
-                      controls
-                      autoPlay
+              <div
+                className="relative h-full w-full aspect-video overflow-hidden bg-black flex items-center justify-center cursor-pointer group"
+                onClick={() => setIsVideoPlaying(true)}
+              >
+                {!isVideoPlaying ? (
+                  <>
+                    <img
+                      src={withBasePath('/couverture-le-principe.jpg')}
+                      alt="Présentation Vidéo"
+                      className="absolute inset-0 h-full w-full object-cover opacity-80 md:scale-105"
                     />
-                  )}
-                </div>
+                    <div className="absolute inset-0 bg-black/20 transition-colors duration-300 group-hover:bg-transparent" />
+                    <VideoPlayButton />
+                  </>
+                ) : (
+                  <video
+                    src={withBasePath('/le-principe.mp4')}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    controls
+                    autoPlay
+                  />
+                )}
               </div>
             </div>
 
-            {/* 3 Cartes */}
             <div
-              className="mt-12 relative w-full animate-text-sweep cursor-default pointer-events-none"
+              className="mt-10 sm:mt-14 lg:mt-16 relative w-full max-w-[92%] mx-auto animate-text-sweep cursor-default pointer-events-none"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-                
-                {/* Carte 1 */}
-                <div className="relative p-8 sm:p-10 flex flex-col text-left overflow-visible min-h-[380px]">
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute -top-12 -left-12 w-48 h-48 bg-white/5 rounded-full blur-2xl animated-blob-1" />
-                    <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-neutral-300/5 rounded-full blur-2xl animated-blob-2" />
-                  </div>
-                  
-                  <div className="relative z-10 flex flex-col h-full">
-                    <h3 
-                      className="font-semibold tracking-tight text-white leading-[1.1] shrink-0"
-                      style={{ fontSize: '25.888px' }}
+              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-14 lg:gap-16 w-full">
+                {principleCards.map((card) => (
+                  <div
+                    key={card.id}
+                    className="relative flex flex-col text-left justify-start"
+                  >
+                    <div
+                      className="flex flex-col items-start gap-[5px] shrink-0"
+                      style={{
+                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                        lineHeight: 1.15,
+                        minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
+                      }}
                     >
-                      Expérience<br />sur mesure
-                    </h3>
-                    <div className="flex-grow flex items-start pt-8 sm:pt-10">
-                      <p 
-                        className="leading-relaxed text-neutral-400 font-light"
-                        style={{ fontSize: '16px' }}
-                      >
-                        Un véritable auditorium de doublage se déplace pour vous proposer de vivre en direct une expérience cinématographique dans les meilleures conditions.
-                      </p>
+                      {card.titleLines.map((line) => (
+                        <span
+                          key={line}
+                          className="inline-block w-fit bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px"
+                        >
+                          {line}
+                        </span>
+                      ))}
                     </div>
-                  </div>
-                </div>
 
-                {/* Carte 2 */}
-                <div className="relative p-8 sm:p-10 flex flex-col text-left overflow-visible min-h-[380px]">
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-1/2 -left-16 w-48 h-48 bg-white/5 rounded-full blur-2xl animated-blob-2" />
-                    <div className="absolute -top-12 -right-12 w-48 h-48 bg-neutral-300/5 rounded-full blur-2xl animated-blob-1" />
-                  </div>
-
-                  <div className="relative z-10 flex flex-col h-full">
-                    <h3 
-                      className="font-semibold tracking-tight text-white leading-[1.1] shrink-0"
-                      style={{ fontSize: '25.888px' }}
+                    <p
+                      className="mt-6 font-bold tracking-[0.01em] text-white"
+                      style={{
+                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                        lineHeight: 1.25,
+                      }}
                     >
-                      Immersion<br />totale
-                    </h3>
-                    <div className="flex-grow flex items-start pt-8 sm:pt-10">
-                      <p 
-                        className="leading-relaxed text-neutral-400 font-light"
-                        style={{ fontSize: '16px' }}
-                      >
-                        À partir de nombreux extraits de films cultes, nous offrons au public la possibilité de se mettre, pendant un temps, dans la peau des comédiens à l'image.
-                      </p>
-                    </div>
+                      {card.summary}
+                    </p>
                   </div>
-                </div>
-
-                {/* Carte 3 */}
-                <div className="relative p-8 sm:p-10 flex flex-col text-left overflow-visible min-h-[380px]">
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-white/5 rounded-full blur-2xl animated-blob-1" />
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-neutral-300/5 rounded-full blur-2xl animated-blob-2" />
-                  </div>
-
-                  <div className="relative z-10 flex flex-col h-full">
-                    <h3 
-                      className="font-semibold tracking-tight text-white leading-[1.1] shrink-0"
-                      style={{ fontSize: '25.888px' }}
-                    >
-                      Moyens<br />professionnels
-                    </h3>
-                    <div className="flex-grow flex items-start pt-8 sm:pt-10">
-                      <p 
-                        className="leading-relaxed text-neutral-400 font-light"
-                        style={{ fontSize: '16px' }}
-                      >
-                        Grâce à des moyens techniques professionnels, le public peut choisir parmi plus de 200 extraits de films. La projection et la mise en situation sont alors possibles grâce au texte qui défile sous l'image sur une bande rythmo synchrone.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
+                ))}
               </div>
             </div>
-
           </div>
-
         </div>
       </section>
     </section>

@@ -259,7 +259,9 @@
 
   z-index: 50;
 
-  background: #000000;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: none;
   overflow: visible;
 }
@@ -280,7 +282,7 @@
   box-sizing: border-box;
   overflow: visible;
 
-  background: #000000;
+  background: transparent;
   border: none;
 }
 
@@ -747,7 +749,7 @@
   .site-header-bar {
     height: 90px;
     padding: 0 15px;
-    background: #000000;
+    background: transparent;
   }
 
   .site-header-desktop-group {

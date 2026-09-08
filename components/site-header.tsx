@@ -47,7 +47,7 @@ export function SiteHeader() {
           >
             <span className="site-header-logo">
               <img
-                src={withBasePath('/logo-fond-transparent-2.svg')}
+                src={withBasePath('/logo-fond-transparent-4.svg')}
                 alt="Logo Tournez Bobines"
               />
             </span>
