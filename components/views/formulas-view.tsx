@@ -1,265 +1,761 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { FORMULAS } from '@/lib/formulas'
+import { useEffect, useRef, useState } from 'react'
+import { VideoPlayButton } from '@/components/video-play-button'
+import { FORMULAS, type Formula, type FormulaId } from '@/lib/formulas'
 import { withBasePath } from '@/lib/paths'
 
+function getFormulaMedia(index: number) {
+  const videoSrc =
+    index === 0
+      ? '/T-B-Immersion.mp4'
+      : index === 1
+        ? '/T-B-Immersion-filmée.mp4'
+        : '/T-B-Captation.mp4'
+
+  const coverSrc =
+    index === 0
+      ? '/couverture-immersion.png'
+      : index === 1
+        ? '/couverture-immersion-filmee.png'
+        : '/couverture-captation.png'
+
+  return { videoSrc, coverSrc }
+}
+
+const FORMULA_CARD_THEMES = [
+  {
+    shell: 'bg-white text-black',
+    chip: 'bg-white text-black border-[3px] border-black',
+    highlight: 'bg-white text-black border-[3px] border-black',
+    body: 'text-black',
+  },
+  {
+    shell: 'bg-[#f3f4f6] text-black',
+    chip: 'bg-black text-white',
+    highlight: 'bg-black text-white',
+    body: 'text-black',
+  },
+  {
+    shell: 'bg-black text-white',
+    chip: 'bg-[#f58220] text-black',
+    highlight: 'bg-[#f58220] text-black',
+    body: 'text-white',
+  },
+] as const
+
+const FORMULA_TITLE_LINES = [
+  ["L'", 'Immersion'],
+  ["L'", 'Immersion', 'filmée'],
+  ['La', 'Captation'],
+] as const
+
+/** Emplacement triptyque — brancher les images ici quand elles sont prêtes */
+const FORMULAS_INTRO_PHOTOS: [string | null, string | null, string | null] = [
+  '/nocturne-2.png',
+  '/barnum-2.png',
+  '/carreau-1.png',
+]
+
+function PhotoTriptych({
+  photos,
+  alt,
+  mainObjectPosition = 'center',
+}: {
+  photos: [string | null, string | null, string | null]
+  alt: string
+  mainObjectPosition?: string
+}) {
+  const [main, second, third] = photos
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full items-stretch">
+      <div className="relative w-full aspect-[3/4] overflow-hidden bg-black">
+        {main ? (
+          <img
+            src={withBasePath(main)}
+            alt={alt}
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: mainObjectPosition }}
+          />
+        ) : null}
+      </div>
+      <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5 min-h-0 md:h-full">
+        {[second, third].map((photo, index) => (
+          <div
+            key={`triptych-slot-${index + 2}`}
+            className="relative w-full aspect-[4/3] md:aspect-auto md:flex-1 md:min-h-0 overflow-hidden bg-black"
+          >
+            {photo ? (
+              <img
+                src={withBasePath(photo)}
+                alt={`${alt} ${index + 2}`}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SharpChevron({
+  direction,
+  className,
+}: {
+  direction: 'left' | 'right'
+  className?: string
+}) {
+  return (
+    <svg
+      viewBox="0 0 48 56"
+      width="36"
+      height="42"
+      aria-hidden
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      overflow="visible"
+    >
+      <path
+        d={
+          direction === 'left'
+            ? 'M36 4 L12 28 L36 52'
+            : 'M12 4 L36 28 L12 52'
+        }
+        stroke="currentColor"
+        strokeWidth="11.5"
+        strokeLinecap="square"
+        strokeLinejoin="miter"
+      />
+    </svg>
+  )
+}
+
+function FormulaCard({
+  formula,
+  index,
+  width,
+  isPlaying,
+  onPlay,
+  onPause,
+}: {
+  formula: Formula
+  index: number
+  width: number
+  isPlaying: boolean
+  onPlay: (formulaId: FormulaId) => void
+  onPause: (formulaId: FormulaId) => void
+}) {
+  const theme = FORMULA_CARD_THEMES[index]
+  const { videoSrc, coverSrc } = getFormulaMedia(index)
+  const titleLines = FORMULA_TITLE_LINES[index]
+
+  return (
+    <article
+      id={`formula-${formula.id}`}
+      style={
+        width > 0
+          ? { width, minWidth: width, maxWidth: width }
+          : undefined
+      }
+      className={[
+        'shrink-0 flex flex-col scroll-mt-[120px] lg:scroll-mt-[160px]',
+        width <= 0
+          ? 'w-[calc(50%-1rem)] sm:w-[calc(50%-1.25rem)] lg:w-[calc(50%-1.5rem)]'
+          : '',
+        theme.shell,
+      ].join(' ')}
+    >
+      <div
+        className="relative w-full aspect-video overflow-hidden bg-black flex items-center justify-center cursor-pointer group"
+        onClick={() => onPlay(formula.id)}
+      >
+        {!isPlaying ? (
+          <>
+            <img
+              src={withBasePath(coverSrc)}
+              alt={`Couverture de ${formula.title}`}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <VideoPlayButton
+              onClick={(e) => {
+                e.stopPropagation()
+                onPlay(formula.id)
+              }}
+            />
+          </>
+        ) : (
+          <video
+            id={`video-${formula.id}`}
+            src={withBasePath(videoSrc)}
+            className="absolute inset-0 h-full w-full object-cover"
+            controls
+            autoPlay
+            playsInline
+            onPause={() => onPause(formula.id)}
+          />
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col p-5 sm:p-6 lg:p-7">
+        <div
+          className="flex flex-col items-start gap-[5px] uppercase"
+          style={{
+            fontSize: 'clamp(18px, 1.5vw, 26px)',
+            lineHeight: 1.15,
+          }}
+        >
+          {titleLines.map((line) => (
+            <span
+              key={`${formula.id}-${line}`}
+              className={[
+                'inline-block w-fit font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px',
+                theme.chip,
+              ].join(' ')}
+            >
+              {line}
+            </span>
+          ))}
+        </div>
+
+        <p
+          className={[
+            'mt-5 sm:mt-6 font-bold tracking-[0.01em]',
+            theme.body,
+          ].join(' ')}
+          style={{
+            fontSize: 'clamp(15px, 1.2vw, 18px)',
+            lineHeight: 1.3,
+          }}
+        >
+          {formula.summary}
+        </p>
+
+        <div className="mt-8 sm:mt-10 flex-1">
+          <div
+            className="flex flex-col items-start gap-[5px] uppercase"
+            style={{
+              fontSize: 'clamp(16px, 1.2vw, 20px)',
+              lineHeight: 1.15,
+            }}
+          >
+            <span
+              className={[
+                'inline-block w-fit font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px',
+                theme.chip,
+              ].join(' ')}
+            >
+              Déroulé
+            </span>
+          </div>
+
+          <div className="mt-5 sm:mt-6 flex flex-col gap-4 sm:gap-5 w-full">
+            {formula.steps.map((step) => (
+              <div
+                key={`${formula.id}-${step.num}`}
+                className="flex items-start gap-3 sm:gap-4"
+              >
+                <span
+                  className="shrink-0 font-bold tracking-[0.01em] pt-px"
+                  style={{
+                    fontSize: 'clamp(14px, 1.1vw, 17px)',
+                    lineHeight: 1.15,
+                  }}
+                >
+                  {step.num}.
+                </span>
+
+                <div className="min-w-0 flex flex-col gap-2">
+                  {step.highlight && (
+                    <p
+                      className="font-bold tracking-[0.01em]"
+                      style={{
+                        fontSize: 'clamp(14px, 1.1vw, 17px)',
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      <span
+                        className={[
+                          'inline px-[3px] py-px',
+                          theme.highlight,
+                        ].join(' ')}
+                      >
+                        {step.highlight}
+                      </span>
+                    </p>
+                  )}
+                  {step.text && (
+                    <p
+                      className={[
+                        'font-bold tracking-[0.01em]',
+                        theme.body,
+                      ].join(' ')}
+                      style={{
+                        fontSize: 'clamp(14px, 1.1vw, 17px)',
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {step.text}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8 sm:mt-10">
+          <span
+            className={[
+              'inline-block w-fit font-bold tracking-[0.01em] uppercase pl-[3px] pr-[43px] py-px',
+              theme.chip,
+            ].join(' ')}
+            style={{
+              fontSize: 'clamp(12px, 1vw, 16px)',
+              lineHeight: 1.15,
+            }}
+          >
+            Devis disponible sur demande
+          </span>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function FormulasCarousel({
+  playingId,
+  onPlay,
+  onPause,
+  focusFormulaId,
+}: {
+  playingId: FormulaId | null
+  onPlay: (formulaId: FormulaId) => void
+  onPause: (formulaId: FormulaId) => void
+  focusFormulaId: FormulaId | null
+}) {
+  const viewportRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [index, setIndex] = useState(0)
+  const [maxIndex, setMaxIndex] = useState(0)
+  const [step, setStep] = useState(0)
+  const [cardWidth, setCardWidth] = useState(0)
+
+  const measure = () => {
+    const viewport = viewportRef.current
+    const track = trackRef.current
+    if (!viewport || !track) return
+
+    const styles = getComputedStyle(track)
+    const gap = Number.parseFloat(styles.columnGap || styles.gap || '40') || 40
+    const nextCardWidth = Math.max(0, (viewport.clientWidth - gap) / 2)
+    const nextStep = nextCardWidth + gap
+    const nextMax = Math.max(0, FORMULAS.length - 2)
+
+    setCardWidth(nextCardWidth)
+    setStep(nextStep)
+    setMaxIndex(nextMax)
+    setIndex((current) => Math.min(current, nextMax))
+  }
+
+  useEffect(() => {
+    const viewport = viewportRef.current
+    if (!viewport) return
+
+    const ro = new ResizeObserver(() => {
+      measure()
+    })
+    ro.observe(viewport)
+    measure()
+
+    return () => ro.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!focusFormulaId) return
+    const formulaIndex = FORMULAS.findIndex(
+      (formula) => formula.id === focusFormulaId,
+    )
+    if (formulaIndex < 0) return
+    setIndex(Math.min(formulaIndex, maxIndex))
+  }, [focusFormulaId, maxIndex])
+
+  const scrollByCard = (direction: -1 | 1) => {
+    setIndex((current) => Math.min(maxIndex, Math.max(0, current + direction)))
+  }
+
+  const canScrollPrev = index > 0
+  const canScrollNext = index < maxIndex
+  const offset = step * index
+
+  return (
+    <div className="flex w-full min-w-0 items-center gap-3 sm:gap-4 lg:gap-5">
+      <div className="shrink-0 w-12 sm:w-14 lg:w-16 flex items-center justify-center">
+        {canScrollPrev ? (
+          <button
+            type="button"
+            onClick={() => scrollByCard(-1)}
+            aria-label="Formules précédentes"
+            className="inline-flex items-center justify-center p-0 bg-transparent border-0 rounded-none shadow-none outline-none transition-opacity duration-300 cursor-pointer hover:opacity-70 text-white"
+          >
+            <SharpChevron direction="left" />
+          </button>
+        ) : null}
+      </div>
+
+      <div ref={viewportRef} className="flex-1 min-w-0 overflow-hidden">
+        <div
+          ref={trackRef}
+          className="flex items-start gap-8 sm:gap-10 lg:gap-12 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
+          style={{ transform: `translate3d(-${offset}px, 0, 0)` }}
+        >
+          {FORMULAS.map((formula, formulaIndex) => (
+            <FormulaCard
+              key={formula.id}
+              formula={formula}
+              index={formulaIndex}
+              width={cardWidth}
+              isPlaying={playingId === formula.id}
+              onPlay={onPlay}
+              onPause={onPause}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="shrink-0 w-12 sm:w-14 lg:w-16 flex items-center justify-center">
+        {canScrollNext ? (
+          <button
+            type="button"
+            onClick={() => scrollByCard(1)}
+            aria-label="Formules suivantes"
+            className="inline-flex items-center justify-center p-0 bg-transparent border-0 rounded-none shadow-none outline-none transition-opacity duration-300 cursor-pointer hover:opacity-70 text-white"
+          >
+            <SharpChevron direction="right" />
+          </button>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
 export function FormulasView() {
-  const [activeFormulaId, setActiveFormulaId] = useState<string>(FORMULAS[0]?.id || '')
-  const [isPlaying, setIsPlaying] = useState<Record<string, boolean>>({})
+  const [playingId, setPlayingId] = useState<FormulaId | null>(null)
+  const [focusFormulaId, setFocusFormulaId] = useState<FormulaId | null>(null)
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '')
     if (!hash) return
 
-    const matchingFormula = FORMULAS.find((f) => f.id === hash)
-    if (matchingFormula) {
-      setActiveFormulaId(matchingFormula.id)
-    }
+    const matchingFormula = FORMULAS.find((formula) => formula.id === hash)
+    if (!matchingFormula) return
+
+    setFocusFormulaId(matchingFormula.id)
+
+    requestAnimationFrame(() => {
+      document
+        .getElementById('formules-carousel')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
   }, [])
 
-  const togglePlay = (e: React.MouseEvent, formulaId: string) => {
-    e.stopPropagation()
-    
-    if (activeFormulaId !== formulaId) {
-      setActiveFormulaId(formulaId)
-    }
+  const playFormula = (formulaId: FormulaId) => {
+    FORMULAS.forEach((formula) => {
+      if (formula.id === formulaId) return
+      const other = document.getElementById(
+        `video-${formula.id}`,
+      ) as HTMLVideoElement | null
+      other?.pause()
+    })
+    setPlayingId(formulaId)
+  }
 
-    const videoEl = document.getElementById(`video-${formulaId}`) as HTMLVideoElement | null
-    if (videoEl) {
-      if (videoEl.paused) {
-        FORMULAS.forEach((f) => {
-          if (f.id !== formulaId) {
-            const otherVideo = document.getElementById(`video-${f.id}`) as HTMLVideoElement | null
-            if (otherVideo && !otherVideo.paused) {
-              otherVideo.pause()
-            }
-          }
-        })
-        videoEl.play().catch(err => console.error("Erreur de lecture :", err))
-      } else {
-        videoEl.pause()
-      }
+  const pauseFormula = (formulaId: FormulaId) => {
+    const el = document.getElementById(
+      `video-${formulaId}`,
+    ) as HTMLVideoElement | null
+    if (el?.paused) {
+      setPlayingId((current) => (current === formulaId ? null : current))
     }
   }
 
   return (
-    <section className="relative min-h-screen w-full overflow-x-hidden bg-black pt-20 flex flex-col text-neutral-50 select-none">
+    <section className="relative w-full bg-black text-neutral-50 pt-[90px] lg:pt-[150px] select-none">
       <style jsx>{`
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
         .animate-text-sweep {
           animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
         }
-        .bg-textured-paper {
-          background-color: #f3f4f6;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-          color: #171717;
-        }
       `}</style>
 
-      {/* HEADER PAGE */}
-      <div className="relative z-10 mx-auto w-full max-w-4xl px-5 pt-12 pb-8 sm:px-8">
-        <header className="animate-text-sweep text-center">
-          <p className="mb-2.5 text-[10px] font-semibold tracking-[0.3em] text-red-500 uppercase sm:text-xs">
-            Nos formules
-          </p>
-          <h1 className="text-balance font-serif text-3xl leading-tight tracking-tight italic drop-shadow-md sm:text-4xl lg:text-5xl">
-            Immersion, immersion filmée, captation
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-neutral-300">
-            Trois façons de vivre le doublage, de l&apos;expérience en direct à la captation filmée.
-            Le déroulé est identique : vous choisissez un extrait, vous vous entraînez, puis vous jouez la scène.
-          </p>
-        </header>
-      </div>
+      {/* 1 — INTRO */}
+      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300 overflow-visible">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px] overflow-visible">
+          <div
+            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+            style={{ top: '180px' }}
+          >
+            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                Nos
+              </span>
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                formules
+              </span>
+            </div>
+          </div>
 
-      {/* ZONE 3 COLONNES FULL BLEED (SPLIT SCREEN) AVEC VIDEOS INTEGREES */}
-      <div id="comparateur-formules" className="w-full flex flex-col lg:flex-row items-stretch mt-8 lg:mt-12 border-t border-white/10 flex-1">
-        {FORMULAS.map((formula, index) => {
-          const isActive = activeFormulaId === formula.id
-          const isVideoPlaying = isPlaying[formula.id] || false
-
-          const videoSrc = withBasePath(
-            index === 0
-              ? '/T-B-Immersion.mp4'
-              : index === 1
-                ? '/T-B-Immersion-filmée.mp4'
-                : '/T-B-Captation.mp4',
-          )
-
-          const coverSrc = withBasePath(
-            index === 0
-              ? '/couverture-immersion.png'
-              : index === 1
-                ? '/couverture-immersion-filmée.png'
-                : '/couverture-captation.png',
-          )
-
-          let colTheme = {
-            bg: 'bg-black text-white',
-            title: 'text-neutral-100',
-            num: 'text-neutral-700',
-            line: 'bg-neutral-800',
-            highlight: 'text-white',
-            text: 'text-neutral-400',
-            border: 'border-white/10',
-          }
-
-          if (index === 0) {
-            colTheme = {
-              bg: 'bg-white text-neutral-900',
-              title: 'text-neutral-900',
-              num: 'text-neutral-300',
-              line: 'bg-neutral-300',
-              highlight: 'text-neutral-900',
-              text: 'text-neutral-600',
-              border: 'border-neutral-200',
-            }
-          } else if (index === 1) {
-            colTheme = {
-              bg: 'bg-textured-paper text-neutral-900',
-              title: 'text-neutral-900',
-              num: 'text-neutral-400',
-              line: 'bg-neutral-400',
-              highlight: 'text-neutral-900',
-              text: 'text-neutral-700',
-              border: 'border-neutral-300',
-            }
-          }
-
-          return (
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col overflow-visible">
             <div
-              key={formula.id}
-              id={`formula-${formula.id}`}
-              onClick={() => {
-                if (!isActive) setActiveFormulaId(formula.id)
-              }}
-              className={`relative flex-1 flex flex-col pb-16 lg:pb-20 transition-all duration-500 cursor-default overflow-hidden ${colTheme.bg}`}
+              className="relative w-full animate-text-sweep overflow-visible"
+              style={{ animationDelay: '200ms' }}
             >
-              {/* Formes d'arrière-plan (Index 1) */}
-              {index === 1 && (
-                <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden opacity-65">
-                  <div className="absolute top-[10%] left-[5%] w-[320px] h-[320px] bg-gradient-to-tr from-neutral-400/50 via-neutral-300/40 to-neutral-500/50 rounded-[30%_70%_60%_40%/50%_50%_50%_50%] blur-[45px] transform rotate-12 scale-110" />
-                  <div className="absolute top-[50%] left-[60%] w-[360px] h-[360px] bg-gradient-to-bl from-neutral-500/50 via-neutral-400/45 to-neutral-300/50 rounded-[60%_40%_30%_70%/40%_60%_40%_60%] blur-[40px] transform -rotate-45 scale-90" />
-                  <div className="absolute top-[20%] left-[70%] w-[300px] h-[300px] bg-gradient-to-r from-neutral-600/45 via-neutral-400/40 to-neutral-300/40 rounded-[50%_50%_40%_60%/60%_40%_50%_50%] blur-[50px] transform rotate-45 scale-125" />
-                  <div className="absolute top-[60%] left-[15%] w-[290px] h-[290px] bg-gradient-to-tl from-neutral-300/45 via-neutral-500/40 to-neutral-600/35 rounded-[40%_60%_30%_70%/50%_50%_70%_30%] blur-[45px] transform -rotate-12 scale-105" />
-                  <div className="absolute top-[35%] left-[35%] w-[340px] h-[340px] bg-gradient-to-br from-neutral-300/40 via-neutral-500/45 to-neutral-400/45 rounded-[70%_30%_50%_50%/30%_70%_50%_50%] blur-[45px] transform rotate-90 scale-95" />
-                </div>
-              )}
+              <PhotoTriptych
+                photos={FORMULAS_INTRO_PHOTOS}
+                alt="Nos formules"
+              />
 
-              {/* LECTEUR VIDÉO */}
-              <div className="relative z-10 w-full mb-10 shadow-2xl flex flex-col">
-                <div 
-                  className={`relative w-full aspect-video overflow-hidden flex items-center justify-center bg-black ${!isVideoPlaying ? 'cursor-pointer' : ''}`}
-                  onClick={(e) => {
-                    if (!isVideoPlaying) togglePlay(e, formula.id)
+              <div className="absolute left-[-4%] sm:left-[-3%] top-[52%] sm:top-[55%] z-20 pointer-events-none w-[70%] sm:w-[58%] lg:w-[48%] -translate-y-1/2 -rotate-2">
+                <div
+                  className="flex flex-col items-start gap-[5px] uppercase"
+                  style={{
+                    fontSize: 'clamp(18px, 2.2vw, 32px)',
+                    lineHeight: 1.15,
                   }}
                 >
-                  <video
-                    id={`video-${formula.id}`}
-                    className={`absolute inset-0 h-full w-full outline-none transition-all duration-700 ${isActive ? 'object-contain' : 'object-cover'}`}
-                    src={videoSrc}
-                    preload="metadata"
-                    playsInline
-                    controls={isActive}
-                    onPlay={() => setIsPlaying(prev => ({ ...prev, [formula.id]: true }))}
-                    onPause={() => setIsPlaying(prev => ({ ...prev, [formula.id]: false }))}
-                  />
+                  <span className="inline-block w-fit bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                    Immersion
+                  </span>
+                  <span className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                    Immersion filmée
+                  </span>
+                  <span className="inline-block w-fit bg-[#f58220] text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                    Captation
+                  </span>
+                </div>
+              </div>
+            </div>
 
-                  <div 
-                    className={`absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-500 ${
-                      isVideoPlaying ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                    }`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={coverSrc} 
-                      alt={`Couverture de ${formula.title}`} 
-                      className="absolute inset-0 h-full w-full object-cover"
+            <div className="mt-10 sm:mt-14 lg:mt-16 flex flex-col gap-6 sm:gap-8">
+              <p
+                className="font-bold tracking-[0.01em] text-black animate-text-sweep"
+                style={{
+                  fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                  lineHeight: 1.3,
+                  animationDelay: '350ms',
+                }}
+              >
+               De l&apos;expérience en direct à la captation filmée, le déroulé
+                est identique{'\u00A0'}: vous choisissez un extrait, vous vous
+                entraînez, puis vous jouez la scène.
+              </p>
+              <p
+                className="font-bold tracking-[0.01em] text-black animate-text-sweep"
+                style={{
+                  fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                  lineHeight: 1.3,
+                  animationDelay: '500ms',
+                }}
+              >
+                Trois façons de vivre le doublage{'\u00A0'}:
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2 — FORMULES (carrousel) */}
+      <section
+        id="formules-carousel"
+        className="relative bg-black text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 scroll-mt-[120px] lg:scroll-mt-[160px]"
+      >
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+          <div
+            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+            style={{ top: '180px' }}
+          >
+            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+                Les
+              </span>
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+                3 formules
+              </span>
+            </div>
+          </div>
+
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 min-w-0 animate-text-sweep">
+            <FormulasCarousel
+              playingId={playingId}
+              onPlay={playFormula}
+              onPause={pauseFormula}
+              focusFormulaId={focusFormulaId}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 3 — CONTACT (copie home) */}
+      <section className="relative bg-[#f0f0eb] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+          <div
+            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+            style={{ top: '180px' }}
+          >
+            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+              <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">
+                Contact
+              </span>
+            </div>
+          </div>
+
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0">
+            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto] gap-6 lg:gap-8 items-stretch">
+              <div
+                className="w-full min-w-0 max-w-full h-full bg-black p-6 sm:p-8 animate-text-sweep"
+                style={{ animationDelay: '200ms' }}
+              >
+                <form
+                  className="flex flex-col gap-3 h-full"
+                  onSubmit={(e) => e.preventDefault()}
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      placeholder="Nom"
+                      className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
                     />
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Entreprise / établissement"
+                    className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Sujet"
+                    className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
+                  />
+                  <textarea
+                    placeholder="Message"
+                    rows={4}
+                    className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950 resize-none"
+                  ></textarea>
 
-                    <div className="absolute inset-0 bg-black/10 transition-colors duration-300" />
-                    
-                    <button
-                      type="button"
-                      onClick={(e) => togglePlay(e, formula.id)}
-                      className="pointer-events-auto relative z-20 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white shadow-xl transition-all duration-300 hover:border-red-500 hover:bg-red-600 hover:shadow-[0_0_30px_rgba(220,38,38,0.5)]"
-                      aria-label={`Lancer la vidéo ${formula.title}`}
+                  <button
+                    type="submit"
+                    className="w-full bg-white text-black py-3 mt-auto text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#f58220] hover:text-black transition-colors duration-300 cursor-pointer"
+                  >
+                    Envoyer
+                  </button>
+                </form>
+              </div>
+
+              <div
+                className="w-full xl:w-fit xl:max-w-md h-full bg-black p-6 sm:p-8 animate-text-sweep flex flex-col justify-between gap-8"
+                style={{ animationDelay: '200ms' }}
+              >
+                <div>
+                  <div className="mb-8 w-full flex items-stretch gap-3 sm:gap-4">
+                    <img
+                      src={withBasePath('/logo-fond-transparent-3.svg')}
+                      alt="Logo Tournez Bobines"
+                      className="h-[64px] w-auto sm:h-[80px] shrink-0 self-start"
+                    />
+                    <div className="flex flex-col justify-between h-[64px] sm:h-[80px] font-bold tracking-[0.01em] lowercase leading-none py-[2px] min-w-0">
+                      <span
+                        className="text-white block"
+                        style={{ fontSize: 'clamp(18px, 1.5vw, 26px)' }}
+                      >
+                        tournez
+                      </span>
+                      <span
+                        className="text-white block"
+                        style={{ fontSize: 'clamp(18px, 1.5vw, 26px)' }}
+                      >
+                        bobines
+                      </span>
+                      <span
+                        className="text-[#f58220] block"
+                        style={{ fontSize: 'clamp(18px, 1.5vw, 26px)' }}
+                      >
+                        association
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3
+                    className="font-bold tracking-[0.01em] text-white leading-[1.15]"
+                    style={{
+                      fontSize: 'clamp(16px, 1.4vw, 26px)',
+                    }}
+                  >
+                    Devis
+                    <br />
+                    &amp; Renseignements
+                  </h3>
+                </div>
+
+                <div
+                  className="font-bold tracking-[0.01em] text-white space-y-6"
+                  style={{
+                    fontSize: 'clamp(13px, 1.05vw, 17px)',
+                    lineHeight: 1.25,
+                  }}
+                >
+                  <div>
+                    <p>Jean-Jacques PRON</p>
+                    <a
+                      href="tel:+33682831034"
+                      className="inline-block mt-1 text-[#f58220] hover:opacity-80 transition-opacity"
                     >
-                      <svg className="h-8 w-8 sm:h-10 sm:w-10 fill-current ml-1" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </button>
+                      06 82 83 10 34
+                    </a>
+                  </div>
+
+                  <div>
+                    <p>Véronique ATTISSO</p>
+                    <p className="mt-1 text-white/70">(Contact pédagogique)</p>
+                    <a
+                      href="tel:+33613647259"
+                      className="inline-block mt-1 text-[#f58220] hover:opacity-80 transition-opacity"
+                    >
+                      06 13 64 72 59
+                    </a>
+                  </div>
+
+                  <div>
+                    <p>Email</p>
+                    <a
+                      href="mailto:contact@doublagetournezbobines.fr"
+                      className="inline-block mt-1 text-[#f58220] hover:opacity-80 transition-opacity break-all"
+                    >
+                      contact@doublagetournezbobines.fr
+                    </a>
                   </div>
                 </div>
               </div>
-
-              {/* CONTENU TEXTUEL */}
-              <div className="relative z-10 flex flex-col flex-1 px-6 sm:px-12 lg:px-10 xl:px-16 w-full">
-                
-                {/* TITRE DE LA COLONNE */}
-                <div className="mb-10 text-center flex items-center justify-center">
-                  <h2 className={`text-balance font-serif text-3xl leading-tight tracking-tight italic drop-shadow-md sm:text-4xl lg:text-5xl transition-transform duration-500 ${colTheme.title}`}>
-                    {formula.title}
-                  </h2>
-                </div>
-
-                {/* Déroulé / Étapes */}
-                <div className="flex-1 space-y-5 max-w-sm mx-auto w-full group">
-                  {formula.steps.map((step) => (
-                    <div key={step.num} className="flex items-start gap-3.5 text-left">
-                      <div className="flex shrink-0 items-center justify-end w-4">
-                        <span className={`font-serif text-lg italic transition-colors duration-300 group-hover:${colTheme.highlight.split(' ')[0]} ${colTheme.num}`}>
-                          {step.num}
-                        </span>
-                      </div>
-                      <div className="mt-3 flex w-4 shrink-0 items-center">
-                        <div className={`h-px w-full transition-colors duration-300 group-hover:bg-red-500/50 ${colTheme.line}`} />
-                      </div>
-                      <div className="pt-0.5 text-pretty text-base leading-relaxed">
-                        {step.highlight && (
-                          <span className={`mb-1 block font-medium ${colTheme.highlight}`}>
-                            {step.highlight}
-                          </span>
-                        )}
-                        {step.text && (
-                          <span className={`block ${colTheme.text}`}>
-                            {step.text}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Mention devis modifiée avec la classe rouge demandée */}
-                <div className={`mt-12 pt-5 border-t text-center transition-colors duration-300 ${colTheme.border}`}>
-                  <p className="mb-2.5 text-[10px] font-semibold tracking-[0.3em] text-red-500 uppercase sm:text-xs">
-                    Devis disponible sur demande
-                  </p>
-                </div>
-
-              </div>
             </div>
-          )
-        })}
-      </div>
-
-      {/* CTA FINAL */}
-      <div className="w-full bg-black py-16 text-center border-t border-white/10">
-        <Link
-          href="/qui-sommes-nous?to=contact"
-          scroll={false}
-          className="inline-flex cursor-pointer items-center justify-center rounded-full border border-white/20 bg-white/5 px-8 py-4 text-sm font-medium tracking-wide text-neutral-200 shadow-2xl backdrop-blur-md transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white hover:shadow-[0_0_30px_rgba(220,38,38,0.4)]"
-        >
-          Contactez-nous pour votre projet
-        </Link>
-      </div>
+          </div>
+        </div>
+      </section>
     </section>
   )
 }

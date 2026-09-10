@@ -108,10 +108,10 @@ export function AboutView() {
             </div>
 
             <div
-              className="mt-10 sm:mt-14 lg:mt-16 relative w-full max-w-[92%] mx-auto animate-text-sweep cursor-default pointer-events-none"
+              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-14 lg:gap-16 w-full">
+              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-12 lg:gap-14 w-full">
                 {dubbingRoles.map((role) => (
                   <div
                     key={role.id}
@@ -184,11 +184,10 @@ export function AboutView() {
                 {!isVideoPlaying ? (
                   <>
                     <img
-                      src={withBasePath('/couverture-le-principe.jpg')}
+                      src={withBasePath('/couverture-le-principe.png')}
                       alt="Présentation Vidéo"
-                      className="absolute inset-0 h-full w-full object-cover opacity-80 md:scale-105"
+                      className="absolute inset-0 h-full w-full object-cover md:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/20 transition-colors duration-300 group-hover:bg-transparent" />
                     <VideoPlayButton />
                   </>
                 ) : (
@@ -203,10 +202,10 @@ export function AboutView() {
             </div>
 
             <div
-              className="mt-10 sm:mt-14 lg:mt-16 relative w-full max-w-[92%] mx-auto animate-text-sweep cursor-default pointer-events-none"
+              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-14 lg:gap-16 w-full">
+              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-12 lg:gap-14 w-full">
                 {principleCards.map((card) => (
                   <div
                     key={card.id}

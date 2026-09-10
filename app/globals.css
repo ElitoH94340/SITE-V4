@@ -277,7 +277,7 @@
   height: 150px;
 
   margin: 0;
-  padding-left: 0 15px;
+  padding: 0;
 
   box-sizing: border-box;
   overflow: visible;
@@ -295,6 +295,8 @@
 
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  gap: clamp(16px, 2vw, 40px);
 
   width: 100%;
   height: 150px;
@@ -305,6 +307,16 @@
   overflow: visible;
   background: transparent;
   border: none;
+}
+
+@media (min-width: 1024px) {
+  .site-header-desktop-group {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+    column-gap: 2rem;
+    padding-right: 100px;
+  }
 }
 
 /* =========================================================
@@ -322,7 +334,7 @@
   height: 150px;
 
   margin: 0;
-  padding-left: 15px 0 0;
+  padding-left: 15px;
   padding-top: 0px;
 
   flex: 0 0 auto;
@@ -333,18 +345,26 @@
   z-index: 60;
 }
 
+@media (min-width: 1024px) {
+  .site-header-brand {
+    grid-column: 1 / span 4;
+    width: 100%;
+    padding-left: 45px;
+  }
+}
+
 .site-header-logo {
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 115.2px;
-  height: 115.2px;
+  width: 86.4px;
+  height: 86.4px;
 
   margin: 0;
   padding: 0;
 
-  flex: 0 0 115.2px;
+  flex: 0 0 86.4px;
 
   animation: none !important;
   transform: none !important;
@@ -355,7 +375,7 @@
   display: block;
 
   width: auto !important;
-  height: 115.2px !important;
+  height: 86.4px !important;
 
   max-width: none !important;
   max-height: none !important;
@@ -385,7 +405,7 @@
   justify-content: center;
 
   width: auto;
-  height: 115.2px;
+  height: 86.4px;
 
   margin-left: 15px;
 
@@ -413,15 +433,29 @@
    ========================================================= */
 
 .site-nav-desktop {
-  position: absolute;
-  top: 0;
-  left: 50%;
+  position: relative;
+  top: auto;
+  left: auto;
 
   display: none;
 
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: flex-end;
   align-self: stretch;
 
-  transform: translateX(-50%);
+  min-width: 0;
+  margin-left: auto;
+
+  transform: none;
+}
+
+@media (min-width: 1024px) {
+  .site-nav-desktop {
+    grid-column: 5 / span 8;
+    width: 100%;
+    margin-left: 0;
+  }
 }
 
 .site-nav-desktop-left,
@@ -432,11 +466,12 @@
 .site-nav-desktop ul {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
 
-  /* Espacement précédent augmenté de 25 % */
-  gap: clamp(44px, 5vw, 81px);
+  gap: 0;
 
+  width: 100%;
   height: 150px;
 
   margin: 0;
@@ -445,131 +480,80 @@
   list-style: none;
 }
 
+.site-nav-desktop li {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
 .site-nav-desktop .site-nav-link {
   position: relative;
+  isolation: isolate;
 
-  display: flex;
+  display: inline-flex;
   align-items: center;
 
-  height: 150px;
+  overflow: hidden;
 
   color: #ffffff;
+  background: transparent;
 
-  font-size: clamp(10px, 0.88vw, 12px);
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: clamp(11px, 0.92vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
 
   text-transform: uppercase;
   text-decoration: none;
 
   white-space: nowrap;
 
-  transition: color 0.2s ease;
+  padding: 6px 12px;
+
+  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.site-nav-desktop .site-nav-link:hover,
-.site-nav-desktop .site-nav-link.is-active {
-  color: #ffffff;
+.site-nav-desktop .site-nav-link::before {
+  content: none;
 }
 
-/* =========================================================
-   LIGNE BLANCHE SOUS LE MENU
-   ========================================================= */
+.site-nav-desktop .site-nav-link-label {
+  position: relative;
+  z-index: 10;
+}
 
 .site-nav-desktop .site-nav-link::after {
   content: '';
 
   position: absolute;
-
-  top: 113px;
-  left: 50%;
-
-  width: 100%;
-  height: 3px;
+  inset: 0;
+  z-index: 0;
 
   background: #ffffff;
 
-  opacity: 0;
-  transform: translateX(-50%) scaleX(0);
-  transform-origin: center;
-
-  transition:
-    opacity 0.2s ease,
-    transform 0.22s ease,
-    background-color 0.22s ease;
-}
-
-.site-nav-desktop .site-nav-link:not(.is-active):hover::after {
-  opacity: 1;
-  transform: translateX(-50%) scaleX(1);
-}
-
-/* =========================================================
-   CROIX ORANGE ACTIVE
-   ========================================================= */
-
-/*
- * Les deux bras ont exactement :
- * - 28px de longueur
- * - 3px d'épaisseur
- *
- * Ils sont tous les deux centrés exactement sur
- * left: 50% / top: 113px.
- */
-
-/* Barre horizontale */
-.site-nav-desktop .site-nav-link.is-active::after {
-  width: 28px;
-  height: 3px;
-
-  top: 113px;
-  left: 50%;
-
-  background: #f58220;
-
-  opacity: 1;
-  transform: translate(-50%, -50%);
-}
-
-/* Barre verticale */
-.site-nav-desktop .site-nav-link.is-active::before {
-  content: '';
-
-  position: absolute;
-
-  top: 113px;
-  left: 50%;
-
-  width: 3px;
-  height: 28px;
-
-  background: #f58220;
-
-  opacity: 1;
-  transform: translate(-50%, -50%);
-
-  transform-origin: center;
-}
-
-/* Élément conservé pour le HTML existant */
-.site-nav-cross {
-  position: absolute;
-
-  top: 113px;
-  left: 50%;
-
-  z-index: 10;
-
-  width: 28px;
-  height: 28px;
-
-  transform: translate(-50%, -50%);
-
   pointer-events: none;
+
+  clip-path: polygon(0 100%, 0 100%, 0 100%);
+  transition: clip-path 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.site-nav-cross span:first-child,
-.site-nav-cross span:last-child {
+.site-nav-desktop .site-nav-link:hover:not(.is-active) {
+  color: #000000;
+}
+
+.site-nav-desktop .site-nav-link:hover:not(.is-active)::after {
+  clip-path: polygon(0 100%, 230% 100%, 0 -130%);
+}
+
+.site-nav-desktop .site-nav-link.is-active {
+  color: #ffffff;
+  background: #f58220;
+}
+
+.site-nav-desktop .site-nav-link.is-active::after {
+  content: none;
+}
+
+.site-nav-cross {
   display: none;
 }
 
@@ -674,7 +658,7 @@
 
   overflow-y: auto;
 
-  background: #f58220;
+  background: #000000;
   border: none;
 }
 
@@ -685,6 +669,8 @@
 .site-nav-mobile ul {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
 
   margin: 0;
   padding: 1.5rem 1.25rem 2.5rem;
@@ -692,52 +678,72 @@
   list-style: none;
 }
 
-.site-nav-mobile a {
-  display: flex;
+.site-nav-mobile .site-nav-link {
+  position: relative;
+  isolation: isolate;
+
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
 
-  gap: 1rem;
+  overflow: hidden;
 
-  padding: 1.1rem 0;
+  margin: 0;
+  padding: 6px 16px 6px 12px;
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border: none;
 
   color: #ffffff;
+  background: transparent;
 
-  font-size: 13px;
-  letter-spacing: 0.16em;
+  font-size: clamp(16px, 4.2vw, 22px);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
 
   text-transform: uppercase;
   text-decoration: none;
+
+  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.site-nav-mobile a.is-active,
-.site-nav-mobile a:hover {
-  color: #ffffff;
+.site-nav-mobile .site-nav-link::before {
+  content: none;
 }
 
-.site-nav-mobile .site-nav-cross {
+.site-nav-mobile .site-nav-link-label {
   position: relative;
-
-  left: auto;
-  bottom: auto;
-
-  transform: none;
-
-  width: 1rem;
-  height: 1rem;
-
-  flex-shrink: 0;
+  z-index: 10;
 }
 
-.site-nav-mobile .site-nav-cross span:first-child,
-.site-nav-mobile .site-nav-cross span:last-child {
+.site-nav-mobile .site-nav-link::after {
+  content: '';
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  background: #ffffff;
+
+  pointer-events: none;
+
+  clip-path: polygon(0 100%, 0 100%, 0 100%);
+  transition: clip-path 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.site-nav-mobile .site-nav-link:hover:not(.is-active) {
+  color: #000000;
+}
+
+.site-nav-mobile .site-nav-link:hover:not(.is-active)::after {
+  clip-path: polygon(0 100%, 230% 100%, 0 -130%);
+}
+
+.site-nav-mobile .site-nav-link.is-active {
+  color: #ffffff;
   background: #f58220;
 }
 
-.site-nav-mobile .site-nav-link::before,
-.site-nav-mobile .site-nav-link::after {
+.site-nav-mobile .site-nav-link.is-active::after {
   content: none;
 }
 
@@ -765,19 +771,19 @@
   }
 
   .site-header-logo {
-    width: 80px;
-    height: 80px;
-    flex-basis: 80px;
+    width: 60px;
+    height: 60px;
+    flex-basis: 60px;
   }
 
   .site-header-logo img {
     width: auto !important;
-    height: 80px !important;
+    height: 60px !important;
   }
 
   .site-header-title {
     width: auto;
-    height: 80px;
+    height: 60px;
     margin-left: 10px;
     font-size: 23px;
   }
@@ -794,7 +800,7 @@
 @media (min-width: 1024px) {
   .site-header-bar {
     height: 150px;
-    padding: 0 15px;
+    padding: 0;
   }
 
   .site-header-desktop-group {
@@ -808,14 +814,14 @@
   }
 
   .site-header-logo {
-    width: 115.2px;
-    height: 115.2px;
-    flex-basis: 115.2px;
+    width: 86.4px;
+    height: 86.4px;
+    flex-basis: 86.4px;
   }
 
   .site-header-logo img {
     width: auto !important;
-    height: 115.2px !important;
+    height: 86.4px !important;
   }
 
   .site-nav-desktop {
@@ -825,6 +831,36 @@
   .site-nav-burger,
   .site-nav-mobile {
     display: none !important;
+  }
+}
+
+/* Laptop 13–14" : logo + titres un peu plus compacts */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .site-header-logo {
+    width: 68px;
+    height: 68px;
+    flex-basis: 68px;
+  }
+
+  .site-header-logo img {
+    width: auto !important;
+    height: 68px !important;
+  }
+
+  .site-header-title {
+    height: 68px;
+    margin-left: 10px;
+    font-size: clamp(15px, 1.35vw, 20px);
+  }
+
+  .site-nav-desktop ul {
+    gap: 0;
+    justify-content: space-between;
+  }
+
+  .site-nav-desktop .site-nav-link {
+    font-size: clamp(10px, 0.85vw, 13px);
+    padding: 6px 12px;
   }
 }
 
@@ -860,19 +896,19 @@
   }
 
   .site-header-logo {
-    width: 60px;
-    height: 60px;
-    flex-basis: 60px;
+    width: 45px;
+    height: 45px;
+    flex-basis: 45px;
   }
 
   .site-header-logo img {
     width: auto !important;
-    height: 60px !important;
+    height: 45px !important;
   }
 
   .site-header-title {
     width: auto;
-    height: 60px;
+    height: 45px;
     margin-left: 8px;
     font-size: 12px;
   }

@@ -281,7 +281,7 @@ export function HomeView() {
                     <span className="block">à la projection d’extraits de films</span>
                     <span className="block">
                       cultes avec les textes sur bande rythmo{' '}
-                      <span className="inline-block w-fit bg-[#f58220] text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
+                      <span className="inline-block w-fit bg-black text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
                         synchrone.
                       </span>
                     </span>
@@ -298,7 +298,7 @@ export function HomeView() {
                     <span className="block">Vous choisissez un personnage.</span>
                     <span className="block">
                       Vous le{' '}
-                      <span className="inline-block w-fit bg-[#f58220] text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
+                      <span className="inline-block w-fit bg-black text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
                         «{'\u00A0'}doublez{'\u00A0'}!{'\u00A0'}»
                       </span>
                     </span>
@@ -368,7 +368,7 @@ export function HomeView() {
               </div>
 
               <div
-                className="mt-10 sm:mt-14 lg:mt-16 relative w-full max-w-[92%] mx-auto animate-text-sweep cursor-default pointer-events-none"
+                className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
                 style={{ animationDelay: '400ms' }}
               >
                 <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-14 lg:gap-16 w-full">
@@ -416,7 +416,7 @@ export function HomeView() {
         <section className="relative bg-[#f0f0eb] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0">
           <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
             <div
-              className="lg:col-span-3 xl:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+              className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
               style={{ top: '180px' }}
             >
               <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
@@ -424,10 +424,10 @@ export function HomeView() {
               </div>
             </div>
 
-            <div className="lg:col-span-9 xl:col-span-8 w-full px-4 sm:px-6 lg:px-0">
+            <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0">
               <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto] gap-6 lg:gap-8 items-stretch">
                 <div
-                  className="w-full min-w-0 h-full bg-black p-6 sm:p-8 animate-text-sweep"
+                  className="w-full min-w-0 max-w-full h-full bg-black p-6 sm:p-8 animate-text-sweep"
                   style={{ animationDelay: '200ms' }}
                 >
                   <form className="flex flex-col gap-3 h-full" onSubmit={(e) => e.preventDefault()}>

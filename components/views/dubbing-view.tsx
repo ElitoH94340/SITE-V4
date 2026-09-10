@@ -2,40 +2,148 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { FormulaFrame } from '@/components/formula-frame'
 import { VideoPlayButton } from '@/components/video-play-button'
 import { FORMULAS } from '@/lib/formulas'
 import { withBasePath } from '@/lib/paths'
 
 const HEADER_PHOTOS = [
-  '/adultes-souriants.png',
-  '/Mardeuil 2018.png',
-  '/sourires-enfants.jpg',
+  '/doublage-6.png',
+  '/senior-1.png',
+  '/enfants-3.png',
 ]
 
 const MATERIAL_PHOTOS = [
-  '/005.jpg',
-  '/006.jpg',
-  '/007.jpg',
+  '/technique-2.png',
+  '/barnum-1.png',
+  '/doublage-3.png',
 ]
+
+const offerTexts = [
+  "Plongez dans l'univers étonnant du doublage et vivez cette expérience unique dans les conditions d'un véritable studio.",
+  'Mairies, institutions, entreprises publiques et privées, nous vous proposons différentes animations tous publics, adaptées à vos événements, dans des lieux dédiés ou sous un barnum.',
+]
+
+const objectives = [
+  {
+    id: 'federer',
+    lines: ['Fédérer un groupe de', 'collaborateurs'],
+  },
+  {
+    id: 'dimension',
+    lines: [
+      'Donner une dimension festive',
+      'et cinématographique',
+      'à un événement',
+    ],
+  },
+]
+
+const howItWorksSteps = [
+  { num: '1', lines: ['Prérequis : être lecteur.'] },
+  {
+    num: '2',
+    lines: [
+      'Plus de 200 extraits de films cultes sont à votre disposition,',
+      'avec différents degrés de difficulté.',
+    ],
+  },
+  { num: '3', lines: ["Vous choisissez le film, l'extrait et le personnage."] },
+  { num: '4', lines: ['Vous vous entraînez.'] },
+  {
+    num: '5',
+    lines: [
+      'Quand vous êtes prêts, vous jouez la scène,',
+      'que vous soyez seul(e) ou à plusieurs.',
+    ],
+  },
+]
+
+const howItWorksNote =
+  "(Le déroulé est identique pour l'immersion, l'immersion filmée ou la captation)"
 
 const materialCards = [
   {
     id: 'regie',
-    title: 'RÉGIE & SYNCHRONISATION',
-    text: 'Station de calcul haute performance (i7, carte graphique dédiée) alimentée par le logiciel de référence Mosaic par Noblurway, garantissant un défilement ultra-fluide de la bande rythmo et une synchronisation image/son sans aucune latence.',
+    titleLines: ['Régie', '& Synchronisation'],
+    lines: [
+      <>Station haute performance et logiciel{' '}
+          Mosaic (Noblurway)
+      </>,
+      <>pour une bande rythmo fluide et une sync image/son sans latence.</>,
+    ],
   },
   {
     id: 'projection',
-    title: 'PROJECTION & RETOUR',
-    text: "Dispositif d'affichage modulable combinant vidéoprojection Full HD sur toile géante (300×200 cm) et moniteurs très haute définition jusqu'à 160 cm, assurant une lisibilité parfaite de la bande rythmo et un retour vidéo immersif pour le public.",
+    titleLines: ['Retour', '& Projection'],
+    lines: [
+      <>
+        Vidéoprojection Full HD sur toile géante{' '}
+          (200×200{'\u00A0'}cm)
+      </>,
+      <>et moniteurs jusqu’à 160{'\u00A0'}cm pour un retour immersif.</>,
+    ],
   },
   {
     id: 'son',
-    title: 'PRISE DE SON & CAPTATION',
-    text: 'Microphones canon directifs de studio, barre de doublage professionnelle et captation vidéo multi-angles (caméra 4K et modules embarqués) pour enregistrer fidèlement les voix et immortaliser les performances en direct.',
+    titleLines: ['Son', '& Captation'],
+    lines: [
+      <>Micros canon de studio, barre de doublage pro</>,
+      <>
+        et captation multi-angles en{' '}
+          4K.
+      </>,
+    ],
   },
 ]
+
+function PhotoTriptych({
+  photos,
+  alt,
+  mainObjectPosition = 'center',
+  reversed = false,
+}: {
+  photos: string[]
+  alt: string
+  mainObjectPosition?: string
+  reversed?: boolean
+}) {
+  const [main, second, third] = photos
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full items-stretch">
+      <div
+        className={`relative w-full aspect-[3/4] overflow-hidden bg-black ${
+          reversed ? 'order-1 md:order-2' : ''
+        }`}
+      >
+        <img
+          src={withBasePath(main)}
+          alt={alt}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: mainObjectPosition }}
+        />
+      </div>
+      <div
+        className={`flex flex-col gap-3 sm:gap-4 lg:gap-5 min-h-0 md:h-full ${
+          reversed ? 'order-2 md:order-1' : ''
+        }`}
+      >
+        {[second, third].map((photo, index) => (
+          <div
+            key={photo}
+            className="relative w-full aspect-[4/3] md:aspect-auto md:flex-1 md:min-h-0 overflow-hidden bg-black"
+          >
+            <img
+              src={withBasePath(photo)}
+              alt={`${alt} ${index + 2}`}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export function DubbingView() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
@@ -43,60 +151,39 @@ export function DubbingView() {
   const [isHowItWorksVideoPlaying, setIsHowItWorksVideoPlaying] = useState(false)
 
   return (
-    <section className="relative w-full bg-[#050505] text-neutral-50 overflow-x-hidden pt-[90px] lg:pt-[150px] select-none">
+    <section className="relative w-full bg-[#050505] text-neutral-50 pt-[90px] lg:pt-[150px] select-none">
       <style jsx>{`
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
         .animate-text-sweep {
           animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
         }
-
-        @keyframes pulseGlow {
-          0%, 100% { opacity: 0.4; box-shadow: 0 0 10px rgba(245, 130, 32, 0.4); }
-          50% { opacity: 1; box-shadow: 0 0 20px rgba(245, 130, 32, 0.8); }
-        }
-        .animate-pulse-glow {
-          animation: pulseGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes slowMove1 {
-          0% { transform: translate(0px, 0px) scale(1); }
-          50% { transform: translate(30px, -20px) scale(1.2); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-
-        @keyframes slowMove2 {
-          0% { transform: translate(0px, 0px) scale(1); }
-          50% { transform: translate(-30px, 20px) scale(1.1); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-
-        .animated-blob-1 {
-          animation: slowMove1 12s ease-in-out infinite;
-        }
-
-        .animated-blob-2 {
-          animation: slowMove2 15s ease-in-out infinite;
-        }
       `}</style>
 
-      {/* UNE OFFRE LUDIQUE */}
-      <section className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10">
+      {/* 1 — UNE OFFRE LUDIQUE (gris) */}
+      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
           <div
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
             <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">Une offre</span>
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">ludique</span>
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                Une offre
+              </span>
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                ludique
+              </span>
             </div>
-            <p className="mt-4 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#f58220]">
-              Doublage pour tous
-            </p>
           </div>
 
           <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
@@ -104,71 +191,46 @@ export function DubbingView() {
               className="relative w-full animate-text-sweep"
               style={{ animationDelay: '200ms' }}
             >
-              <div className="relative w-full aspect-video overflow-hidden bg-black">
-                <img
-                  src={withBasePath(HEADER_PHOTOS[0])}
-                  alt="Une offre ludique"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              </div>
+              <PhotoTriptych photos={HEADER_PHOTOS} alt="Une offre ludique" />
             </div>
 
             <div
-              className="mt-12 relative w-full animate-text-sweep"
+              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-                <div className="relative p-8 sm:p-10 flex flex-col text-left overflow-visible min-h-[320px]">
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute -top-12 -left-12 w-48 h-48 bg-white/5 rounded-full blur-2xl animated-blob-1" />
-                    <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-neutral-300/5 rounded-full blur-2xl animated-blob-2" />
-                  </div>
-                  <div className="relative z-10 flex flex-col h-full justify-start">
-                    <p className="leading-relaxed text-neutral-400 font-light" style={{ fontSize: '16px' }}>
-                      Plongez dans l&apos;univers étonnant du doublage et vivez cette expérience unique dans les conditions d&apos;un véritable studio.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="relative p-8 sm:p-10 flex flex-col text-left overflow-visible min-h-[320px]">
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-1/2 -left-16 w-48 h-48 bg-white/5 rounded-full blur-2xl animated-blob-2" />
-                    <div className="absolute -top-12 -right-12 w-48 h-48 bg-neutral-300/5 rounded-full blur-2xl animated-blob-1" />
-                  </div>
-                  <div className="relative z-10 flex flex-col h-full justify-start">
-                    <p className="leading-relaxed text-neutral-400 font-light" style={{ fontSize: '16px' }}>
-                      Mairies, institutions, entreprises publiques et privées, nous vous proposons différentes animations tous publics, adaptées à vos événements, dans des lieux dédiés ou sous un barnum.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="relative flex flex-col gap-4 min-h-[320px]">
-                  {HEADER_PHOTOS.slice(1, 3).map((photo, index) => (
-                    <div key={index} className="relative flex-1 min-h-[140px] overflow-hidden bg-black">
-                      <img
-                        src={withBasePath(photo)}
-                        alt={`Animation ${index + 2}`}
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-12 w-full items-start">
+                {offerTexts.map((text) => (
+                  <p
+                    key={text}
+                    className="text-black font-bold tracking-[0.01em] min-w-0"
+                    style={{
+                      fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {text}
+                  </p>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* NOS OBJECTIFS */}
-      <section className="relative bg-[#f0f0eb] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+      {/* 2 — NOS OBJECTIFS (noir) */}
+      <section className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10">
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
           <div
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
             <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
-              <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">Nos</span>
-              <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">objectifs</span>
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+                Nos
+              </span>
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+                objectifs
+              </span>
             </div>
           </div>
 
@@ -186,9 +248,8 @@ export function DubbingView() {
                     <img
                       src={withBasePath('/couverture-doublage-pour-tous.jpg')}
                       alt="Présentation Vidéo"
-                      className="absolute inset-0 h-full w-full object-cover opacity-90 md:scale-105"
+                      className="absolute inset-0 h-full w-full object-cover md:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/20 transition-colors duration-300 group-hover:bg-transparent" />
                     <VideoPlayButton />
                   </>
                 ) : (
@@ -203,31 +264,36 @@ export function DubbingView() {
             </div>
 
             <div
-              className="mt-12 relative w-full animate-text-sweep"
+              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
               style={{ animationDelay: '400ms' }}
             >
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-8 list-none mb-0">
-                <li className="relative p-8 sm:p-10 min-h-[280px] flex items-start">
-                  <p className="text-black font-serif italic text-2xl sm:text-3xl tracking-normal text-balance leading-[1.2]">
-                    <span className="text-black mr-3">—</span>
-                    Fédérer un groupe de <span className="text-[#f58220] font-medium">collaborateurs</span>
-                    <span className="text-black ml-3">—</span>
-                  </p>
-                </li>
-                <li className="relative p-8 sm:p-10 min-h-[280px] flex items-start">
-                  <p className="text-black font-serif italic text-2xl sm:text-3xl tracking-normal text-balance leading-[1.2]">
-                    <span className="text-black mr-3">—</span>
-                    Donner une dimension <span className="text-[#f58220] font-medium">festive et cinématographique</span> à un événement
-                    <span className="text-black ml-3">—</span>
-                  </p>
-                </li>
-              </ul>
+              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-2 md:gap-12 lg:gap-14 w-full">
+                {objectives.map((objective) => (
+                  <div
+                    key={objective.id}
+                    className="relative flex flex-col items-start gap-[5px] text-left justify-start"
+                    style={{
+                      fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                      lineHeight: 1.15,
+                    }}
+                  >
+                    {objective.lines.map((line) => (
+                      <span
+                        key={line}
+                        className="inline-block w-fit bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px"
+                      >
+                        {line}
+                      </span>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* S'AMUSER À DOUBLER */}
+      {/* 3 — S'AMUSER À DOUBLER (gris) */}
       <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
           <div
@@ -235,8 +301,12 @@ export function DubbingView() {
             style={{ top: '180px' }}
           >
             <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">S&apos;amuser</span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">à doubler</span>
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                S&apos;amuser
+              </span>
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                à doubler
+              </span>
             </div>
           </div>
 
@@ -254,9 +324,8 @@ export function DubbingView() {
                     <img
                       src={withBasePath('/couverture-s-amuser-a-doubler.webp')}
                       alt="S'amuser à doubler"
-                      className="absolute inset-0 h-full w-full object-cover opacity-90 md:scale-105"
+                      className="absolute inset-0 h-full w-full object-cover md:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/25 transition-colors duration-300 group-hover:bg-transparent" />
                     <VideoPlayButton />
                   </>
                 ) : (
@@ -273,7 +342,7 @@ export function DubbingView() {
         </div>
       </section>
 
-      {/* COMMENT ÇA MARCHE ? */}
+      {/* 4 — COMMENT ÇA MARCHE ? (noir) */}
       <section className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10">
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
           <div
@@ -281,12 +350,13 @@ export function DubbingView() {
             style={{ top: '180px' }}
           >
             <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">Comment</span>
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">ça marche{'\u00A0'}?</span>
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+                Comment
+              </span>
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+                ça marche{'\u00A0'}?
+              </span>
             </div>
-            <p className="mt-4 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#f58220]">
-              L&apos;immersion & la captation
-            </p>
           </div>
 
           <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
@@ -301,11 +371,10 @@ export function DubbingView() {
                 {!isHowItWorksVideoPlaying ? (
                   <>
                     <img
-                      src={withBasePath('/couverture-le-deroule.jpg')}
+                      src={withBasePath('/couverture-le-deroule.png')}
                       alt="Comment ça marche"
-                      className="absolute inset-0 h-full w-full object-cover opacity-80 md:scale-105"
+                      className="absolute inset-0 h-full w-full object-cover md:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/25 transition-colors duration-300 group-hover:bg-transparent" />
                     <VideoPlayButton />
                   </>
                 ) : (
@@ -320,33 +389,130 @@ export function DubbingView() {
             </div>
 
             <div
-              className="mt-12 relative w-full animate-text-sweep"
+              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="space-y-6">
-                {[
-                  { num: '1', text: 'Prérequis : être lecteur.' },
-                  { num: '2', text: 'Plus de 200 extraits de films cultes sont à votre disposition, avec différents degrés de difficulté.' },
-                  { num: '3', text: "Vous choisissez le film, l'extrait et le personnage." },
-                  { num: '4', text: 'Vous vous entraînez.' },
-                  { num: '5', text: 'Quand vous êtes prêts, vous jouez la scène, que vous soyez seul(e) ou à plusieurs.' },
-                ].map((step) => (
-                  <div key={step.num} className="flex items-center gap-4 sm:gap-6 group cursor-default">
-                    <div className="relative flex items-center justify-end shrink-0 w-6 h-6">
-                      <span className="absolute font-serif italic text-xl sm:text-2xl text-neutral-300 transition-all duration-300 group-hover:opacity-0 group-hover:scale-50">
-                        {step.num}
-                      </span>
-                      <div className="absolute flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 scale-50">
-                        <div className="w-3 h-3 rounded-full bg-[#f58220] animate-pulse-glow" />
+              <div className="flex w-full flex-col gap-6 sm:gap-8 overflow-visible">
+                {howItWorksSteps.map((step) => (
+                  <div
+                    key={step.num}
+                    className="relative w-full flex flex-col items-start gap-[5px]"
+                  >
+                    {step.lines.map((line, lineIndex) => (
+                      <div
+                        key={`${step.num}-${lineIndex}`}
+                        className="relative w-full"
+                      >
+                        {lineIndex === 0 ? (
+                          <span
+                            className="absolute top-0 right-full mr-3 sm:mr-4 text-right text-white font-bold tracking-[0.01em] tabular-nums pt-px whitespace-nowrap"
+                            style={{
+                              fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                              lineHeight: 1.15,
+                            }}
+                          >
+                            {step.num}.
+                          </span>
+                        ) : null}
+                        <span
+                          className="inline-block w-fit max-w-full bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[40px] py-px"
+                          style={{
+                            fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                            lineHeight: 1.15,
+                          }}
+                        >
+                          {line}
+                        </span>
                       </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              <p
+                className="mt-8 sm:mt-10 w-full text-neutral-400 italic font-normal tracking-[0.01em] whitespace-nowrap"
+                style={{
+                  fontSize: 'clamp(15px, 1.2vw, 19px)',
+                  lineHeight: 1.4,
+                }}
+              >
+                {howItWorksNote}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5 — NOTRE MATÉRIEL (gris) */}
+      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+          <div
+            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+            style={{ top: '180px' }}
+          >
+            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                Notre
+              </span>
+              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+                matériel
+              </span>
+            </div>
+          </div>
+
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
+            <div
+              className="relative w-full animate-text-sweep"
+              style={{ animationDelay: '200ms' }}
+            >
+              <PhotoTriptych
+                photos={MATERIAL_PHOTOS}
+                alt="Notre matériel"
+                mainObjectPosition="70% center"
+                reversed
+              />
+            </div>
+
+            <div
+              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
+              style={{ animationDelay: '400ms' }}
+            >
+              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-12 lg:gap-14 w-full">
+                {materialCards.map((card) => (
+                  <div
+                    key={card.id}
+                    className="relative flex flex-col text-left justify-start"
+                  >
+                    <div
+                      className="flex flex-col items-start gap-[5px] shrink-0"
+                      style={{
+                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                        lineHeight: 1.15,
+                        minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
+                      }}
+                    >
+                      {card.titleLines.map((line) => (
+                        <span
+                          key={line}
+                          className="inline-block w-fit bg-black text-[#f3f4f6] font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px"
+                        >
+                          {line}
+                        </span>
+                      ))}
                     </div>
 
-                    <div className="flex items-center shrink-0 w-12 sm:w-16">
-                      <div className="w-full h-px bg-neutral-700 transition-colors duration-300 group-hover:bg-neutral-400" />
-                    </div>
-
-                    <p className="text-balance text-neutral-300 text-[16px] leading-[1.618] font-light transition-colors duration-300 group-hover:text-white">
-                      {step.text}
+                    <p
+                      className="mt-6 font-bold tracking-[0.01em] text-black"
+                      style={{
+                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {card.lines.map((line, index) => (
+                        <span key={index} className="block">
+                          {line}
+                        </span>
+                      ))}
                     </p>
                   </div>
                 ))}
@@ -356,96 +522,38 @@ export function DubbingView() {
         </div>
       </section>
 
-      {/* NOTRE MATÉRIEL */}
-      <section className="relative bg-[#f0f0eb] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+      {/* 6 — NOS FORMULES (noir) */}
+      <section
+        className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0"
+        id="formulas"
+      >
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
           <div
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
             <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
-              <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">Notre</span>
-              <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">matériel</span>
+              <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[43px] py-px">
+                Nos
+              </span>
+              <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[43px] py-px">
+                formules
+              </span>
             </div>
           </div>
 
           <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
-            <div
-              className="relative w-full animate-text-sweep"
-              style={{ animationDelay: '200ms' }}
+            <p
+              className="mb-10 sm:mb-12 text-white font-bold tracking-[0.01em] animate-text-sweep"
+              style={{
+                fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
+                lineHeight: 1.3,
+              }}
             >
-              <div className="relative w-full aspect-video overflow-hidden bg-black">
-                <img
-                  src={withBasePath(MATERIAL_PHOTOS[0])}
-                  alt="Notre matériel"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              </div>
-            </div>
-
-            <div
-              className="mt-12 relative w-full animate-text-sweep cursor-default pointer-events-none"
-              style={{ animationDelay: '400ms' }}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-                {materialCards.map((card) => (
-                  <div
-                    key={card.id}
-                    className="relative p-8 sm:p-10 flex flex-col text-left overflow-visible min-h-[380px]"
-                  >
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      <div className="absolute -top-12 -left-12 w-48 h-48 bg-black/5 rounded-full blur-2xl animated-blob-1" />
-                      <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-neutral-500/5 rounded-full blur-2xl animated-blob-2" />
-                    </div>
-                    <div className="relative z-10 flex flex-col h-full justify-start">
-                      <h3 className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#f58220] shrink-0">
-                        {card.title}
-                      </h3>
-                      <div className="flex items-start pt-8 sm:pt-10">
-                        <p className="leading-relaxed text-neutral-600 font-light" style={{ fontSize: '16px' }}>
-                          {card.text}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div
-              className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-text-sweep"
-              style={{ animationDelay: '500ms' }}
-            >
-              {MATERIAL_PHOTOS.slice(1, 3).map((photo, index) => (
-                <div key={index} className="relative w-full aspect-video overflow-hidden bg-black">
-                  <img
-                    src={withBasePath(photo)}
-                    alt={`Matériel ${index + 2}`}
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* NOS FORMULES */}
-      <section className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0" id="formulas">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
-          <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
-          >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">Nos</span>
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">formules</span>
-            </div>
-          </div>
-
-          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
-            <p className="mb-10 sm:mb-12 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#f58220] animate-text-sweep">
-              Trois expériences, un même déroulé. Cliquez pour découvrir le détail de chaque formule.
+              <span className="block">Trois expériences, un même déroulé.</span>
+              <span className="block">
+                Cliquez pour découvrir le détail de chaque formule.
+              </span>
             </p>
 
             <div
@@ -456,26 +564,36 @@ export function DubbingView() {
                 <Link
                   key={formula.id}
                   href={`/formules#${formula.id}`}
-                  className="block h-full cursor-pointer no-underline group"
+                  className="group block h-full cursor-pointer no-underline"
                 >
-                  <FormulaFrame>
-                    <div className="flex h-full flex-col items-start text-left px-6 py-6 sm:py-8">
+                  <div className="relative isolate flex h-full flex-col items-start overflow-hidden border-[3px] border-white bg-black p-6 text-left transition-[border-color,background-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:p-8 group-hover:border-[#f58220] group-hover:bg-[#f58220]">
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute -inset-[3px] z-0 bg-[#f58220] transition-[clip-path] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] [clip-path:polygon(0_100%,0_100%,0_100%)] group-hover:[clip-path:polygon(0_100%,230%_100%,0_-130%)]"
+                    />
+                    <div className="relative z-10 flex h-full w-full flex-col items-start">
                       <h3
-                        className="font-semibold tracking-tight text-white leading-[1.1] shrink-0"
-                        style={{ fontSize: '25.888px' }}
+                        className="font-bold tracking-[0.01em] text-white leading-[1.15] shrink-0 transition-colors duration-500 group-hover:text-black"
+                        style={{ fontSize: 'clamp(19.5px, 1.76vw, 28.5px)' }}
                       >
                         {formula.title}
                       </h3>
                       <div className="flex items-start pt-8 sm:pt-10 flex-1">
-                        <p className="leading-relaxed text-neutral-400 font-light group-hover:text-neutral-200 transition-colors" style={{ fontSize: '16px' }}>
+                        <p
+                          className="leading-[1.3] text-white font-bold transition-colors duration-500 group-hover:text-black"
+                          style={{ fontSize: 'clamp(16px, 1.2vw, 20px)' }}
+                        >
                           {formula.summary}
                         </p>
                       </div>
-                      <p className="mt-8 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#f58220] mb-0">
+                      <p
+                        className="mt-8 mb-0 inline-block w-fit bg-[#f58220] text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px uppercase transition-colors duration-500 group-hover:bg-white group-hover:text-black"
+                        style={{ fontSize: 'clamp(14px, 1.1vw, 18px)' }}
+                      >
                         Découvrir
                       </p>
                     </div>
-                  </FormulaFrame>
+                  </div>
                 </Link>
               ))}
             </div>

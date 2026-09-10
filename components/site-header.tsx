@@ -79,17 +79,7 @@ export function SiteHeader() {
                         isActive && 'is-active'
                       )}
                     >
-                      {item.label}
-
-                      {isActive && (
-                        <span
-                          className="site-nav-cross"
-                          aria-hidden
-                        >
-                          <span />
-                          <span />
-                        </span>
-                      )}
+                      <span className="site-nav-link-label">{item.label}</span>
                     </Link>
                   </li>
                 )
@@ -143,19 +133,12 @@ export function SiteHeader() {
                   href={item.href}
                   aria-current={isActive ? 'page' : undefined}
                   onClick={() => setMenuOpen(false)}
-                  className={cn(isActive && 'is-active')}
-                >
-                  {item.label}
-
-                  {isActive && (
-                    <span
-                      className="site-nav-cross"
-                      aria-hidden
-                    >
-                      <span />
-                      <span />
-                    </span>
+                  className={cn(
+                    'site-nav-link',
+                    isActive && 'is-active'
                   )}
+                >
+                  <span className="site-nav-link-label">{item.label}</span>
                 </Link>
               </li>
             )
