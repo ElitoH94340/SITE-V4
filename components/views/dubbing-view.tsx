@@ -2,9 +2,16 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { ContactSection } from '@/components/contact-section'
 import { VideoPlayButton } from '@/components/video-play-button'
 import { FORMULAS } from '@/lib/formulas'
 import { withBasePath } from '@/lib/paths'
+import {
+  TYPO_BODY,
+  TYPO_SUBTITLE,
+  TYPO_TITLE,
+  TYPO_TITLE_CLASS,
+} from '@/lib/typography'
 
 const HEADER_PHOTOS = [
   '/doublage-6.png',
@@ -47,13 +54,13 @@ const howItWorksSteps = [
       'avec différents degrés de difficulté.',
     ],
   },
-  { num: '3', lines: ["Vous choisissez le film, l'extrait et le personnage."] },
-  { num: '4', lines: ['Vous vous entraînez.'] },
+  { num: '3', lines: ["Choisissez le film, l'extrait et le personnage."] },
+  { num: '4', lines: ['Entraînez-vous.'] },
   {
     num: '5',
     lines: [
-      'Quand vous êtes prêts, vous jouez la scène,',
-      'que vous soyez seul(e) ou à plusieurs.',
+      'Une fois prêts, jouez la scène,',
+      'seul(e) ou à plusieurs.',
     ],
   },
 ]
@@ -64,7 +71,7 @@ const howItWorksNote =
 const materialCards = [
   {
     id: 'regie',
-    titleLines: ['Régie', '& Synchronisation'],
+    titleLines: ['Régie &', 'Synchronisation'],
     lines: [
       <>Station haute performance et logiciel{' '}
           Mosaic (Noblurway)
@@ -74,7 +81,7 @@ const materialCards = [
   },
   {
     id: 'projection',
-    titleLines: ['Retour', '& Projection'],
+    titleLines: ['Retour &', 'Projection'],
     lines: [
       <>
         Vidéoprojection Full HD sur toile géante{' '}
@@ -85,7 +92,7 @@ const materialCards = [
   },
   {
     id: 'son',
-    titleLines: ['Son', '& Captation'],
+    titleLines: ['Son &', 'Captation'],
     lines: [
       <>Micros canon de studio, barre de doublage pro</>,
       <>
@@ -176,7 +183,10 @@ export function DubbingView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
                 Une offre
               </span>
@@ -203,10 +213,7 @@ export function DubbingView() {
                   <p
                     key={text}
                     className="text-black font-bold tracking-[0.01em] min-w-0"
-                    style={{
-                      fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                      lineHeight: 1.3,
-                    }}
+                    style={TYPO_SUBTITLE}
                   >
                     {text}
                   </p>
@@ -224,7 +231,10 @@ export function DubbingView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
                 Nos
               </span>
@@ -272,10 +282,7 @@ export function DubbingView() {
                   <div
                     key={objective.id}
                     className="relative flex flex-col items-start gap-[5px] text-left justify-start"
-                    style={{
-                      fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                      lineHeight: 1.15,
-                    }}
+                    style={TYPO_SUBTITLE}
                   >
                     {objective.lines.map((line) => (
                       <span
@@ -300,7 +307,10 @@ export function DubbingView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
                 S&apos;amuser
               </span>
@@ -349,7 +359,10 @@ export function DubbingView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
                 Comment
               </span>
@@ -363,6 +376,49 @@ export function DubbingView() {
             <div
               className="relative w-full animate-text-sweep"
               style={{ animationDelay: '200ms' }}
+            >
+              <div className="flex w-full flex-col gap-6 sm:gap-8 overflow-visible">
+                {howItWorksSteps.map((step) => (
+                  <div
+                    key={step.num}
+                    className="relative w-full flex flex-col items-start gap-[5px]"
+                  >
+                    {step.lines.map((line, lineIndex) => (
+                      <div
+                        key={`${step.num}-${lineIndex}`}
+                        className="relative w-full"
+                      >
+                        {lineIndex === 0 ? (
+                          <span
+                            className="absolute top-0 right-full mr-3 sm:mr-4 text-right text-white font-bold tracking-[0.01em] tabular-nums pt-px whitespace-nowrap"
+                            style={TYPO_SUBTITLE}
+                          >
+                            {step.num}.
+                          </span>
+                        ) : null}
+                        <span
+                          className="inline-block w-fit max-w-full bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[40px] py-px"
+                          style={TYPO_SUBTITLE}
+                        >
+                          {line}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              <p
+                className="mt-8 sm:mt-10 w-full text-neutral-400 italic font-normal tracking-[0.01em] whitespace-nowrap"
+                style={TYPO_BODY}
+              >
+                {howItWorksNote}
+              </p>
+            </div>
+
+            <div
+              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep"
+              style={{ animationDelay: '400ms' }}
             >
               <div
                 className="relative w-full aspect-video overflow-hidden bg-black flex items-center justify-center cursor-pointer group"
@@ -387,58 +443,6 @@ export function DubbingView() {
                 )}
               </div>
             </div>
-
-            <div
-              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep"
-              style={{ animationDelay: '400ms' }}
-            >
-              <div className="flex w-full flex-col gap-6 sm:gap-8 overflow-visible">
-                {howItWorksSteps.map((step) => (
-                  <div
-                    key={step.num}
-                    className="relative w-full flex flex-col items-start gap-[5px]"
-                  >
-                    {step.lines.map((line, lineIndex) => (
-                      <div
-                        key={`${step.num}-${lineIndex}`}
-                        className="relative w-full"
-                      >
-                        {lineIndex === 0 ? (
-                          <span
-                            className="absolute top-0 right-full mr-3 sm:mr-4 text-right text-white font-bold tracking-[0.01em] tabular-nums pt-px whitespace-nowrap"
-                            style={{
-                              fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                              lineHeight: 1.15,
-                            }}
-                          >
-                            {step.num}.
-                          </span>
-                        ) : null}
-                        <span
-                          className="inline-block w-fit max-w-full bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[40px] py-px"
-                          style={{
-                            fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                            lineHeight: 1.15,
-                          }}
-                        >
-                          {line}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-
-              <p
-                className="mt-8 sm:mt-10 w-full text-neutral-400 italic font-normal tracking-[0.01em] whitespace-nowrap"
-                style={{
-                  fontSize: 'clamp(15px, 1.2vw, 19px)',
-                  lineHeight: 1.4,
-                }}
-              >
-                {howItWorksNote}
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -450,7 +454,10 @@ export function DubbingView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
                 Notre
               </span>
@@ -486,8 +493,7 @@ export function DubbingView() {
                     <div
                       className="flex flex-col items-start gap-[5px] shrink-0"
                       style={{
-                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                        lineHeight: 1.15,
+                        ...TYPO_SUBTITLE,
                         minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
                       }}
                     >
@@ -503,10 +509,7 @@ export function DubbingView() {
 
                     <p
                       className="mt-6 font-bold tracking-[0.01em] text-black"
-                      style={{
-                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                        lineHeight: 1.3,
-                      }}
+                      style={TYPO_SUBTITLE}
                     >
                       {card.lines.map((line, index) => (
                         <span key={index} className="block">
@@ -532,7 +535,10 @@ export function DubbingView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[43px] py-px">
                 Nos
               </span>
@@ -545,10 +551,7 @@ export function DubbingView() {
           <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
             <p
               className="mb-10 sm:mb-12 text-white font-bold tracking-[0.01em] animate-text-sweep"
-              style={{
-                fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                lineHeight: 1.3,
-              }}
+              style={TYPO_SUBTITLE}
             >
               <span className="block">Trois expériences, un même déroulé.</span>
               <span className="block">
@@ -574,21 +577,21 @@ export function DubbingView() {
                     <div className="relative z-10 flex h-full w-full flex-col items-start">
                       <h3
                         className="font-bold tracking-[0.01em] text-white leading-[1.15] shrink-0 transition-colors duration-500 group-hover:text-black"
-                        style={{ fontSize: 'clamp(19.5px, 1.76vw, 28.5px)' }}
+                        style={TYPO_SUBTITLE}
                       >
                         {formula.title}
                       </h3>
                       <div className="flex items-start pt-8 sm:pt-10 flex-1">
                         <p
                           className="leading-[1.3] text-white font-bold transition-colors duration-500 group-hover:text-black"
-                          style={{ fontSize: 'clamp(16px, 1.2vw, 20px)' }}
+                          style={TYPO_BODY}
                         >
                           {formula.summary}
                         </p>
                       </div>
                       <p
                         className="mt-8 mb-0 inline-block w-fit bg-[#f58220] text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px uppercase transition-colors duration-500 group-hover:bg-white group-hover:text-black"
-                        style={{ fontSize: 'clamp(14px, 1.1vw, 18px)' }}
+                        style={TYPO_BODY}
                       >
                         Découvrir
                       </p>
@@ -600,6 +603,8 @@ export function DubbingView() {
           </div>
         </div>
       </section>
+
+      <ContactSection idPrefix="dubbing-contact" layout="stacked" />
     </section>
   )
 }

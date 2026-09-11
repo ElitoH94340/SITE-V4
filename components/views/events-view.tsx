@@ -4,6 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 import { Maximize, Pause, Play, Volume2, VolumeX, X } from 'lucide-react'
 import { VideoPlayButton } from '@/components/video-play-button'
 import { withBasePath } from '@/lib/paths'
+import {
+  TYPO_BODY,
+  TYPO_SUBTITLE,
+  TYPO_TITLE,
+  TYPO_TITLE_CLASS,
+} from '@/lib/typography'
 import { handleYoutubeCoverError, youtubeCoverSrc } from '@/lib/youtube'
 
 interface EventItem {
@@ -389,10 +395,7 @@ function EventCard({
       <div className="flex flex-col p-5 sm:p-6 lg:p-7">
         <div
           className="flex flex-col items-start justify-start gap-[5px] uppercase h-[5.85em] overflow-hidden"
-          style={{
-            fontSize: 'clamp(18px, 1.5vw, 26px)',
-            lineHeight: 1.15,
-          }}
+          style={TYPO_SUBTITLE}
         >
           {titleLines.map((line, index) => (
             <span
@@ -410,17 +413,14 @@ function EventCard({
         </div>
 
         <div
-          className="mt-5 sm:mt-6 flex flex-col items-start justify-start gap-[5px] h-[2.85em] overflow-hidden"
-          style={{
-            fontSize: 'clamp(16px, 1.3vw, 22px)',
-            lineHeight: 1.15,
-          }}
+          className="mt-5 sm:mt-6 flex flex-col items-start justify-start gap-[5px] min-h-[calc(2*(1.4em+2px)+5px)]"
+          style={TYPO_BODY}
         >
           {dateLines.map((line, index) => (
             <span
               key={`${event.id}-date-${index}`}
               className={[
-                'inline-block w-fit max-w-full font-bold tracking-[0.01em] px-[3px] py-px transition-colors duration-300',
+                'inline-block w-fit max-w-full whitespace-nowrap font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px transition-colors duration-300',
                 isDark
                   ? 'bg-black text-white group-hover/card:bg-white group-hover/card:text-[#f58220]'
                   : 'bg-white text-black group-hover/card:bg-white group-hover/card:text-[#f58220]',
@@ -438,10 +438,7 @@ function EventCard({
               ? 'text-black group-hover/card:text-white'
               : 'text-white group-hover/card:text-white',
           ].join(' ')}
-          style={{
-            fontSize: 'clamp(15px, 1.2vw, 18px)',
-            lineHeight: 1.3,
-          }}
+          style={TYPO_BODY}
         >
           {event.desc}
         </p>
@@ -655,15 +652,15 @@ export function EventsView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-[#f58220] text-white pl-[3px] pr-[43px] py-px">
                 Nos
               </span>
               <span className="inline-block w-fit bg-[#f58220] text-white pl-[3px] pr-[43px] py-px">
-                prestations
-              </span>
-              <span className="inline-block w-fit bg-[#f58220] text-white pl-[3px] pr-[43px] py-px">
-                passées
+                évènements
               </span>
             </div>
           </div>
@@ -681,10 +678,7 @@ export function EventsView() {
               <div className="absolute left-[-4%] sm:left-[-3%] top-[52%] sm:top-[55%] z-20 pointer-events-none w-[70%] sm:w-[58%] lg:w-[52%] -translate-y-1/2 rotate-2">
                 <div
                   className="flex flex-col items-start gap-[5px] uppercase"
-                  style={{
-                    fontSize: 'clamp(16px, 1.9vw, 28px)',
-                    lineHeight: 1.15,
-                  }}
+                  style={TYPO_SUBTITLE}
                 >
                   <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
                     Retrouvez
@@ -714,10 +708,7 @@ export function EventsView() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] uppercase pl-[3px] pr-[43px] py-px no-underline transition-colors duration-300 cursor-pointer hover:bg-[#f58220] hover:text-white"
-                style={{
-                  fontSize: 'clamp(16px, 1.9vw, 28px)',
-                  lineHeight: 1.15,
-                }}
+                style={TYPO_SUBTITLE}
               >
                 Découvrez notre chaîne YouTube
               </a>
@@ -733,7 +724,10 @@ export function EventsView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
                 Doublage
               </span>
@@ -760,7 +754,10 @@ export function EventsView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
                 La
               </span>
@@ -813,10 +810,7 @@ export function EventsView() {
             <div className="pr-12 sm:pr-14 flex flex-col gap-4">
               <div
                 className="flex flex-col items-start gap-[5px]"
-                style={{
-                  fontSize: 'clamp(16px, 1.3vw, 22px)',
-                  lineHeight: 1.15,
-                }}
+                style={TYPO_BODY}
               >
                 {splitIntoChipLines(activeEvent.date, 16).map((line) => (
                   <span
@@ -830,10 +824,7 @@ export function EventsView() {
 
               <div
                 className="flex flex-col items-start gap-[5px] uppercase"
-                style={{
-                  fontSize: 'clamp(22px, 2.2vw, 36px)',
-                  lineHeight: 1.15,
-                }}
+                style={TYPO_TITLE}
               >
                 {splitIntoChipLines(activeEvent.title, 18).map((line) => (
                   <span

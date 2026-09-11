@@ -4,6 +4,32 @@ import { useState } from 'react'
 
 import { VideoPlayButton } from '@/components/video-play-button'
 import { withBasePath } from '@/lib/paths'
+import {
+  TYPO_BODY,
+  TYPO_BODY_CLASS,
+  TYPO_SUBTITLE,
+  TYPO_TITLE,
+  TYPO_TITLE_CLASS,
+} from '@/lib/typography'
+
+function AboutTextBlock({
+  children,
+  tone = 'light',
+}: {
+  children: string
+  tone?: 'light' | 'dark'
+}) {
+  return (
+    <p
+      className={`${TYPO_BODY_CLASS} ${
+        tone === 'light' ? 'text-black' : 'text-white'
+      }`}
+      style={TYPO_BODY}
+    >
+      {children}
+    </p>
+  )
+}
 
 const dubbingRoles = [
   {
@@ -29,19 +55,16 @@ const dubbingRoles = [
 const principleCards = [
   {
     id: 'experience',
-    titleLines: ['Expérience', 'sur mesure'],
     summary:
       'Un véritable auditorium de doublage se déplace pour vous proposer de vivre en direct une expérience cinématographique dans les meilleures conditions.',
   },
   {
     id: 'immersion',
-    titleLines: ['Immersion', 'totale'],
     summary:
       'À partir de nombreux extraits de films cultes, nous offrons au public la possibilité de se mettre, pendant un temps, dans la peau des comédiens à l’image.',
   },
   {
     id: 'moyens',
-    titleLines: ['Moyens', 'professionnels'],
     summary:
       'Grâce à des moyens techniques professionnels, le public peut choisir parmi plus de 200 extraits de films. La projection et la mise en situation sont alors possibles grâce au texte qui défile sous l’image sur une bande rythmo synchrone.',
   },
@@ -80,7 +103,10 @@ export function AboutView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
                 Qu’est-ce
               </span>
@@ -111,7 +137,7 @@ export function AboutView() {
               className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-12 lg:gap-14 w-full">
+              <div className="grid grid-cols-1 items-start gap-12 md:grid-cols-3 md:gap-16 lg:gap-20 w-full">
                 {dubbingRoles.map((role) => (
                   <div
                     key={role.id}
@@ -120,8 +146,7 @@ export function AboutView() {
                     <div
                       className="flex flex-col items-start gap-[5px] shrink-0"
                       style={{
-                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                        lineHeight: 1.15,
+                        ...TYPO_SUBTITLE,
                         minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
                       }}
                     >
@@ -135,15 +160,9 @@ export function AboutView() {
                       ))}
                     </div>
 
-                    <p
-                      className="mt-6 font-bold tracking-[0.01em] text-black"
-                      style={{
-                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                        lineHeight: 1.25,
-                      }}
-                    >
-                      {role.summary}
-                    </p>
+                    <div className="mt-8">
+                      <AboutTextBlock tone="light">{role.summary}</AboutTextBlock>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -162,7 +181,10 @@ export function AboutView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
                 Le
               </span>
@@ -205,39 +227,13 @@ export function AboutView() {
               className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-12 lg:gap-14 w-full">
+              <div className="grid grid-cols-1 items-start gap-12 md:grid-cols-3 md:gap-16 lg:gap-20 w-full">
                 {principleCards.map((card) => (
                   <div
                     key={card.id}
                     className="relative flex flex-col text-left justify-start"
                   >
-                    <div
-                      className="flex flex-col items-start gap-[5px] shrink-0"
-                      style={{
-                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                        lineHeight: 1.15,
-                        minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
-                      }}
-                    >
-                      {card.titleLines.map((line) => (
-                        <span
-                          key={line}
-                          className="inline-block w-fit bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px"
-                        >
-                          {line}
-                        </span>
-                      ))}
-                    </div>
-
-                    <p
-                      className="mt-6 font-bold tracking-[0.01em] text-white"
-                      style={{
-                        fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                        lineHeight: 1.25,
-                      }}
-                    >
-                      {card.summary}
-                    </p>
+                    <AboutTextBlock tone="dark">{card.summary}</AboutTextBlock>
                   </div>
                 ))}
               </div>

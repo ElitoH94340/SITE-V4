@@ -1,26 +1,153 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react'
 import { Volume2, VolumeX, ChevronDown, ChevronUp } from 'lucide-react'
+import { ContactSection } from '@/components/contact-section'
 import { DrawingLogo } from '@/components/drawing-logo'
 import { withBasePath } from '@/lib/paths'
+import { TYPO_SUBTITLE, TYPO_TITLE } from '@/lib/typography'
+
+const RECTANGLE_THEMES = {
+  lightOnDark:
+    'inline-block w-fit whitespace-nowrap bg-black text-[#f0f0eb] font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px',
+  white:
+    'inline-block w-fit whitespace-nowrap bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px',
+  orange:
+    'inline-block w-fit whitespace-nowrap bg-[#f58220] text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px',
+} as const
+
+const TEAM_ORIGIN_LINES = [
+  "À l'origine",
+  'trois ami.e.s',
+  'passionné.e.s',
+  'de cinéma,',
+  'aux\u00A0compétences',
+  'complémentaires.',
+] as const
+
+function wrapRectangleLine(
+  text: string,
+  maxWidth: number,
+  measure: (value: string) => number,
+): string[] {
+  if (maxWidth <= 0) return [text]
+
+  // Ne pas couper sur les espaces insécables (ex. « aux compétences »)
+  const words = text.split(/ +/).filter(Boolean)
+  if (words.length === 0) return ['']
+
+  const lines: string[] = []
+  let current = ''
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word
+    if (measure(candidate) <= maxWidth) {
+      current = candidate
+    } else {
+      if (current) lines.push(current)
+      current = word
+    }
+  }
+
+  if (current) lines.push(current)
+  return lines.length > 0 ? lines : [text]
+}
+
+function HomeRectangleLines({
+  lines,
+  theme,
+  className = '',
+  style,
+}: {
+  lines: readonly string[]
+  theme: keyof typeof RECTANGLE_THEMES
+  className?: string
+  style?: CSSProperties
+}) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const measurerRef = useRef<HTMLSpanElement>(null)
+  const [containerWidth, setContainerWidth] = useState(0)
+
+  useEffect(() => {
+    const element = containerRef.current
+    if (!element) return
+
+    const updateWidth = () => {
+      setContainerWidth(element.getBoundingClientRect().width)
+    }
+
+    updateWidth()
+    const observer = new ResizeObserver(updateWidth)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
+  const measureRectangle = useCallback(
+    (value: string) => {
+      const measurer = measurerRef.current
+      if (!measurer) return value.length * 10
+      measurer.textContent = value
+      return measurer.getBoundingClientRect().width
+    },
+    [],
+  )
+
+  const maxRectangleWidth = containerWidth
+
+  const wrappedLines = useMemo(
+    () =>
+      lines.flatMap((line) =>
+        wrapRectangleLine(line, maxRectangleWidth, measureRectangle),
+      ),
+    [lines, maxRectangleWidth, measureRectangle],
+  )
+
+  return (
+    <div ref={containerRef} className={className}>
+      <span
+        ref={measurerRef}
+        aria-hidden
+        className={`pointer-events-none fixed -left-[9999px] top-0 ${RECTANGLE_THEMES[theme]}`}
+        style={style}
+      />
+      <div className="flex flex-col items-start gap-[5px]">
+        {wrappedLines.map((line, index) => (
+          <span
+            key={`${line}-${index}`}
+            className={RECTANGLE_THEMES[theme]}
+            style={style}
+          >
+            {line}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 const teamRoles = [
   {
     id: 'adaptateur',
-    titleLines: ['Traduction', '& Adaptation'],
+    titleLines: ['Traduction &', 'Adaptation'],
     summary:
       'Un auteur-adaptateur de doublage, bilingue en anglais et expert.',
   },
   {
     id: 'direction',
-    titleLines: ['Direction', '& pédagogie'],
+    titleLines: ['Direction &', 'Pédagogie'],
     summary:
       'Une professeure des écoles, ancienne directrice de salles de cinémas.',
   },
   {
     id: 'technique',
-    titleLines: ['Technique', '& langage'],
+    titleLines: ['Langage &', 'Technique'],
     summary:
       'Une ingénieure d’études, professeure de français langue étrangère à l’université.',
   },
@@ -239,13 +366,13 @@ export function HomeView() {
               className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
               style={{ top: '180px' }}
             >
-              <h2
-                id="experience-title"
-                className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase"
-              >
-                <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">Vivez une</span>
-                <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">expérience</span>
-                <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">inoubliable.</span>
+              <h2 id="experience-title">
+                <HomeRectangleLines
+                  lines={['Vivez une', 'expérience', 'inoubliable.']}
+                  theme="lightOnDark"
+                  className="uppercase"
+                  style={TYPO_TITLE}
+                />
               </h2>
             </div>
 
@@ -267,45 +394,33 @@ export function HomeView() {
                 className="mt-10 sm:mt-12 relative w-full animate-text-sweep"
                 style={{ animationDelay: '400ms' }}
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-12 w-full items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-12 w-full items-start">
                   <p
-                    className="text-black font-bold tracking-[0.01em] min-w-0"
-                    style={{
-                      fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                      lineHeight: 1.3,
-                    }}
+                    className="text-black font-bold tracking-[0.01em]"
+                    style={TYPO_SUBTITLE}
                   >
-                    <span className="block">Plongez dans l’univers passionnant</span>
-                    <span className="block">du cinéma. Imaginez-vous dans la</span>
-                    <span className="block">peau des comédiens à l’image, face</span>
-                    <span className="block">à la projection d’extraits de films</span>
-                    <span className="block">
-                      cultes avec les textes sur bande rythmo{' '}
-                      <span className="inline-block w-fit bg-black text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
-                        synchrone.
-                      </span>
+                    Plongez dans l&apos;univers passionnant du cinéma.
+                    Imaginez-vous dans la peau des comédiens à l&apos;image,
+                    face à la projection d&apos;extraits de films cultes avec
+                    les textes sur{' '}
+                    <span className="inline-block w-fit whitespace-nowrap bg-black text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
+                      bande rythmo synchrone.
                     </span>
                   </p>
 
                   <p
-                    className="text-black font-bold tracking-[0.01em] min-w-0"
-                    style={{
-                      fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                      lineHeight: 1.3,
-                    }}
+                    className="text-black font-bold tracking-[0.01em]"
+                    style={TYPO_SUBTITLE}
                   >
-                    <span className="block">Les dialogues défilent sous l’image.</span>
-                    <span className="block">Vous choisissez un personnage.</span>
-                    <span className="block">
-                      Vous le{' '}
-                      <span className="inline-block w-fit bg-black text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
-                        «{'\u00A0'}doublez{'\u00A0'}!{'\u00A0'}»
-                      </span>
+                    Les dialogues défilent sous l&apos;image. Vous choisissez un
+                    personnage.{' '}
+                    <span className="inline-block w-fit whitespace-nowrap bg-black text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
+                      Vous le «{'\u00A0'}doublez{'\u00A0'}».
                     </span>
-                    <span className="block">Seul prérequis{'\u00A0'}: être lecteur.</span>
-                    <span className="block">Toute l’équipe de Tournez Bobines</span>
-                    <span className="block">est là pour vous accompagner</span>
-                    <span className="block">à la barre de doublage.</span>
+                    <br />
+                    Seul prérequis{'\u00A0'}: être lecteur. Toute l&apos;équipe
+                    de Tournez Bobines est là pour vous accompagner à la barre de
+                    doublage.
                   </p>
                 </div>
               </div>
@@ -320,11 +435,12 @@ export function HomeView() {
               className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
               style={{ top: '180px' }}
             >
-              <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
-                <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[43px] py-px">Qui</span>
-                <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[43px] py-px">sommes</span>
-                <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[43px] py-px">nous{'\u00A0'}?</span>
-              </div>
+              <HomeRectangleLines
+                lines={['Qui', 'sommes', 'nous\u00A0?']}
+                theme="orange"
+                className="uppercase"
+                style={TYPO_TITLE}
+              />
             </div>
 
             <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col overflow-visible">
@@ -334,7 +450,7 @@ export function HomeView() {
               >
                 <div className="relative w-full flex items-center justify-center min-h-[360px] sm:min-h-[440px] lg:min-h-[520px]">
                   {/* Photo centrée — un peu plus large pour passer sous le logo */}
-                  <div className="relative z-10 w-[72%] sm:w-[68%] lg:w-[64%] aspect-[4/3] overflow-hidden bg-black rotate-[1.5deg]">
+                  <div className="relative z-10 w-[72%] sm:w-[68%] lg:w-[64%] aspect-[4/3] overflow-hidden bg-black rotate-[1.5deg] translate-x-[40px]">
                     <img
                       src={withBasePath("/Mâcon 2019 L'équipe.JPG")}
                       alt="Qui sommes nous"
@@ -343,21 +459,12 @@ export function HomeView() {
                   </div>
 
                   {/* Citation — gauche */}
-                  <div className="absolute left-0 top-[4%] sm:top-[8%] z-20 pointer-events-none w-[34%] sm:w-[30%] lg:w-[28%] -rotate-2">
-                    <div
-                      className="font-bold tracking-tight text-[#f58220] flex flex-col items-start"
-                      style={{
-                        fontSize: 'clamp(18px, 2.4vw, 36px)',
-                        lineHeight: 1.12,
-                      }}
-                    >
-                      <span>À l&apos;origine</span>
-                      <span>trois ami.e.s</span>
-                      <span>passionné.e.s</span>
-                      <span>de cinéma,</span>
-                      <span>aux compétences</span>
-                      <span>complémentaires.</span>
-                    </div>
+                  <div className="absolute left-0 top-[4%] sm:top-[8%] z-20 pointer-events-none w-[42%] sm:w-[36%] md:w-[32%] lg:w-[30%] -rotate-2">
+                    <HomeRectangleLines
+                      lines={TEAM_ORIGIN_LINES}
+                      theme="white"
+                      style={TYPO_TITLE}
+                    />
                   </div>
 
                   {/* Logo — droite, partiellement sur la photo (−30%) */}
@@ -377,30 +484,16 @@ export function HomeView() {
                       key={role.id}
                       className="relative flex flex-col text-left justify-start"
                     >
-                      <div
-                        className="flex flex-col items-start gap-[5px] shrink-0"
-                        style={{
-                          fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                          lineHeight: 1.15,
-                          minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
-                        }}
-                      >
-                        {role.titleLines.map((line) => (
-                          <span
-                            key={line}
-                            className="inline-block w-fit bg-[#f58220] text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px"
-                          >
-                            {line}
-                          </span>
-                        ))}
-                      </div>
+                      <HomeRectangleLines
+                        lines={role.titleLines}
+                        theme="orange"
+                        className="shrink-0 min-h-[calc(2*(1.15em+2px)+5px)]"
+                        style={TYPO_SUBTITLE}
+                      />
 
                       <p
                         className="mt-6 font-bold tracking-[0.01em] text-white"
-                        style={{
-                          fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                          lineHeight: 1.25,
-                        }}
+                        style={TYPO_SUBTITLE}
                       >
                         {role.summary}
                       </p>
@@ -412,150 +505,7 @@ export function HomeView() {
           </div>
         </section>
 
-        {/* SECTION CONTACT */}
-        <section className="relative bg-[#f0f0eb] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0">
-          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
-            <div
-              className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-              style={{ top: '180px' }}
-            >
-              <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
-                <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">Contact</span>
-              </div>
-            </div>
-
-            <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0">
-              <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto] gap-6 lg:gap-8 items-stretch">
-                <div
-                  className="w-full min-w-0 max-w-full h-full bg-black p-6 sm:p-8 animate-text-sweep"
-                  style={{ animationDelay: '200ms' }}
-                >
-                  <form className="flex flex-col gap-3 h-full" onSubmit={(e) => e.preventDefault()}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <input
-                        type="text"
-                        placeholder="Nom"
-                        className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
-                      />
-                      <input
-                        type="email"
-                        placeholder="Email"
-                        className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
-                      />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Entreprise / établissement"
-                      className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Sujet"
-                      className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
-                    />
-                    <textarea
-                      placeholder="Message"
-                      rows={4}
-                      className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950 resize-none"
-                    ></textarea>
-
-                    <button
-                      type="submit"
-                      className="w-full bg-white text-black py-3 mt-auto text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#f58220] hover:text-black transition-colors duration-300 cursor-pointer"
-                    >
-                      Envoyer
-                    </button>
-                  </form>
-                </div>
-
-                <div
-                  className="w-full xl:w-fit xl:max-w-md h-full bg-black p-6 sm:p-8 animate-text-sweep flex flex-col justify-between gap-8"
-                  style={{ animationDelay: '200ms' }}
-                >
-                  <div>
-                    <div className="mb-8 w-full flex items-stretch gap-3 sm:gap-4">
-                      <img
-                        src={withBasePath('/logo-fond-transparent-3.svg')}
-                        alt="Logo Tournez Bobines"
-                        className="h-[64px] w-auto sm:h-[80px] shrink-0 self-start"
-                      />
-                      <div className="flex flex-col justify-between h-[64px] sm:h-[80px] font-bold tracking-[0.01em] lowercase leading-none py-[2px] min-w-0">
-                        <span
-                          className="text-white block"
-                          style={{ fontSize: 'clamp(18px, 1.5vw, 26px)' }}
-                        >
-                          tournez
-                        </span>
-                        <span
-                          className="text-white block"
-                          style={{ fontSize: 'clamp(18px, 1.5vw, 26px)' }}
-                        >
-                          bobines
-                        </span>
-                        <span
-                          className="text-[#f58220] block"
-                          style={{ fontSize: 'clamp(18px, 1.5vw, 26px)' }}
-                        >
-                          association
-                        </span>
-                      </div>
-                    </div>
-
-                    <h3
-                      className="font-bold tracking-[0.01em] text-white leading-[1.15]"
-                      style={{
-                        fontSize: 'clamp(16px, 1.4vw, 26px)',
-                      }}
-                    >
-                      Devis
-                      <br />
-                      &amp; Renseignements
-                    </h3>
-                  </div>
-
-                  <div
-                    className="font-bold tracking-[0.01em] text-white space-y-6"
-                    style={{
-                      fontSize: 'clamp(13px, 1.05vw, 17px)',
-                      lineHeight: 1.25,
-                    }}
-                  >
-                    <div>
-                      <p>Jean-Jacques PRON</p>
-                      <a
-                        href="tel:+33682831034"
-                        className="inline-block mt-1 text-[#f58220] hover:opacity-80 transition-opacity"
-                      >
-                        06 82 83 10 34
-                      </a>
-                    </div>
-
-                    <div>
-                      <p>Véronique ATTISSO</p>
-                      <p className="mt-1 text-white/70">(Contact pédagogique)</p>
-                      <a
-                        href="tel:+33613647259"
-                        className="inline-block mt-1 text-[#f58220] hover:opacity-80 transition-opacity"
-                      >
-                        06 13 64 72 59
-                      </a>
-                    </div>
-
-                    <div>
-                      <p>Email</p>
-                      <a
-                        href="mailto:contact@doublagetournezbobines.fr"
-                        className="inline-block mt-1 text-[#f58220] hover:opacity-80 transition-opacity break-all"
-                      >
-                        contact@doublagetournezbobines.fr
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <ContactSection layout="stacked" />
       </div>
     </div>
   )

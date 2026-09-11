@@ -1,9 +1,16 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { ContactSection } from '@/components/contact-section'
 import { VideoPlayButton } from '@/components/video-play-button'
 import { FORMULAS, type Formula, type FormulaId } from '@/lib/formulas'
 import { withBasePath } from '@/lib/paths'
+import {
+  TYPO_BODY,
+  TYPO_SUBTITLE,
+  TYPO_TITLE,
+  TYPO_TITLE_CLASS,
+} from '@/lib/typography'
 
 function getFormulaMedia(index: number) {
   const videoSrc =
@@ -202,10 +209,7 @@ function FormulaCard({
       <div className="flex flex-1 flex-col p-5 sm:p-6 lg:p-7">
         <div
           className="flex flex-col items-start gap-[5px] uppercase"
-          style={{
-            fontSize: 'clamp(18px, 1.5vw, 26px)',
-            lineHeight: 1.15,
-          }}
+          style={TYPO_SUBTITLE}
         >
           {titleLines.map((line) => (
             <span
@@ -220,26 +224,10 @@ function FormulaCard({
           ))}
         </div>
 
-        <p
-          className={[
-            'mt-5 sm:mt-6 font-bold tracking-[0.01em]',
-            theme.body,
-          ].join(' ')}
-          style={{
-            fontSize: 'clamp(15px, 1.2vw, 18px)',
-            lineHeight: 1.3,
-          }}
-        >
-          {formula.summary}
-        </p>
-
         <div className="mt-8 sm:mt-10 flex-1">
           <div
             className="flex flex-col items-start gap-[5px] uppercase"
-            style={{
-              fontSize: 'clamp(16px, 1.2vw, 20px)',
-              lineHeight: 1.15,
-            }}
+            style={TYPO_BODY}
           >
             <span
               className={[
@@ -259,10 +247,7 @@ function FormulaCard({
               >
                 <span
                   className="shrink-0 font-bold tracking-[0.01em] pt-px"
-                  style={{
-                    fontSize: 'clamp(14px, 1.1vw, 17px)',
-                    lineHeight: 1.15,
-                  }}
+                  style={TYPO_BODY}
                 >
                   {step.num}.
                 </span>
@@ -271,10 +256,7 @@ function FormulaCard({
                   {step.highlight && (
                     <p
                       className="font-bold tracking-[0.01em]"
-                      style={{
-                        fontSize: 'clamp(14px, 1.1vw, 17px)',
-                        lineHeight: 1.3,
-                      }}
+                      style={TYPO_BODY}
                     >
                       <span
                         className={[
@@ -292,10 +274,7 @@ function FormulaCard({
                         'font-bold tracking-[0.01em]',
                         theme.body,
                       ].join(' ')}
-                      style={{
-                        fontSize: 'clamp(14px, 1.1vw, 17px)',
-                        lineHeight: 1.3,
-                      }}
+                      style={TYPO_BODY}
                     >
                       {step.text}
                     </p>
@@ -507,7 +486,10 @@ export function FormulasView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
                 Nos
               </span>
@@ -530,10 +512,7 @@ export function FormulasView() {
               <div className="absolute left-[-4%] sm:left-[-3%] top-[52%] sm:top-[55%] z-20 pointer-events-none w-[70%] sm:w-[58%] lg:w-[48%] -translate-y-1/2 -rotate-2">
                 <div
                   className="flex flex-col items-start gap-[5px] uppercase"
-                  style={{
-                    fontSize: 'clamp(18px, 2.2vw, 32px)',
-                    lineHeight: 1.15,
-                  }}
+                  style={TYPO_TITLE}
                 >
                   <span className="inline-block w-fit bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
                     Immersion
@@ -552,20 +531,18 @@ export function FormulasView() {
               <p
                 className="font-bold tracking-[0.01em] text-black animate-text-sweep"
                 style={{
-                  fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                  lineHeight: 1.3,
+                  ...TYPO_SUBTITLE,
                   animationDelay: '350ms',
                 }}
               >
-               De l&apos;expérience en direct à la captation filmée, le déroulé
-                est identique{'\u00A0'}: vous choisissez un extrait, vous vous
-                entraînez, puis vous jouez la scène.
+                De l&apos;expérience en direct à la captation filmée, le déroulé
+                est identique{'\u00A0'}: choisissez un extrait, entraînez-vous,
+                puis jouez la scène.
               </p>
               <p
                 className="font-bold tracking-[0.01em] text-black animate-text-sweep"
                 style={{
-                  fontSize: 'clamp(19.5px, 1.76vw, 28.5px)',
-                  lineHeight: 1.3,
+                  ...TYPO_SUBTITLE,
                   animationDelay: '500ms',
                 }}
               >
@@ -586,7 +563,10 @@ export function FormulasView() {
             className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             style={{ top: '180px' }}
           >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
               <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
                 Les
               </span>
@@ -607,155 +587,7 @@ export function FormulasView() {
         </div>
       </section>
 
-      {/* 3 — CONTACT (copie home) */}
-      <section className="relative bg-[#f0f0eb] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
-          <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
-          >
-            <div className="text-[18px] sm:text-[24px] lg:text-[32px] font-bold tracking-[0.01em] leading-[1.1] flex flex-col items-start gap-[5px] uppercase">
-              <span className="inline-block w-fit bg-black text-[#f0f0eb] pl-[3px] pr-[43px] py-px">
-                Contact
-              </span>
-            </div>
-          </div>
-
-          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0">
-            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto] gap-6 lg:gap-8 items-stretch">
-              <div
-                className="w-full min-w-0 max-w-full h-full bg-black p-6 sm:p-8 animate-text-sweep"
-                style={{ animationDelay: '200ms' }}
-              >
-                <form
-                  className="flex flex-col gap-3 h-full"
-                  onSubmit={(e) => e.preventDefault()}
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      placeholder="Nom"
-                      className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Entreprise / établissement"
-                    className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Sujet"
-                    className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950"
-                  />
-                  <textarea
-                    placeholder="Message"
-                    rows={4}
-                    className="w-full min-w-0 border border-white/20 px-3 py-2.5 text-sm focus:outline-none focus:border-[#f58220] transition-colors placeholder:text-neutral-500 text-white bg-neutral-950 resize-none"
-                  ></textarea>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-white text-black py-3 mt-auto text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#f58220] hover:text-black transition-colors duration-300 cursor-pointer"
-                  >
-                    Envoyer
-                  </button>
-                </form>
-              </div>
-
-              <div
-                className="w-full xl:w-fit xl:max-w-md h-full bg-black p-6 sm:p-8 animate-text-sweep flex flex-col justify-between gap-8"
-                style={{ animationDelay: '200ms' }}
-              >
-                <div>
-                  <div className="mb-8 w-full flex items-stretch gap-3 sm:gap-4">
-                    <img
-                      src={withBasePath('/logo-fond-transparent-3.svg')}
-                      alt="Logo Tournez Bobines"
-                      className="h-[64px] w-auto sm:h-[80px] shrink-0 self-start"
-                    />
-                    <div className="flex flex-col justify-between h-[64px] sm:h-[80px] font-bold tracking-[0.01em] lowercase leading-none py-[2px] min-w-0">
-                      <span
-                        className="text-white block"
-                        style={{ fontSize: 'clamp(18px, 1.5vw, 26px)' }}
-                      >
-                        tournez
-                      </span>
-                      <span
-                        className="text-white block"
-                        style={{ fontSize: 'clamp(18px, 1.5vw, 26px)' }}
-                      >
-                        bobines
-                      </span>
-                      <span
-                        className="text-[#f58220] block"
-                        style={{ fontSize: 'clamp(18px, 1.5vw, 26px)' }}
-                      >
-                        association
-                      </span>
-                    </div>
-                  </div>
-
-                  <h3
-                    className="font-bold tracking-[0.01em] text-white leading-[1.15]"
-                    style={{
-                      fontSize: 'clamp(16px, 1.4vw, 26px)',
-                    }}
-                  >
-                    Devis
-                    <br />
-                    &amp; Renseignements
-                  </h3>
-                </div>
-
-                <div
-                  className="font-bold tracking-[0.01em] text-white space-y-6"
-                  style={{
-                    fontSize: 'clamp(13px, 1.05vw, 17px)',
-                    lineHeight: 1.25,
-                  }}
-                >
-                  <div>
-                    <p>Jean-Jacques PRON</p>
-                    <a
-                      href="tel:+33682831034"
-                      className="inline-block mt-1 text-[#f58220] hover:opacity-80 transition-opacity"
-                    >
-                      06 82 83 10 34
-                    </a>
-                  </div>
-
-                  <div>
-                    <p>Véronique ATTISSO</p>
-                    <p className="mt-1 text-white/70">(Contact pédagogique)</p>
-                    <a
-                      href="tel:+33613647259"
-                      className="inline-block mt-1 text-[#f58220] hover:opacity-80 transition-opacity"
-                    >
-                      06 13 64 72 59
-                    </a>
-                  </div>
-
-                  <div>
-                    <p>Email</p>
-                    <a
-                      href="mailto:contact@doublagetournezbobines.fr"
-                      className="inline-block mt-1 text-[#f58220] hover:opacity-80 transition-opacity break-all"
-                    >
-                      contact@doublagetournezbobines.fr
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ContactSection idPrefix="formulas-contact" layout="stacked" />
     </section>
   )
 }
