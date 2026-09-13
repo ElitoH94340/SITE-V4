@@ -1,13 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import Link from 'next/link'
-import { ContactSection } from '@/components/contact-section'
 import { VideoPlayButton } from '@/components/video-play-button'
 import { FORMULAS } from '@/lib/formulas'
 import { withBasePath } from '@/lib/paths'
+import { ContactCtaSection } from '@/components/contact-cta-section'
+import { RectangleLines } from '@/components/rectangle-lines'
 import {
-  TYPO_BODY,
+  CHIP_PAD_CLASS,
+  TYPO_BLOCK_BODY_CLASS,
+  TYPO_BLOCK_SUBTITLE_CLASS,
   TYPO_SUBTITLE,
   TYPO_TITLE,
   TYPO_TITLE_CLASS,
@@ -22,48 +25,141 @@ const HEADER_PHOTOS = [
 const MATERIAL_PHOTOS = [
   '/technique-2.png',
   '/barnum-1.png',
-  '/doublage-3.png',
+  '/experience-1.png',
 ]
 
 const offerTexts = [
-  "Plongez dans l'univers étonnant du doublage et vivez cette expérience unique dans les conditions d'un véritable studio.",
-  'Mairies, institutions, entreprises publiques et privées, nous vous proposons différentes animations tous publics, adaptées à vos événements, dans des lieux dédiés ou sous un barnum.',
+  <>
+    Plongez dans l&apos;univers étonnant du doublage et vivez cette{' '}
+    <span className="font-bold">expérience unique</span>
+    {' '}dans les conditions d&apos;un véritable studio.
+  </>,
+  <>
+    Mairies, institutions, entreprises publiques et privées, nous vous
+    proposons différentes{' '}
+    <span className="font-bold">animations tous publics</span>
+    {', adaptées à vos événements, dans des lieux dédiés ou sous un barnum.'}
+  </>,
 ]
 
 const objectives = [
   {
     id: 'federer',
-    lines: ['Fédérer un groupe de', 'collaborateurs'],
+    num: '1',
+    lines: ['Fédérer un', 'groupe de', 'collaborateurs.'],
   },
   {
     id: 'dimension',
+    num: '2',
     lines: [
-      'Donner une dimension festive',
-      'et cinématographique',
-      'à un événement',
+      'Donner une',
+      'dimension festive',
+      '&\u00A0cinématographique',
+      'à un événement.',
     ],
   },
 ]
 
 const howItWorksSteps = [
-  { num: '1', lines: ['Prérequis : être lecteur.'] },
+  {
+    num: '1',
+    linesLaptop: ['Prérequis : être lecteur.'],
+    linesDesktop: ['Prérequis : être lecteur.'],
+  },
   {
     num: '2',
-    lines: [
+    linesLaptop: [
+      'Plus de 200 extraits de films cultes',
+      'sont à votre disposition,',
+      'avec différents degrés de difficulté.',
+    ],
+    linesDesktop: [
       'Plus de 200 extraits de films cultes sont à votre disposition,',
       'avec différents degrés de difficulté.',
     ],
   },
-  { num: '3', lines: ["Choisissez le film, l'extrait et le personnage."] },
-  { num: '4', lines: ['Entraînez-vous.'] },
+  {
+    num: '3',
+    linesLaptop: ['Choisissez le film,', 'l\u2019extrait et le personnage.'],
+    linesDesktop: ['Choisissez le film, l\u2019extrait', 'et le personnage.'],
+  },
+  { num: '4', linesLaptop: ['Entraînez-vous.'], linesDesktop: ['Entraînez-vous.'] },
   {
     num: '5',
-    lines: [
-      'Une fois prêts, jouez la scène,',
-      'seul(e) ou à plusieurs.',
-    ],
+    linesLaptop: ['Une fois prêts, jouez la scène,', 'seul(e) ou à plusieurs.'],
+    linesDesktop: ['Une fois prêts, jouez la scène,', 'seul(e) ou à plusieurs.'],
   },
 ]
+
+const HOW_IT_WORKS_BODY_CLASS =
+  'text-[18px] 2xl:text-[24px] leading-[1.4] font-normal tracking-[0.01em]'
+
+function NumberedLinesBlock({
+  num,
+  lines,
+  textStyle,
+  textClassName,
+  textTheme = 'plainWhite',
+  compact = false,
+  disableWrap = true,
+}: {
+  num: string
+  lines: readonly string[]
+  textStyle?: CSSProperties
+  textClassName?: string
+  textTheme?: 'plainWhite' | 'plainWhiteBody'
+  compact?: boolean
+  disableWrap?: boolean
+}) {
+  return (
+    <div
+      className={`flex w-full min-w-0 flex-col items-start ${compact ? 'gap-[3px]' : 'gap-[5px]'}`}
+    >
+      <span
+        className={`inline-block w-fit bg-white text-black font-bold tracking-[0.01em] ${CHIP_PAD_CLASS}`}
+        style={TYPO_TITLE}
+      >
+        {num}.
+      </span>
+      <RectangleLines
+        lines={lines}
+        theme={textTheme}
+        className="w-full min-w-0"
+        lineClassName={textClassName}
+        style={textStyle}
+        disableWrap={disableWrap}
+      />
+    </div>
+  )
+}
+
+function HowItWorksStep({
+  step,
+  variant,
+}: {
+  step: (typeof howItWorksSteps)[number]
+  variant: 'laptop' | 'desktop'
+}) {
+  const isDesktop = variant === 'desktop'
+  return (
+    <NumberedLinesBlock
+      num={step.num}
+      lines={isDesktop ? step.linesDesktop : step.linesLaptop}
+      textTheme="plainWhiteBody"
+      textClassName={HOW_IT_WORKS_BODY_CLASS}
+      compact
+      disableWrap={false}
+    />
+  )
+}
+
+const howItWorksLaptopPlacement = [
+  { step: howItWorksSteps[0], className: 'col-start-1 row-start-1 pr-4 sm:pr-8 lg:pr-10' },
+  { step: howItWorksSteps[1], className: 'col-start-1 row-start-2 pr-4 sm:pr-8 lg:pr-10' },
+  { step: howItWorksSteps[2], className: 'col-start-1 row-start-3 pr-4 sm:pr-8 lg:pr-10' },
+  { step: howItWorksSteps[3], className: 'col-start-2 row-start-1 pl-4 sm:pl-8 lg:pl-10' },
+  { step: howItWorksSteps[4], className: 'col-start-2 row-start-2 pl-4 sm:pl-8 lg:pl-10' },
+] as const
 
 const howItWorksNote =
   "(Le déroulé est identique pour l'immersion, l'immersion filmée ou la captation)"
@@ -158,7 +254,7 @@ export function DubbingView() {
   const [isHowItWorksVideoPlaying, setIsHowItWorksVideoPlaying] = useState(false)
 
   return (
-    <section className="relative w-full bg-[#050505] text-neutral-50 pt-[90px] lg:pt-[150px] select-none">
+    <section data-header-surface="dark" className="relative w-full bg-black text-neutral-50 pt-[90px] lg:pt-[80px] min-[1440px]:pt-[150px] select-none">
       <style jsx>{`
         @keyframes fadeUp {
           from {
@@ -177,20 +273,19 @@ export function DubbingView() {
       `}</style>
 
       {/* 1 — UNE OFFRE LUDIQUE (gris) */}
-      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 Une offre
               </span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 ludique
               </span>
             </div>
@@ -205,15 +300,15 @@ export function DubbingView() {
             </div>
 
             <div
-              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep"
+              className="mt-10 sm:mt-14 xl:mt-16 relative w-full animate-text-sweep"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-12 w-full items-start">
-                {offerTexts.map((text) => (
+              <div className="grid grid-cols-1 min-w-0 gap-8 md:grid-cols-2 md:gap-x-8 md:gap-y-8 lg:gap-x-6 xl:gap-x-10 w-full items-start">
+                {offerTexts.map((text, index) => (
                   <p
-                    key={text}
-                    className="text-black font-bold tracking-[0.01em] min-w-0"
-                    style={TYPO_SUBTITLE}
+                    key={index}
+                    lang="fr"
+                    className={`min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
                   >
                     {text}
                   </p>
@@ -225,20 +320,19 @@ export function DubbingView() {
       </section>
 
       {/* 2 — NOS OBJECTIFS (noir) */}
-      <section className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+      <section data-header-surface="dark" className="relative bg-black text-white py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 Nos
               </span>
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 objectifs
               </span>
             </div>
@@ -246,54 +340,43 @@ export function DubbingView() {
 
           <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
             <div
-              className="relative w-full animate-text-sweep"
+              className="relative grid w-full min-w-0 grid-cols-1 items-start gap-4 sm:gap-5 animate-text-sweep md:grid-cols-[minmax(0,1.4fr)_minmax(0,2.6fr)] md:items-stretch lg:gap-6"
               style={{ animationDelay: '200ms' }}
             >
-              <div
-                className="relative w-full aspect-video overflow-hidden bg-black flex items-center justify-center cursor-pointer group"
-                onClick={() => setIsVideoPlaying(true)}
-              >
-                {!isVideoPlaying ? (
-                  <>
-                    <img
-                      src={withBasePath('/couverture-doublage-pour-tous.jpg')}
-                      alt="Présentation Vidéo"
-                      className="absolute inset-0 h-full w-full object-cover md:scale-105"
-                    />
-                    <VideoPlayButton />
-                  </>
-                ) : (
-                  <video
-                    src={withBasePath('/Doublage-Pour-Tous.mp4')}
-                    className="absolute inset-0 h-full w-full object-cover"
-                    controls
-                    autoPlay
-                  />
-                )}
-              </div>
-            </div>
-
-            <div
-              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
-              style={{ animationDelay: '400ms' }}
-            >
-              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-2 md:gap-12 lg:gap-14 w-full">
+              <div className="order-2 flex w-full min-w-0 flex-col gap-8 sm:gap-10 md:order-1 md:h-full md:justify-start md:gap-6 lg:gap-5 2xl:justify-between 2xl:gap-0">
                 {objectives.map((objective) => (
-                  <div
+                  <NumberedLinesBlock
                     key={objective.id}
-                    className="relative flex flex-col items-start gap-[5px] text-left justify-start"
-                    style={TYPO_SUBTITLE}
-                  >
-                    {objective.lines.map((line) => (
-                      <span
-                        key={line}
-                        className="inline-block w-fit bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px"
-                      >
-                        {line}
-                      </span>
-                    ))}
-                  </div>
+                    num={objective.num}
+                    lines={objective.lines}
+                    textStyle={TYPO_TITLE}
+                  />
                 ))}
+              </div>
+
+              <div className="relative order-1 aspect-video w-full shrink-0 overflow-hidden bg-black md:order-2">
+                <div
+                  className="absolute inset-0 flex cursor-pointer items-center justify-center group"
+                  onClick={() => setIsVideoPlaying(true)}
+                >
+                  {!isVideoPlaying ? (
+                    <>
+                      <img
+                        src={withBasePath('/couverture-doublage-pour-tous.jpg')}
+                        alt="Présentation Vidéo"
+                        className="absolute inset-0 h-full w-full object-cover md:scale-105"
+                      />
+                      <VideoPlayButton />
+                    </>
+                  ) : (
+                    <video
+                      src={withBasePath('/Doublage-Pour-Tous.mp4')}
+                      className="absolute inset-0 h-full w-full object-contain"
+                      controls
+                      autoPlay
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -301,20 +384,19 @@ export function DubbingView() {
       </section>
 
       {/* 3 — S'AMUSER À DOUBLER (gris) */}
-      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 S&apos;amuser
               </span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 à doubler
               </span>
             </div>
@@ -353,20 +435,19 @@ export function DubbingView() {
       </section>
 
       {/* 4 — COMMENT ÇA MARCHE ? (noir) */}
-      <section className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+      <section data-header-surface="dark" className="relative bg-black text-white py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 Comment
               </span>
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 ça marche{'\u00A0'}?
               </span>
             </div>
@@ -377,47 +458,37 @@ export function DubbingView() {
               className="relative w-full animate-text-sweep"
               style={{ animationDelay: '200ms' }}
             >
-              <div className="flex w-full flex-col gap-6 sm:gap-8 overflow-visible">
+              {/* Mobile — liste simple */}
+              <div className="flex w-full min-w-0 flex-col gap-y-10 sm:hidden">
                 {howItWorksSteps.map((step) => (
-                  <div
-                    key={step.num}
-                    className="relative w-full flex flex-col items-start gap-[5px]"
-                  >
-                    {step.lines.map((line, lineIndex) => (
-                      <div
-                        key={`${step.num}-${lineIndex}`}
-                        className="relative w-full"
-                      >
-                        {lineIndex === 0 ? (
-                          <span
-                            className="absolute top-0 right-full mr-3 sm:mr-4 text-right text-white font-bold tracking-[0.01em] tabular-nums pt-px whitespace-nowrap"
-                            style={TYPO_SUBTITLE}
-                          >
-                            {step.num}.
-                          </span>
-                        ) : null}
-                        <span
-                          className="inline-block w-fit max-w-full bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[40px] py-px"
-                          style={TYPO_SUBTITLE}
-                        >
-                          {line}
-                        </span>
-                      </div>
-                    ))}
+                  <div key={step.num} className="min-w-0 w-full">
+                    <HowItWorksStep step={step} variant="laptop" />
                   </div>
                 ))}
               </div>
 
-              <p
-                className="mt-8 sm:mt-10 w-full text-neutral-400 italic font-normal tracking-[0.01em] whitespace-nowrap"
-                style={TYPO_BODY}
-              >
-                {howItWorksNote}
-              </p>
+              {/* Laptop — 2 colonnes, 5 aligné sur la même ligne que 2 */}
+              <div className="hidden w-full min-w-0 grid-cols-2 grid-rows-[auto_auto_auto] items-start gap-x-6 gap-y-6 sm:grid lg:gap-x-6 lg:gap-y-6 2xl:hidden">
+                {howItWorksLaptopPlacement.map(({ step, className }) => (
+                  <div key={step.num} className={`min-w-0 w-full overflow-hidden ${className}`}>
+                    <HowItWorksStep step={step} variant="laptop" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Bureau — grille 3 × 2 */}
+              <div className="hidden w-full min-w-0 grid-cols-3 grid-rows-2 items-start gap-x-14 gap-y-16 2xl:grid">
+                {howItWorksSteps.map((step) => (
+                  <div key={step.num} className="min-w-0 w-full overflow-hidden">
+                    <HowItWorksStep step={step} variant="desktop" />
+                  </div>
+                ))}
+                <div className="min-w-0" aria-hidden="true" />
+              </div>
             </div>
 
             <div
-              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep"
+              className="relative mt-3 w-full animate-text-sweep sm:mt-4 lg:mt-5"
               style={{ animationDelay: '400ms' }}
             >
               <div
@@ -442,26 +513,32 @@ export function DubbingView() {
                   />
                 )}
               </div>
+
+              <p
+                lang="fr"
+                className={`mt-4 sm:mt-5 xl:mt-8 w-full text-pretty text-neutral-400 italic 2xl:whitespace-nowrap ${HOW_IT_WORKS_BODY_CLASS}`}
+              >
+                {howItWorksNote}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* 5 — NOTRE MATÉRIEL (gris) */}
-      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 Notre
               </span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 matériel
               </span>
             </div>
@@ -481,26 +558,25 @@ export function DubbingView() {
             </div>
 
             <div
-              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
+              className="mt-10 sm:mt-14 xl:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-12 lg:gap-14 w-full">
+              <div className="grid grid-cols-3 items-start gap-4 sm:gap-6 lg:gap-5 xl:gap-10 w-full min-w-0">
                 {materialCards.map((card) => (
                   <div
                     key={card.id}
-                    className="relative flex flex-col text-left justify-start"
+                    className="relative flex min-w-0 flex-col text-left justify-start"
                   >
                     <div
-                      className="flex flex-col items-start gap-[5px] shrink-0"
+                      className={`flex flex-col items-start gap-[5px] shrink-0 ${TYPO_BLOCK_SUBTITLE_CLASS}`}
                       style={{
-                        ...TYPO_SUBTITLE,
                         minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
                       }}
                     >
                       {card.titleLines.map((line) => (
                         <span
                           key={line}
-                          className="inline-block w-fit bg-black text-[#f3f4f6] font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px"
+                          className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]"
                         >
                           {line}
                         </span>
@@ -508,11 +584,12 @@ export function DubbingView() {
                     </div>
 
                     <p
-                      className="mt-6 font-bold tracking-[0.01em] text-black"
-                      style={TYPO_SUBTITLE}
+                      lang="fr"
+                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
                     >
                       {card.lines.map((line, index) => (
-                        <span key={index} className="block">
+                        <span key={index}>
+                          {index > 0 ? ' ' : null}
                           {line}
                         </span>
                       ))}
@@ -527,22 +604,22 @@ export function DubbingView() {
 
       {/* 6 — NOS FORMULES (noir) */}
       <section
-        className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0"
+        data-header-surface="dark"
+        className="relative bg-black text-white py-16 xl:py-24 px-4 sm:px-6 lg:px-0"
         id="formulas"
       >
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 Nos
               </span>
-              <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 formules
               </span>
             </div>
@@ -550,48 +627,46 @@ export function DubbingView() {
 
           <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
             <p
-              className="mb-10 sm:mb-12 text-white font-bold tracking-[0.01em] animate-text-sweep"
-              style={TYPO_SUBTITLE}
+              lang="fr"
+              className={`mb-8 sm:mb-10 xl:mb-12 min-w-0 text-pretty text-white [hyphens:auto] animate-text-sweep ${TYPO_BLOCK_BODY_CLASS}`}
             >
-              <span className="block">Trois expériences, un même déroulé.</span>
-              <span className="block">
-                Cliquez pour découvrir le détail de chaque formule.
-              </span>
+              Trois expériences, un même déroulé. Cliquez pour découvrir le
+              détail de chaque formule.
             </p>
 
             <div
-              className="grid grid-cols-1 items-stretch gap-8 md:grid-cols-3 w-full animate-text-sweep"
+              className="grid grid-cols-1 items-stretch gap-3 sm:gap-4 2xl:grid-cols-3 2xl:gap-8 w-full min-w-0 animate-text-sweep"
               style={{ animationDelay: '200ms' }}
             >
               {FORMULAS.map((formula) => (
                 <Link
                   key={formula.id}
                   href={`/formules#${formula.id}`}
-                  className="group block h-full cursor-pointer no-underline"
+                  className="group block cursor-pointer no-underline 2xl:h-full"
                 >
-                  <div className="relative isolate flex h-full flex-col items-start overflow-hidden border-[3px] border-white bg-black p-6 text-left transition-[border-color,background-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:p-8 group-hover:border-[#f58220] group-hover:bg-[#f58220]">
+                  <div className="relative isolate flex flex-col items-start overflow-hidden border-[3px] border-white bg-black p-5 text-left transition-[border-color,background-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:p-6 2xl:h-full 2xl:p-8 group-hover:border-[#f58220] group-hover:bg-[#f58220]">
                     <span
                       aria-hidden
                       className="pointer-events-none absolute -inset-[3px] z-0 bg-[#f58220] transition-[clip-path] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] [clip-path:polygon(0_100%,0_100%,0_100%)] group-hover:[clip-path:polygon(0_100%,230%_100%,0_-130%)]"
                     />
-                    <div className="relative z-10 flex h-full w-full flex-col items-start">
+                    <div className="relative z-10 flex w-full flex-col items-start 2xl:h-full">
                       <h3
-                        className="font-bold tracking-[0.01em] text-white leading-[1.15] shrink-0 transition-colors duration-500 group-hover:text-black"
+                        className="font-bold tracking-[0.01em] text-white leading-[1.15] shrink-0 transition-colors duration-500 group-hover:text-black 2xl:min-h-[calc(2*1.15em)]"
                         style={TYPO_SUBTITLE}
                       >
                         {formula.title}
                       </h3>
-                      <div className="flex items-start pt-8 sm:pt-10 flex-1">
+                      <div className="flex items-start pt-4 sm:pt-5 2xl:flex-1 2xl:pt-10">
                         <p
-                          className="leading-[1.3] text-white font-bold transition-colors duration-500 group-hover:text-black"
-                          style={TYPO_BODY}
+                          lang="fr"
+                          className={`text-pretty text-white transition-colors duration-500 group-hover:text-black ${TYPO_BLOCK_BODY_CLASS}`}
                         >
                           {formula.summary}
                         </p>
                       </div>
                       <p
-                        className="mt-8 mb-0 inline-block w-fit bg-[#f58220] text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px uppercase transition-colors duration-500 group-hover:bg-white group-hover:text-black"
-                        style={TYPO_BODY}
+                        className="mt-4 sm:mt-5 mb-0 inline-block w-fit shrink-0 bg-[#f58220] text-black font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px] uppercase transition-colors duration-500 group-hover:bg-white group-hover:text-black 2xl:mt-8"
+                        style={TYPO_SUBTITLE}
                       >
                         Découvrir
                       </p>
@@ -604,7 +679,7 @@ export function DubbingView() {
         </div>
       </section>
 
-      <ContactSection idPrefix="dubbing-contact" layout="stacked" />
+      <ContactCtaSection tone="light" />
     </section>
   )
 }

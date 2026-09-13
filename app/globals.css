@@ -259,11 +259,17 @@
 
   z-index: 50;
 
-  background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: #000000;
   border: none;
+  border-bottom: 1px solid transparent;
   overflow: visible;
+
+  transition: border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Sur fond noir : fine séparation blanche sous le header */
+.site-header.is-on-dark {
+  border-bottom-color: #ffffff;
 }
 
 .site-header-bar {
@@ -418,6 +424,8 @@
 
   text-transform: lowercase;
   white-space: nowrap;
+
+  transition: color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .site-header-title span {
@@ -426,6 +434,7 @@
 
 .site-header-title-association {
   color: #f58220;
+  transition: color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* =========================================================
@@ -509,7 +518,9 @@
 
   padding: 6px 12px;
 
-  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .site-nav-desktop .site-nav-link::before {
@@ -533,7 +544,9 @@
   pointer-events: none;
 
   clip-path: polygon(0 100%, 0 100%, 0 100%);
-  transition: clip-path 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    clip-path 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .site-nav-desktop .site-nav-link:hover:not(.is-active) {
@@ -588,6 +601,8 @@
   cursor: pointer;
 
   transform: translateY(-50%);
+
+  transition: color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .site-nav-burger-icon {
@@ -613,7 +628,8 @@
   transition:
     transform 0.25s ease,
     opacity 0.25s ease,
-    top 0.25s ease;
+    top 0.25s ease,
+    background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .site-nav-burger-icon span:nth-child(1) {
@@ -834,33 +850,57 @@
   }
 }
 
-/* Laptop 13–14" : logo + titres un peu plus compacts */
+/* Laptop 13–14" : header compact (~moitié du bureau) */
 @media (min-width: 1024px) and (max-width: 1439px) {
-  .site-header-logo {
-    width: 68px;
-    height: 68px;
-    flex-basis: 68px;
-  }
-
-  .site-header-logo img {
-    width: auto !important;
-    height: 68px !important;
-  }
-
-  .site-header-title {
-    height: 68px;
-    margin-left: 10px;
-    font-size: clamp(15px, 1.35vw, 20px);
+  .site-header-bar,
+  .site-header-desktop-group,
+  .site-header-brand {
+    height: 76px;
   }
 
   .site-nav-desktop ul {
+    height: 76px;
     gap: 0;
     justify-content: space-between;
   }
 
+  .site-header-logo {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+
+  .site-header-logo img {
+    width: auto !important;
+    height: 44px !important;
+  }
+
+  .site-header-title {
+    height: 44px;
+    margin-left: 10px;
+    font-size: clamp(13px, 1.15vw, 17px);
+  }
+
   .site-nav-desktop .site-nav-link {
-    font-size: clamp(10px, 0.85vw, 13px);
-    padding: 6px 12px;
+    font-size: clamp(9px, 0.72vw, 12px);
+    padding: 4px 10px;
+  }
+}
+
+/* Sticky sidebars — calé sous la hauteur du header */
+.site-sticky-offset {
+  top: 110px;
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .site-sticky-offset {
+    top: 96px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .site-sticky-offset {
+    top: 180px;
   }
 }
 

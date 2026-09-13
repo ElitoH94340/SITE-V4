@@ -1,20 +1,22 @@
 'use client'
 
 import {
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
-  type RefObject,
 } from 'react'
 import Link from 'next/link'
-import { ContactSection } from '@/components/contact-section'
 import { VideoPlayButton } from '@/components/video-play-button'
 import { withBasePath } from '@/lib/paths'
+import { ContactCtaSection } from '@/components/contact-cta-section'
 import {
-  TYPO_BODY,
-  TYPO_BODY_CLASS,
-  TYPO_SUBTITLE,
+  TYPO_BLOCK_BODY_BOLD_CLASS,
+  TYPO_BLOCK_BODY_CLASS,
+  TYPO_BLOCK_SUBTEXT_CLASS,
+  TYPO_BLOCK_SUBTITLE_CLASS,
   TYPO_TITLE,
   TYPO_TITLE_CLASS,
 } from '@/lib/typography'
@@ -27,6 +29,7 @@ type Media = {
 type Module = {
   prefix?: string
   title: string
+  titleLines: readonly string[]
   desc?: string
   subDesc?: string
   media?: Media
@@ -52,11 +55,12 @@ const TABS: Tab[] = [
     modules: [
       {
         title: 'Découverte Immersion',
-        desc: "Plusieurs séances de travail en co-organisation avec l'enseignant.",
+        titleLines: ['Découverte', 'Immersion'],
+        desc: "Expérience déjà menée en Réseau d'Éducation\u00A0Prioritaire\u00A0(REP).",
         subDesc:
-          "Expérience déjà menée en Réseau d'Éducation Prioritaire (REP).",
+          "Plusieurs séances de travail en co-organisation avec l'enseignant.",
         objectives: [
-          'Découvrir une œuvre cinématographique, Histoire des Arts',
+          'Découvrir une\u00A0œuvre cinématographique,\nHistoire des Arts',
           "Étudier le sens d'un texte",
           "Faciliter l'expression orale",
           'S’entraîner à la lecture à voix haute',
@@ -87,10 +91,11 @@ const TABS: Tab[] = [
     modules: [
       {
         title: 'Module découverte',
-        desc: 'Plusieurs séances de travail en co-organisation avec les professeurs de Français.',
+        titleLines: ['Module', 'découverte'],
+        subDesc: 'Plusieurs séances de travail en co-organisation avec les professeurs de Français.',
         objectives: [
-          'Découvrir une œuvre cinématographique, Histoire des Arts',
-          'S’entraîner à la lecture : rythme, intonation, fluence',
+          'Découvrir une\u00A0œuvre cinématographique,\nHistoire des Arts',
+          'S’entraîner à la lecture\u00A0: rythme, intonation, fluence',
           'Faciliter l’expression orale',
           'Développer la confiance en soi',
           'Créer une œuvre commune',
@@ -110,14 +115,15 @@ const TABS: Tab[] = [
       {
         prefix: 'Module 1',
         title: 'Découverte Immersion',
-        subDesc:
-          "Plusieurs séances de travail en co-organisation avec l'enseignant.",
+        titleLines: ['Découverte', 'Immersion'],
+        subDesc: "Plusieurs séances de travail en co-organisation avec l'enseignant.",
         media: {
-          photo: '/couverture-lycee-4.png',
+          video: '/lycée-module-4.mp4',
+          photo: '/couverture-10.png',
         },
         objectives: [
-          'Découvrir une œuvre cinématographique, Histoire des Arts',
-          'S’entraîner à la lecture : rythme, intonation, fluence',
+          'Découvrir une\u00A0œuvre cinématographique,\nHistoire des Arts',
+          'S’entraîner à la lecture\u00A0: rythme, intonation, fluence',
           'Faciliter l’expression orale',
           'Créer une œuvre commune',
         ],
@@ -125,7 +131,8 @@ const TABS: Tab[] = [
       {
         prefix: 'Module 2',
         title: 'Découverte Immersion / adaptation',
-        desc: 'Plusieurs séances de travail en co-organisation avec les professeurs d’anglais et de français.',
+        titleLines: ['Découverte', 'immersion / adaptation'],
+        subDesc: 'Plusieurs séances de travail en co-organisation avec les professeurs d’anglais et de français.',
         media: {
           video: '/lycée-module-1.mp4',
           photo: '/couverture-lycee-2.png',
@@ -141,6 +148,7 @@ const TABS: Tab[] = [
       {
         prefix: 'Module 3',
         title: 'Entraînement au grand oral du bac',
+        titleLines: ['Entraînement', 'au grand oral', 'du bac'],
         media: {
           video: '/lycée-module-2.mp4',
           photo: '/couverture-lycee-3.png',
@@ -155,8 +163,10 @@ const TABS: Tab[] = [
       {
         prefix: 'Module 4',
         title: 'Classes avec option cinéma',
-        desc: 'Découvrir un métier de la post-production : adaptateur dialoguiste.',
-        subDesc: "Création d'une œuvre commune.",
+        titleLines: ['Classes avec', 'option cinéma'],
+        desc: "Création d'une œuvre commune.",
+        subDesc:
+          'Découvrir un métier de la post-production : adaptateur dialoguiste.',
         media: {
           video: '/lycée-module-1.mp4',
           photo: '/couverture-lycee-1.png',
@@ -183,8 +193,14 @@ const EDUCATION_PHOTOS = [
   '/ado-2.png',
 ]
 
-const FACTORY_MATERIAL_SUMMARY =
-  'Station de travail pour la synchronisation, vidéoprojection Full HD sur grand écran (200×200\u00A0cm) et moniteurs immersifs, micros de studio, barre de doublage et captation 4K multi-angles.'
+const FACTORY_MATERIAL_ITEMS = [
+  'Station de travail pour\u00A0la\u00A0synchronisation',
+  'Vidéoprojection Full HD sur\u00A0grand\u00A0écran (200×200\u00A0cm)',
+  'Moniteurs immersifs',
+  'Micros de studio',
+  'Barre de doublage',
+  'Captation 4K multi-angles',
+]
 
 function SharpChevron({
   direction,
@@ -196,8 +212,8 @@ function SharpChevron({
   return (
     <svg
       viewBox="0 0 48 56"
-      width="36"
-      height="42"
+      width="28"
+      height="32"
       aria-hidden
       className={className}
       fill="none"
@@ -233,7 +249,7 @@ function FactoryMediaSlide({
   if (media.video) {
     return (
       <div
-        className="relative w-full aspect-video overflow-hidden bg-black flex items-center justify-center cursor-pointer group"
+        className="relative flex h-full w-full cursor-pointer items-center justify-center overflow-hidden bg-black group"
         onClick={onPlay}
       >
         {!isPlaying ? (
@@ -258,7 +274,7 @@ function FactoryMediaSlide({
   }
 
   return (
-    <div className="relative w-full aspect-video overflow-hidden bg-black">
+    <div className="relative h-full w-full overflow-hidden bg-black">
       <img
         src={withBasePath(media.photo)}
         alt={title}
@@ -314,38 +330,27 @@ function FactoryMediaCarousel({
     return () => ro.disconnect()
   }, [mediaList, maxIndex])
 
-  const scrollBy = (direction: -1 | 1) => {
-    setIndex((current) => Math.min(maxIndex, Math.max(0, current + direction)))
+  const goTo = (nextIndex: number) => {
+    setIndex(nextIndex)
     onSlideChange()
   }
 
-  const chevronClass =
-    'inline-flex items-center justify-center p-0 bg-transparent border-0 rounded-none shadow-none outline-none transition-opacity duration-300 cursor-pointer hover:opacity-70 text-white'
-
   const offset = Math.round(slideWidth * index)
 
-  return (
-    <div className="relative w-full min-w-0 overflow-visible">
-      {canScrollPrev ? (
-        <button
-          type="button"
-          onClick={() => scrollBy(-1)}
-          aria-label="Vidéo précédente"
-          className={`${chevronClass} absolute left-0 top-1/2 z-20 -translate-x-full -translate-y-1/2 pr-3 sm:pr-4`}
-        >
-          <SharpChevron direction="left" />
-        </button>
-      ) : null}
+  const edgeNavClass =
+    'absolute top-1/2 z-20 flex -translate-y-1/2 items-center justify-center border-0 bg-transparent p-0 text-white opacity-90 shadow-none outline-none drop-shadow-[0_1px_8px_rgba(0,0,0,0.95)] transition-opacity duration-300 cursor-pointer hover:opacity-100 disabled:pointer-events-none disabled:opacity-0'
 
-      <div ref={viewportRef} className="w-full min-w-0 overflow-hidden">
+  return (
+    <div className="absolute inset-0 min-w-0 overflow-hidden">
+      <div ref={viewportRef} className="h-full w-full min-w-0 overflow-hidden">
         <div
-          className="flex items-start transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
+          className="flex h-full items-stretch transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
           style={{ transform: `translate3d(-${offset}px, 0, 0)` }}
         >
           {mediaList.map((media, mediaIndex) => (
             <div
               key={`${media.video ?? media.photo}-${mediaIndex}`}
-              className="shrink-0"
+              className="h-full shrink-0"
               style={
                 slideWidth > 0
                   ? {
@@ -367,144 +372,455 @@ function FactoryMediaCarousel({
         </div>
       </div>
 
-      {canScrollNext ? (
-        <button
-          type="button"
-          onClick={() => scrollBy(1)}
-          aria-label="Vidéo suivante"
-          className={`${chevronClass} absolute right-0 top-1/2 z-20 translate-x-full -translate-y-1/2 pl-3 sm:pl-4`}
-        >
-          <SharpChevron direction="right" />
-        </button>
+      {mediaList.length > 1 ? (
+        <>
+          <button
+            type="button"
+            onClick={() => goTo(index - 1)}
+            disabled={!canScrollPrev}
+            aria-label="Vidéo précédente"
+            className={`${edgeNavClass} left-2 sm:left-3`}
+          >
+            <SharpChevron direction="left" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => goTo(index + 1)}
+            disabled={!canScrollNext}
+            aria-label="Vidéo suivante"
+            className={`${edgeNavClass} right-2 sm:right-3`}
+          >
+            <SharpChevron direction="right" />
+          </button>
+
+          <div className="pointer-events-none absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
+            {mediaList.map((media, mediaIndex) => {
+              const isActive = mediaIndex === index
+              return (
+                <button
+                  key={`${media.video ?? media.photo}-${mediaIndex}-dot`}
+                  type="button"
+                  aria-label={`Vidéo ${mediaIndex + 1}`}
+                  aria-current={isActive ? 'true' : undefined}
+                  onClick={() => goTo(mediaIndex)}
+                  className={[
+                    'pointer-events-auto h-1.5 w-1.5 shrink-0 rounded-full border-0 p-0 shadow-none outline-none transition-colors duration-300 cursor-pointer',
+                    isActive ? 'bg-white' : 'bg-white/35 hover:bg-white/60',
+                  ].join(' ')}
+                />
+              )
+            })}
+          </div>
+        </>
       ) : null}
     </div>
   )
 }
 
-const FACTORY_GRAY = '#f3f4f6'
+const FACTORY_ORANGE_TITLE_CHIP_CLASS =
+  'inline-block w-fit whitespace-nowrap bg-[#f58220] pl-[3px] py-px text-black font-bold uppercase tracking-[0.01em] max-2xl:pr-[clamp(12px,9cqi,23px)] max-2xl:text-[clamp(16px,max(6.5cqi,18cqh),34px)] max-2xl:leading-[1.05] 2xl:pr-[43px] 2xl:text-[clamp(22px,3.25vw,50px)] 2xl:leading-[1.08]'
 
-const OBJECTIVE_NUMBER_WIDTH = '2.5rem'
+const FACTORY_ORANGE_PUBLIC_CLASS =
+  'inline-block w-fit whitespace-nowrap bg-transparent text-white normal-case font-bold tracking-[0.01em] max-2xl:text-[clamp(8px,max(2.8cqi,7.5cqh),15px)] max-2xl:leading-[1.15] 2xl:text-[26px] 2xl:leading-[1.15]'
 
-function FactoryModuleLabel({ children }: { children: ReactNode }) {
+const FACTORY_INVERTED_LABEL_CHIP_CLASS = `inline-block w-fit whitespace-nowrap bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px] ${TYPO_BLOCK_SUBTITLE_CLASS}`
+
+const FACTORY_INTRO_ORANGE_CHIP_CLASS = `inline-block w-fit whitespace-nowrap bg-[#f58220] text-white pl-[3px] pr-[23px] py-px xl:pr-[43px] ${TYPO_BLOCK_SUBTITLE_CLASS}`
+
+/** Même hauteur qu’avant (deux cellules 16:9 côte à côte) pour une bande pleine largeur */
+const FACTORY_ASPECT_CELL_CLASS = 'aspect-video w-full min-w-0'
+
+function wrapOrangeChipLine(
+  text: string,
+  maxWidth: number,
+  measure: (value: string) => number,
+): string[] {
+  if (maxWidth <= 0) return [text]
+
+  const words = text.split(/ +/).filter(Boolean)
+  if (words.length === 0) return ['']
+
+  const lines: string[] = []
+  let current = ''
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word
+    if (measure(candidate) <= maxWidth) {
+      current = candidate
+    } else {
+      if (current) lines.push(current)
+      current = word
+    }
+  }
+
+  if (current) lines.push(current)
+  return lines.length > 0 ? lines : [text]
+}
+
+function FactoryChipLines({
+  lines,
+  text,
+  chipClassName,
+  className = '',
+  gapClassName = 'gap-0 max-xl:gap-[clamp(2px,0.8cqi,3px)] xl:gap-[5px]',
+  lineClassName = '',
+}: {
+  lines?: readonly string[]
+  text?: string
+  chipClassName: string
+  className?: string
+  gapClassName?: string
+  lineClassName?: string
+}) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const measurerRef = useRef<HTMLSpanElement>(null)
+  const [containerWidth, setContainerWidth] = useState(0)
+
+  useEffect(() => {
+    const element = containerRef.current
+    if (!element) return
+
+    const updateWidth = () => {
+      setContainerWidth(element.getBoundingClientRect().width)
+    }
+
+    updateWidth()
+    const observer = new ResizeObserver(updateWidth)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
+  const measureRectangle = useCallback((value: string) => {
+    const measurer = measurerRef.current
+    if (!measurer) return value.length * 8
+    measurer.textContent = value
+    return measurer.getBoundingClientRect().width
+  }, [])
+
+  const sourceLines = useMemo(() => {
+    if (lines?.length) return [...lines]
+    if (text) return text.split('\n').filter(Boolean)
+    return []
+  }, [lines, text])
+
+  const wrappedLines = useMemo(
+    () =>
+      sourceLines.flatMap((paragraph) =>
+        wrapOrangeChipLine(paragraph, containerWidth, measureRectangle),
+      ),
+    [sourceLines, containerWidth, measureRectangle],
+  )
+
   return (
     <div
-      className="mb-4 flex flex-col items-start gap-[5px] uppercase sm:mb-5"
-      style={TYPO_SUBTITLE}
+      ref={containerRef}
+      className={`flex w-full min-w-0 flex-col items-start ${gapClassName} ${className}`}
     >
-      <span className="inline-block w-fit bg-[#f58220] pl-[3px] pr-[43px] py-px font-bold tracking-[0.01em] text-black">
-        {children}
-      </span>
+      <span
+        ref={measurerRef}
+        aria-hidden
+        className={`pointer-events-none fixed -left-[9999px] top-0 ${chipClassName} ${lineClassName}`}
+      />
+      {wrappedLines.map((line, index) => (
+        <span key={`${line}-${index}`} className={`${chipClassName} ${lineClassName}`}>
+          {line}
+        </span>
+      ))}
     </div>
   )
 }
 
-function FactoryGrayCard({
+function FactoryModuleBlock({
   children,
-  cardRef,
-  height,
+  className = '',
+  tone,
+  minHeight,
 }: {
   children: ReactNode
-  cardRef?: RefObject<HTMLDivElement | null>
-  height?: number
+  className?: string
+  tone: 'white' | 'orange' | 'dark' | 'hero'
+  minHeight?: number
 }) {
+  const tones = {
+    white: 'bg-white text-black overflow-y-auto max-2xl:p-4 p-5 sm:p-6',
+    orange:
+      'bg-[#f58220] text-black overflow-hidden max-2xl:p-[clamp(0.5rem,2.8cqi,1.25rem)] 2xl:p-6',
+    dark: 'bg-black text-white overflow-y-auto p-5 sm:p-6',
+    hero: 'bg-black text-white overflow-visible p-0',
+  } as const
+
   return (
     <div
-      ref={cardRef}
-      className="flex w-full flex-col p-5 text-black sm:p-6"
-      style={{
-        backgroundColor: FACTORY_GRAY,
-        height: height ? `${height}px` : undefined,
-      }}
+      className={`flex min-h-0 min-w-0 flex-col ${tones[tone]} ${className}`}
+      style={minHeight ? { minHeight: `${minHeight}px` } : undefined}
     >
       {children}
     </div>
   )
 }
 
-function FactoryModuleInfoGrid({
-  header,
-  objectives,
-  materialSummary,
+function FactoryModuleLabel({
+  label,
+  inverted = false,
 }: {
-  header: ReactNode
-  objectives: string[]
-  materialSummary: string
+  label: string
+  inverted?: boolean
 }) {
-  const objectivesCardRef = useRef<HTMLDivElement>(null)
-  const [objectivesCardHeight, setObjectivesCardHeight] = useState<number>()
+  return (
+    <div className="mb-3 w-full min-w-0 uppercase sm:mb-3 xl:mb-4">
+      <FactoryChipLines
+        text={label}
+        chipClassName={
+          inverted ? FACTORY_INVERTED_LABEL_CHIP_CLASS : FACTORY_INTRO_ORANGE_CHIP_CLASS
+        }
+      />
+    </div>
+  )
+}
+
+function formatListItemText(text: string) {
+  if (!text.includes('\n')) return text
+
+  const lines = text.split('\n')
+  return lines.map((line, index) => (
+    <span key={`${line}-${index}`}>
+      {line}
+      {index < lines.length - 1 ? <br /> : null}
+    </span>
+  ))
+}
+
+function FactoryDashList({ items }: { items: string[] }) {
+  return (
+    <ul className="flex flex-col">
+      {items.map((item, index) => (
+        <li key={`${index}-${item}`} className="flex items-start">
+          <span
+            aria-hidden="true"
+            className={`mr-1 shrink-0 leading-[1.25] text-black ${TYPO_BLOCK_SUBTEXT_CLASS}`}
+          >
+            -
+          </span>
+          <p
+            lang="fr"
+            className={`m-0 min-w-0 flex-1 text-pretty leading-[1.3] text-black max-2xl:hyphens-none max-2xl:[overflow-wrap:normal] max-2xl:[word-break:normal] 2xl:leading-[1.25] 2xl:hyphens-auto ${TYPO_BLOCK_SUBTEXT_CLASS}`}
+          >
+            {formatListItemText(item)}
+          </p>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function FactoryModuleMedia({
+  useMediaCarousel,
+  current,
+  currentModule,
+  activeMedia,
+  isVideoPlaying,
+  playingMediaIndex,
+  onCarouselPlay,
+  onCarouselSlideChange,
+  onVideoPlay,
+}: {
+  useMediaCarousel: boolean
+  current: Tab
+  currentModule: Module
+  activeMedia: Media
+  isVideoPlaying: boolean
+  playingMediaIndex: number | null
+  onCarouselPlay: (index: number) => void
+  onCarouselSlideChange: () => void
+  onVideoPlay: () => void
+}) {
+  let content: ReactNode
+
+  if (useMediaCarousel) {
+    content = (
+      <FactoryMediaCarousel
+        mediaList={current.mediaList}
+        title={currentModule.title}
+        playingIndex={playingMediaIndex}
+        onPlay={onCarouselPlay}
+        onSlideChange={onCarouselSlideChange}
+      />
+    )
+  } else if (activeMedia.video) {
+    content = (
+      <div
+        className="relative flex h-full w-full cursor-pointer items-center justify-center overflow-hidden group"
+        onClick={onVideoPlay}
+      >
+        {!isVideoPlaying ? (
+          <>
+            <img
+              src={withBasePath(activeMedia.photo)}
+              alt={currentModule.title}
+              className="absolute inset-0 h-full w-full object-cover md:scale-105"
+            />
+            <VideoPlayButton />
+          </>
+        ) : (
+          <video
+            src={withBasePath(activeMedia.video)}
+            className="absolute inset-0 h-full w-full object-cover"
+            controls
+            autoPlay
+          />
+        )}
+      </div>
+    )
+  } else {
+    content = (
+      <div className="relative h-full w-full overflow-hidden">
+        <img
+          src={withBasePath(activeMedia.photo)}
+          alt={currentModule.title}
+          className="absolute inset-0 h-full w-full object-cover md:scale-105"
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-black">{content}</div>
+  )
+}
+
+function FactoryModulePanel({
+  current,
+  currentModule,
+  activeMedia,
+  useMediaCarousel,
+  isVideoPlaying,
+  playingMediaIndex,
+  onCarouselPlay,
+  onCarouselSlideChange,
+  onVideoPlay,
+}: {
+  current: Tab
+  currentModule: Module
+  activeMedia: Media
+  useMediaCarousel: boolean
+  isVideoPlaying: boolean
+  playingMediaIndex: number | null
+  onCarouselPlay: (index: number) => void
+  onCarouselSlideChange: () => void
+  onVideoPlay: () => void
+}) {
+  const aspectCellRef = useRef<HTMLDivElement>(null)
+  const [aspectCellHeight, setAspectCellHeight] = useState<number>()
+
+  const materialItems = currentModule.materialExtra
+    ? [...FACTORY_MATERIAL_ITEMS, currentModule.materialExtra]
+    : FACTORY_MATERIAL_ITEMS
 
   useEffect(() => {
-    const element = objectivesCardRef.current
+    const element = aspectCellRef.current
     if (!element) return
 
     const updateHeight = () => {
-      setObjectivesCardHeight(element.getBoundingClientRect().height)
+      setAspectCellHeight(Math.round(element.getBoundingClientRect().height))
     }
 
     updateHeight()
     const observer = new ResizeObserver(updateHeight)
     observer.observe(element)
     return () => observer.disconnect()
-  }, [objectives])
+  }, [activeMedia, current.id, currentModule.title, useMediaCarousel])
 
   return (
-    <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-x-12 xl:gap-x-14">
-      {/* Gauche — titres en haut, matériel poussé en bas */}
-      <div className="flex min-w-0 flex-col lg:h-full">
-        {header}
-        <div className="hidden min-h-0 flex-1 lg:block" aria-hidden />
-        <div className="pt-10 sm:pt-12 lg:pt-0">
-          <FactoryModuleLabel>
-            Matériel fourni{'\u00A0'}:
-          </FactoryModuleLabel>
-          <FactoryGrayCard height={objectivesCardHeight}>
-            <p
-              className="font-bold tracking-[0.01em]"
-              style={TYPO_BODY}
-            >
-              {materialSummary}
-            </p>
-          </FactoryGrayCard>
-        </div>
-      </div>
-
-      {/* Droite — Objectifs + liste en haut, hauteur naturelle */}
-      <div className="flex min-w-0 flex-col">
-        <FactoryModuleLabel>Objectifs</FactoryModuleLabel>
-        <FactoryGrayCard cardRef={objectivesCardRef}>
-          <FactoryObjectivesList objectives={objectives} />
-        </FactoryGrayCard>
-      </div>
-    </div>
-  )
-}
-
-function FactoryObjectivesList({ objectives }: { objectives: string[] }) {
-  return (
-    <ol className="flex flex-col gap-3 sm:gap-4">
-      {objectives.map((objective, index) => (
-        <li
-          key={`${index}-${objective}`}
-          className="flex items-start gap-3 sm:gap-4"
+    <div className="flex w-full flex-col gap-3 sm:gap-4">
+      <div className="grid w-full grid-cols-2 gap-4 sm:gap-5 xl:gap-6">
+        {/* 1 — titre (colonne gauche, alignée sur Objectifs) */}
+        <div
+          ref={aspectCellRef}
+          className={`${FACTORY_ASPECT_CELL_CLASS} @container relative z-10 overflow-visible bg-black`}
+          style={{ containerType: 'size' }}
         >
-          <span
-            className="shrink-0 tabular-nums text-right font-bold tracking-[0.01em]"
-            style={{
-              ...TYPO_BODY,
-              width: OBJECTIVE_NUMBER_WIDTH,
-            }}
-          >
-            {index + 1}.
-          </span>
-          <p
-            className="min-w-0 font-bold tracking-[0.01em]"
-            style={TYPO_BODY}
-          >
-            {objective}
-          </p>
-        </li>
-      ))}
-    </ol>
+          <FactoryModuleBlock tone="hero" className="h-full min-h-full justify-between overflow-visible">
+            <div className="flex w-full min-w-0 flex-col items-start justify-start gap-[clamp(0.4rem,2.5cqi,0.85rem)] 2xl:gap-5">
+              <div className="relative z-20 w-full min-w-0 origin-top-left -rotate-2 overflow-visible uppercase">
+                <FactoryChipLines
+                  lines={currentModule.titleLines}
+                  chipClassName={FACTORY_ORANGE_TITLE_CHIP_CLASS}
+                  gapClassName="gap-[clamp(1px,0.5cqi,4px)] 2xl:gap-[5px]"
+                />
+              </div>
+              <FactoryChipLines
+                text={current.publicLabel}
+                chipClassName={FACTORY_ORANGE_PUBLIC_CLASS}
+              />
+            </div>
+            {currentModule.desc ? (
+              <p
+                lang="fr"
+                className={`mt-auto w-full min-w-0 text-pretty leading-[1.25] text-white italic max-2xl:hyphens-none max-2xl:[overflow-wrap:normal] max-2xl:[word-break:normal] 2xl:hyphens-auto ${TYPO_BLOCK_SUBTEXT_CLASS}`}
+              >
+                {currentModule.desc}
+              </p>
+            ) : null}
+          </FactoryModuleBlock>
+        </div>
+
+        {/* 2 — vidéo (colonne droite, alignée sur Matériel) */}
+        <div className={`${FACTORY_ASPECT_CELL_CLASS} relative z-0 overflow-hidden bg-black`}>
+          <FactoryModuleMedia
+            useMediaCarousel={useMediaCarousel}
+            current={current}
+            currentModule={currentModule}
+            activeMedia={activeMedia}
+            isVideoPlaying={isVideoPlaying}
+            playingMediaIndex={playingMediaIndex}
+            onCarouselPlay={onCarouselPlay}
+            onCarouselSlideChange={onCarouselSlideChange}
+            onVideoPlay={onVideoPlay}
+          />
+        </div>
+
+        {/* 3 — objectifs */}
+        <FactoryModuleBlock
+          tone="white"
+          minHeight={aspectCellHeight}
+          className="min-h-0"
+        >
+          <FactoryModuleLabel inverted label={`Objectifs${'\u00A0'}:`} />
+          <FactoryDashList items={currentModule.objectives} />
+        </FactoryModuleBlock>
+
+        {/* 4 — matériel */}
+        <FactoryModuleBlock
+          tone="white"
+          minHeight={aspectCellHeight}
+          className="min-h-0"
+        >
+          <FactoryModuleLabel inverted label={`Matériel fourni${'\u00A0'}:`} />
+          <FactoryDashList items={materialItems} />
+        </FactoryModuleBlock>
+
+        {/* 5 — subDesc */}
+        {currentModule.subDesc ? (
+          <div className="col-span-2 flex w-full min-w-0 flex-col bg-black py-3 text-white sm:py-4">
+            <p
+              lang="fr"
+              className={`text-pretty leading-[1.25] text-white [hyphens:auto] ${TYPO_BLOCK_SUBTITLE_CLASS}`}
+            >
+              {currentModule.subDesc}
+            </p>
+          </div>
+        ) : null}
+      </div>
+
+      <Link
+        href={withBasePath('/formules')}
+        className={`${TYPO_TITLE_CLASS} inline-block w-fit shrink-0 self-start whitespace-nowrap uppercase leading-none bg-white pl-[3px] pr-[23px] py-px xl:pr-[43px] text-black no-underline transition-colors duration-300 cursor-pointer hover:bg-[#f58220] hover:text-white`}
+        style={TYPO_TITLE}
+      >
+        {current.ctaButton}
+      </Link>
+    </div>
   )
 }
 
@@ -574,7 +890,7 @@ export function FactoryView() {
   }, [moduleIndex])
 
   return (
-    <section className="relative w-full bg-black text-neutral-50 pt-[90px] lg:pt-[150px] select-none">
+    <section data-header-surface="dark" className="relative w-full bg-black text-neutral-50 pt-[90px] lg:pt-[80px] min-[1440px]:pt-[150px] select-none">
       <style jsx>{`
         @keyframes fadeUp {
           from {
@@ -592,24 +908,23 @@ export function FactoryView() {
         }
       `}</style>
 
-      {/* 1 — LA FABRIQUE À DOUBLAGE (gris) */}
-      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300 overflow-visible">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px] overflow-visible">
+      {/* 1 — LA FABRIQUE À DOUBLAGE (blanc) */}
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300 overflow-visible">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px] overflow-visible">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 La
               </span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 fabrique
               </span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 à doublage
               </span>
             </div>
@@ -630,46 +945,43 @@ export function FactoryView() {
                   className="flex flex-col items-start gap-[5px] uppercase"
                   style={TYPO_TITLE}
                 >
-                  <span className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                  <span className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                     Le doublage{'\u00A0'}:
                   </span>
-                  <span className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                  <span className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                     un programme
                   </span>
-                  <span className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                  <span className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                     culturel
                     </span>
-                    <span className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                    <span className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                     & pédagogique
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-10 sm:mt-14 lg:mt-16 flex flex-col gap-6 sm:gap-8">
+            <div className="mt-10 sm:mt-14 xl:mt-16 flex flex-col gap-6 xl:gap-8">
               <p
-                className="font-bold tracking-[0.01em] text-black animate-text-sweep"
-                style={{
-                  ...TYPO_SUBTITLE,
-                  animationDelay: '400ms',
-                }}
+                lang="fr"
+                className={`text-pretty text-black animate-text-sweep ${TYPO_BLOCK_BODY_CLASS}`}
+                style={{ animationDelay: '400ms' }}
               >
                 Modules de découverte à l&apos;école élémentaire, au collège et
                 au lycée.
               </p>
               <div
-                className="flex flex-col items-start gap-[5px] animate-text-sweep"
-                style={{
-                  ...TYPO_SUBTITLE,
-                  animationDelay: '500ms',
-                }}
+                className="w-full min-w-0 animate-text-sweep"
+                style={{ animationDelay: '500ms' }}
               >
-                <span className="inline-block w-fit bg-[#f58220] text-[#f3f4f6] font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
-                  Développer des actions culturelles et pédagogiques.
-                </span>
-                <span className="inline-block w-fit bg-[#f58220] text-[#f3f4f6] font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
-                  Promouvoir la culture cinématographique.
-                </span>
+                <FactoryChipLines
+                  lines={[
+                    'Développer des actions culturelles et pédagogiques.',
+                    'Promouvoir la culture cinématographique.',
+                  ]}
+                  chipClassName={FACTORY_INTRO_ORANGE_CHIP_CLASS}
+                  gapClassName="gap-[5px]"
+                />
               </div>
             </div>
           </div>
@@ -677,15 +989,14 @@ export function FactoryView() {
       </section>
 
       {/* 2 — ONGLETS + CONTENU (noir) */}
-      <section className="relative bg-black text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 overflow-visible">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px] overflow-visible">
+      <section data-header-surface="dark" className="relative bg-black text-white py-16 xl:py-24 px-4 sm:px-6 lg:px-0 overflow-visible">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px] overflow-visible">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] self-start"
           >
-            <div className="flex flex-col items-start gap-5 sm:gap-6">
+            <div className="flex flex-col items-start gap-4 sm:gap-5 xl:gap-6">
               <div
-                className={`inline-flex w-max flex-col items-stretch gap-5 sm:gap-6 ${TYPO_TITLE_CLASS}`}
+                className={`flex w-max flex-col items-start gap-4 sm:gap-5 xl:gap-6 ${TYPO_TITLE_CLASS}`}
                 style={TYPO_TITLE}
               >
                 {TABS.map((tab) => {
@@ -697,7 +1008,7 @@ export function FactoryView() {
                       aria-current={isActive ? 'true' : undefined}
                       onClick={() => setActive(tab.id)}
                       className={[
-                        `w-full text-left ${TYPO_TITLE_CLASS} pl-[3px] pr-[43px] py-px transition-colors duration-300 cursor-pointer`,
+                        `inline-block w-fit text-left ${TYPO_TITLE_CLASS} pl-[3px] pr-[23px] py-px xl:pr-[43px] transition-colors duration-300 cursor-pointer`,
                         isActive
                           ? 'bg-[#f58220] text-black'
                           : 'bg-black text-white hover:bg-white hover:text-black',
@@ -721,12 +1032,11 @@ export function FactoryView() {
                         aria-current={isActiveModule ? 'true' : undefined}
                         onClick={() => setModuleIndex(index)}
                         className={[
-                          `w-full text-left ${TYPO_BODY_CLASS} uppercase pl-[3px] pr-[43px] py-px transition-colors duration-300 cursor-pointer`,
+                          `w-full text-left uppercase pl-[3px] pr-[23px] py-px xl:pr-[43px] transition-colors duration-300 cursor-pointer ${TYPO_BLOCK_BODY_BOLD_CLASS}`,
                           isActiveModule
                             ? 'bg-white text-black'
                             : 'bg-transparent text-neutral-500 hover:bg-transparent hover:text-white',
                         ].join(' ')}
-                        style={TYPO_BODY}
                       >
                         {module.prefix ?? `Module ${index + 1}`}
                       </button>
@@ -740,126 +1050,25 @@ export function FactoryView() {
           <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col overflow-visible">
             <div
               key={`${active}-${moduleIndex}`}
-              className="w-full animate-text-sweep overflow-visible flex flex-col gap-10 sm:gap-14 lg:gap-16"
+              className="w-full animate-text-sweep overflow-visible"
             >
-              <div className="flex flex-col gap-10 sm:gap-12 lg:gap-14">
-                <FactoryModuleInfoGrid
-                  objectives={currentModule.objectives}
-                  materialSummary={
-                    currentModule.materialExtra
-                      ? `${FACTORY_MATERIAL_SUMMARY} ${currentModule.materialExtra}`
-                      : FACTORY_MATERIAL_SUMMARY
-                  }
-                  header={
-                    <>
-                      <div className="flex flex-col items-start gap-[5px] uppercase">
-                        <span
-                          className="inline-block w-fit bg-[#f58220] pl-[3px] pr-[43px] py-px font-bold tracking-[0.01em] text-black"
-                          style={TYPO_SUBTITLE}
-                        >
-                          {currentModule.title}
-                        </span>
-                        <span
-                          className="inline-block w-fit bg-white pl-[3px] pr-[43px] py-px font-bold tracking-[0.01em] text-black"
-                          style={TYPO_BODY}
-                        >
-                          {current.publicLabel}
-                        </span>
-                      </div>
-
-                      {(currentModule.desc || currentModule.subDesc) && (
-                        <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:gap-4">
-                          {currentModule.desc && (
-                            <p
-                              className="font-bold tracking-[0.01em] text-white"
-                              style={TYPO_BODY}
-                            >
-                              {currentModule.desc}
-                            </p>
-                          )}
-
-                          {currentModule.subDesc && (
-                            <p
-                              className="font-normal italic tracking-[0.01em] text-white/75"
-                              style={TYPO_BODY}
-                            >
-                              {currentModule.subDesc}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </>
-                  }
-                />
-
-                <div>
-                  <Link
-                    href="/formules"
-                    className="group relative isolate inline-flex cursor-pointer overflow-hidden border-[3px] border-white bg-black px-6 py-4 no-underline transition-[border-color,background-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-[#f58220] hover:bg-[#f58220]"
-                  >
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute -inset-[3px] z-0 bg-[#f58220] transition-[clip-path] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] [clip-path:polygon(0_100%,0_100%,0_100%)] group-hover:[clip-path:polygon(0_100%,230%_100%,0_-130%)]"
-                    />
-                    <span
-                      className="relative z-10 font-bold uppercase tracking-[0.01em] text-white transition-colors duration-500 group-hover:text-black"
-                      style={TYPO_BODY}
-                    >
-                      {current.ctaButton}
-                    </span>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Vidéo pleine largeur */}
-              <div className="w-full overflow-visible">
-                {useMediaCarousel ? (
-                  <FactoryMediaCarousel
-                    mediaList={current.mediaList}
-                    title={currentModule.title}
-                    playingIndex={playingMediaIndex}
-                    onPlay={setPlayingMediaIndex}
-                    onSlideChange={() => setPlayingMediaIndex(null)}
-                  />
-                ) : activeMedia.video ? (
-                  <div
-                    className="relative w-full aspect-video overflow-hidden bg-neutral-950 flex items-center justify-center cursor-pointer group"
-                    onClick={() => setIsVideoPlaying(true)}
-                  >
-                    {!isVideoPlaying ? (
-                      <>
-                        <img
-                          src={withBasePath(activeMedia.photo)}
-                          alt={currentModule.title}
-                          className="absolute inset-0 h-full w-full object-cover md:scale-105"
-                        />
-                        <VideoPlayButton />
-                      </>
-                    ) : (
-                      <video
-                        src={withBasePath(activeMedia.video)}
-                        className="absolute inset-0 h-full w-full object-cover"
-                        controls
-                        autoPlay
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <div className="relative w-full aspect-video overflow-hidden bg-neutral-950">
-                    <img
-                      src={withBasePath(activeMedia.photo)}
-                      alt={currentModule.title}
-                      className="absolute inset-0 h-full w-full object-cover md:scale-105"
-                    />
-                  </div>
-                )}
-              </div>
+              <FactoryModulePanel
+                current={current}
+                currentModule={currentModule}
+                activeMedia={activeMedia}
+                useMediaCarousel={useMediaCarousel}
+                isVideoPlaying={isVideoPlaying}
+                playingMediaIndex={playingMediaIndex}
+                onCarouselPlay={setPlayingMediaIndex}
+                onCarouselSlideChange={() => setPlayingMediaIndex(null)}
+                onVideoPlay={() => setIsVideoPlaying(true)}
+              />
             </div>
           </div>
         </div>
       </section>
 
-      <ContactSection idPrefix="factory-contact" layout="stacked" />
+      <ContactCtaSection tone="light" />
     </section>
   )
 }

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Maximize, Pause, Play, Volume2, VolumeX, X } from 'lucide-react'
 import { VideoPlayButton } from '@/components/video-play-button'
 import { withBasePath } from '@/lib/paths'
+import { ContactCtaSection } from '@/components/contact-cta-section'
 import {
   TYPO_BODY,
   TYPO_SUBTITLE,
@@ -56,7 +57,7 @@ const LUDIC_EVENTS: EventItem[] = [
     desc: 'Brétigny-sur-Orge',
     longText:
       'Animation hors les murs dans le Quartier des Ardrets à Brétigny-sur-Orge.\nLe 11 juillet 2023.',
-    image: '/Hors-les-Murs.jpg',
+    image: '/couverture-hors-les-murs.png',
   },
   {
     id: 'l5',
@@ -96,9 +97,9 @@ const LUDIC_EVENTS: EventItem[] = [
     id: 'l9',
     title: 'Centre Paris Anim',
     date: '17/02/2018',
-    desc: 'Paris 19ème',
+    desc: 'Paris, 19ème',
     longText:
-      'Animation au Centre Paris Anim, Paris 19ème.\nLe 17 février 2018.',
+      'Animation au Centre Paris Anim, Paris, 19ème.\nLe 17 février 2018.',
     videoId: 'iomLA6-5LDk',
   },
   {
@@ -113,9 +114,9 @@ const LUDIC_EVENTS: EventItem[] = [
     id: 'l11',
     title: 'Fête du Court Métrage',
     date: '17/12/2016 - 18/12/2016',
-    desc: 'Carreau du Temple — Paris 11ème',
+    desc: 'Carreau du Temple — Paris, 11ème',
     longText:
-      'Fête du Court Métrage au Carreau du Temple, Paris 11ème.\nLes 17 et 18 décembre 2016.',
+      'Fête du Court Métrage au Carreau du Temple, Paris, 11ème.\nLes 17 et 18 décembre 2016.',
     videoId: 'u56qoOOZksA',
   },
   {
@@ -139,7 +140,7 @@ const LUDIC_EVENTS: EventItem[] = [
     id: 'l14',
     title: 'Apt Captation',
     date: '08/08/2015',
-    desc: 'Première animation doublage de l’association',
+    desc: 'Apt',
     longText:
       'Apt Captation — première animation doublage de l’association.\nLe 8 août 2015.',
     videoId: 'cFaV3rzLHnw',
@@ -151,27 +152,27 @@ const FACTORY_EVENTS: EventItem[] = [
     id: 'f1',
     title: 'École Philippe de Girard',
     date: 'Année 2023',
-    desc: 'Classe de CM1/CM2 — Paris 18ème',
+    desc: 'Classe de CM1/CM2 — Paris, 18ème',
     longText:
-      'La Fabrique à doublage à l’école Philippe de Girard, Paris 18ème.\nClasse de CM1/CM2 — année 2023.',
+      'La Fabrique à doublage à l’école Philippe de Girard, Paris, 18ème.\nClasse de CM1/CM2 — année 2023.',
     videoId: '8QNw-f1ia1A',
   },
   {
     id: 'f2',
     title: 'Conférence ESRA Paris',
     date: '17/07/2022',
-    desc: 'Présentation du métier d’adaptateur de doublage',
+    desc: 'Paris, 15ème',
     longText:
       'Conférence ESRA Paris.\nPrésentation du métier d’adaptateur de doublage.\nLe 17 juillet 2022.',
-    image: '/conference-esra-ecole-de-cinema-2021-22.jpg',
+    image: '/couverture-esra.png',
   },
   {
     id: 'f3',
     title: 'École Philippe de Girard',
     date: 'Année 2022',
-    desc: 'Classe de CM1/CM2 — Paris 18ème',
+    desc: 'Classe de CM1/CM2 — Paris, 18ème',
     longText:
-      'La Fabrique à doublage à l’école Philippe de Girard, Paris 18ème.\nClasse de CM1/CM2 — année 2022.',
+      'La Fabrique à doublage à l’école Philippe de Girard, Paris, 18ème.\nClasse de CM1/CM2 — année 2022.',
     videoId: 'oT2paY-TNIM',
   },
   {
@@ -187,9 +188,9 @@ const FACTORY_EVENTS: EventItem[] = [
     id: 'f5',
     title: 'École Philippe de Girard',
     date: 'Année 2021',
-    desc: 'Classe de CM1/CM2 — Paris 18ème',
+    desc: 'Classe de CM1/CM2 — Paris, 18ème',
     longText:
-      'La Fabrique à doublage à l’école Philippe de Girard, Paris 18ème.\nClasse de CM1/CM2 — année 2021.',
+      'La Fabrique à doublage à l’école Philippe de Girard, Paris, 18ème.\nClasse de CM1/CM2 — année 2021.',
     videoId: 'Z86N4znIQwQ',
   },
   {
@@ -205,16 +206,16 @@ const FACTORY_EVENTS: EventItem[] = [
     id: 'f7',
     title: 'École Philippe de Girard',
     date: 'Année 2019',
-    desc: 'Classe de CM1/CM2 — Paris 18ème',
+    desc: 'Classe de CM1/CM2 — Paris, 18ème',
     longText:
-      'La Fabrique à doublage à l’école Philippe de Girard, Paris 18ème.\nClasse de CM1/CM2 — année 2019.',
+      'La Fabrique à doublage à l’école Philippe de Girard, Paris, 18ème.\nClasse de CM1/CM2 — année 2019.',
     videoId: 'PserkUDl1n8',
   },
   {
     id: 'f8',
     title: 'Conférence Université de Rennes',
     date: 'Mars 2019',
-    desc: 'Master 2 d’anglais — Présentation du métier d’adaptateur de doublage',
+    desc: 'Rennes',
     longText:
       'Conférence à l’Université de Rennes, Master 2 d’anglais.\nPrésentation du métier d’adaptateur de doublage.\nMars 2019.',
     image: '/Conférence-Fac-de-Rennes-01-2020.jpg',
@@ -367,6 +368,7 @@ function EventCard({
   const titleLines = splitIntoChipLines(event.title, 18).slice(0, 3)
   const dateLines = splitIntoChipLines(event.date, 16).slice(0, 2)
   const isDark = tone === 'dark'
+  const isHorsLesMurs = event.id === 'l4'
 
   return (
     <button
@@ -388,11 +390,16 @@ function EventCard({
           : 'bg-black text-white hover:bg-[#f58220]',
       ].join(' ')}
     >
-      <div className="relative w-full aspect-[16/10] shrink-0 overflow-hidden bg-black">
+      <div
+        className={[
+          'relative w-full aspect-[16/10] shrink-0 overflow-hidden bg-black',
+          isHorsLesMurs ? 'border-b-[3px] border-black' : '',
+        ].join(' ')}
+      >
         <EventCardMedia event={event} />
       </div>
 
-      <div className="flex flex-col p-5 sm:p-6 lg:p-7">
+      <div className="flex flex-col p-5 sm:p-6 lg:p-5 xl:p-7">
         <div
           className="flex flex-col items-start justify-start gap-[5px] uppercase h-[5.85em] overflow-hidden"
           style={TYPO_SUBTITLE}
@@ -401,7 +408,7 @@ function EventCard({
             <span
               key={`${event.id}-title-${index}`}
               className={[
-                'inline-block w-fit max-w-full font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px transition-colors duration-300',
+                'inline-block w-fit max-w-full font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px] transition-colors duration-300',
                 isDark
                   ? 'bg-black text-white group-hover/card:bg-white group-hover/card:text-[#f58220]'
                   : 'bg-white text-black group-hover/card:bg-white group-hover/card:text-[#f58220]',
@@ -420,7 +427,7 @@ function EventCard({
             <span
               key={`${event.id}-date-${index}`}
               className={[
-                'inline-block w-fit max-w-full whitespace-nowrap font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px transition-colors duration-300',
+                'inline-block w-fit max-w-full whitespace-nowrap font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px] transition-colors duration-300',
                 isDark
                   ? 'bg-black text-white group-hover/card:bg-white group-hover/card:text-[#f58220]'
                   : 'bg-white text-black group-hover/card:bg-white group-hover/card:text-[#f58220]',
@@ -526,7 +533,7 @@ function EventsCarousel({
       <div ref={viewportRef} className="w-full min-w-0 overflow-hidden">
         <div
           ref={trackRef}
-          className="flex items-start gap-8 sm:gap-10 lg:gap-12 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
+          className="flex items-start gap-8 sm:gap-10 xl:gap-12 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
           style={{ transform: `translate3d(-${offset}px, 0, 0)` }}
         >
           {events.map((event) => (
@@ -627,7 +634,7 @@ export function EventsView() {
   }, [activeEvent])
 
   return (
-    <section className="relative w-full bg-black text-neutral-50 pt-[90px] lg:pt-[150px] select-none">
+    <section data-header-surface="dark" className="relative w-full bg-black text-neutral-50 pt-[90px] lg:pt-[80px] min-[1440px]:pt-[150px] select-none">
       <style jsx>{`
         @keyframes fadeUp {
           from {
@@ -646,26 +653,25 @@ export function EventsView() {
       `}</style>
 
       {/* 1 — INTRO */}
-      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300 overflow-visible">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px] overflow-visible">
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300 overflow-visible">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px] overflow-visible">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-[#f58220] text-white pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-[#f58220] text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 Nos
               </span>
-              <span className="inline-block w-fit bg-[#f58220] text-white pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-[#f58220] text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 évènements
               </span>
             </div>
           </div>
 
-          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col overflow-visible">
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col gap-3 sm:gap-4 overflow-visible">
             <div
               className="relative w-full animate-text-sweep overflow-visible"
               style={{ animationDelay: '200ms' }}
@@ -680,19 +686,19 @@ export function EventsView() {
                   className="flex flex-col items-start gap-[5px] uppercase"
                   style={TYPO_SUBTITLE}
                 >
-                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                     Retrouvez
                   </span>
-                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                     l&apos;association
                   </span>
-                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                     Tournez Bobines
                   </span>
-                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                     tout au long
                   </span>
-                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px">
+                  <span className="inline-block w-fit bg-[#f58220] text-white font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                     de l&apos;année
                   </span>
                 </div>
@@ -700,14 +706,14 @@ export function EventsView() {
             </div>
 
             <div
-              className="mt-10 sm:mt-14 lg:mt-16 animate-text-sweep"
+              className="animate-text-sweep"
               style={{ animationDelay: '350ms' }}
             >
               <a
                 href="https://www.youtube.com/@TournezBobines"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] uppercase pl-[3px] pr-[43px] py-px no-underline transition-colors duration-300 cursor-pointer hover:bg-[#f58220] hover:text-white"
+                className="inline-block w-fit bg-black text-white font-bold tracking-[0.01em] uppercase pl-[3px] pr-[23px] py-px xl:pr-[43px] no-underline transition-colors duration-300 cursor-pointer hover:bg-[#f58220] hover:text-white"
                 style={TYPO_SUBTITLE}
               >
                 Découvrez notre chaîne YouTube
@@ -718,20 +724,19 @@ export function EventsView() {
       </section>
 
       {/* 2 — DOUBLAGE POUR TOUS (noir) */}
-      <section className="relative bg-black text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 overflow-visible">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px] overflow-visible">
+      <section data-header-surface="dark" className="relative bg-black text-white py-16 xl:py-24 px-4 sm:px-6 lg:px-0 overflow-visible">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px] overflow-visible">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 Doublage
               </span>
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 pour tous
               </span>
             </div>
@@ -747,24 +752,23 @@ export function EventsView() {
         </div>
       </section>
 
-      {/* 3 — FABRIQUE À DOUBLAGE (gris) */}
-      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 overflow-visible">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px] overflow-visible">
+      {/* 3 — FABRIQUE À DOUBLAGE (blanc) */}
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 overflow-visible">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px] overflow-visible">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 La
               </span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 fabrique
               </span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 à doublage
               </span>
             </div>
@@ -780,17 +784,23 @@ export function EventsView() {
         </div>
       </section>
 
+      <ContactCtaSection tone="dark" />
+
       {/* MODALE */}
       {activeEvent ? (
         <div
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 bg-black/90"
+          className={`fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 backdrop-blur-md ${
+            activeTone === 'dark'
+              ? 'bg-black/90'
+              : 'bg-white/60'
+          }`}
           onClick={handleCloseModal}
         >
           <div
             className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 lg:p-10 ${
               activeTone === 'dark'
-                ? 'bg-black text-white border border-white'
-                : 'bg-[#f3f4f6] text-black'
+                ? 'bg-white text-black'
+                : 'bg-black text-white'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -799,8 +809,8 @@ export function EventsView() {
               onClick={handleCloseModal}
               className={`absolute top-4 right-4 sm:top-5 sm:right-5 inline-flex items-center justify-center p-2 transition-colors cursor-pointer ${
                 activeTone === 'dark'
-                  ? 'bg-white text-black hover:bg-[#f58220]'
-                  : 'bg-black text-white hover:bg-[#f58220] hover:text-black'
+                  ? 'bg-black text-white hover:bg-[#f58220] hover:text-black'
+                  : 'bg-white text-black hover:bg-[#f58220]'
               }`}
               aria-label="Fermer"
             >
@@ -829,10 +839,10 @@ export function EventsView() {
                 {splitIntoChipLines(activeEvent.title, 18).map((line) => (
                   <span
                     key={line}
-                    className={`inline-block w-fit font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px ${
+                    className={`inline-block w-fit font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px] ${
                       activeTone === 'dark'
-                        ? 'bg-white text-black'
-                        : 'bg-black text-[#f3f4f6]'
+                        ? 'bg-black text-white'
+                        : 'bg-white text-black'
                     }`}
                   >
                     {line}
@@ -845,7 +855,7 @@ export function EventsView() {
               {activeEvent.image ? (
                   <div
                     className={`relative w-full aspect-[4/3] overflow-hidden ${
-                      activeTone === 'dark' ? 'bg-neutral-950' : 'bg-black'
+                      activeTone === 'dark' ? 'bg-black' : 'bg-white'
                     }`}
                   >
                     <img
@@ -951,7 +961,7 @@ export function EventsView() {
                   <p
                     key={`${activeEvent.id}-line-${index}`}
                     className={`font-bold tracking-[0.01em] ${
-                      activeTone === 'dark' ? 'text-white' : 'text-black'
+                      activeTone === 'dark' ? 'text-black' : 'text-white'
                     }`}
                     style={{
                       fontSize: 'clamp(11px, 0.85vw, 13px)',

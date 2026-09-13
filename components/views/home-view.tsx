@@ -1,27 +1,19 @@
 'use client'
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-} from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Volume2, VolumeX, ChevronDown, ChevronUp } from 'lucide-react'
 import { ContactSection } from '@/components/contact-section'
 import { DrawingLogo } from '@/components/drawing-logo'
+import {
+  ORIGIN_RECTANGLE_STYLE,
+  RectangleLines,
+} from '@/components/rectangle-lines'
 import { withBasePath } from '@/lib/paths'
-import { TYPO_SUBTITLE, TYPO_TITLE } from '@/lib/typography'
-
-const RECTANGLE_THEMES = {
-  lightOnDark:
-    'inline-block w-fit whitespace-nowrap bg-black text-[#f0f0eb] font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px',
-  white:
-    'inline-block w-fit whitespace-nowrap bg-white text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px',
-  orange:
-    'inline-block w-fit whitespace-nowrap bg-[#f58220] text-black font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px',
-} as const
+import {
+  TYPO_BLOCK_BODY_CLASS,
+  TYPO_BLOCK_SUBTITLE_CLASS,
+  TYPO_TITLE,
+} from '@/lib/typography'
 
 const TEAM_ORIGIN_LINES = [
   "À l'origine",
@@ -31,106 +23,6 @@ const TEAM_ORIGIN_LINES = [
   'aux\u00A0compétences',
   'complémentaires.',
 ] as const
-
-function wrapRectangleLine(
-  text: string,
-  maxWidth: number,
-  measure: (value: string) => number,
-): string[] {
-  if (maxWidth <= 0) return [text]
-
-  // Ne pas couper sur les espaces insécables (ex. « aux compétences »)
-  const words = text.split(/ +/).filter(Boolean)
-  if (words.length === 0) return ['']
-
-  const lines: string[] = []
-  let current = ''
-
-  for (const word of words) {
-    const candidate = current ? `${current} ${word}` : word
-    if (measure(candidate) <= maxWidth) {
-      current = candidate
-    } else {
-      if (current) lines.push(current)
-      current = word
-    }
-  }
-
-  if (current) lines.push(current)
-  return lines.length > 0 ? lines : [text]
-}
-
-function HomeRectangleLines({
-  lines,
-  theme,
-  className = '',
-  style,
-}: {
-  lines: readonly string[]
-  theme: keyof typeof RECTANGLE_THEMES
-  className?: string
-  style?: CSSProperties
-}) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const measurerRef = useRef<HTMLSpanElement>(null)
-  const [containerWidth, setContainerWidth] = useState(0)
-
-  useEffect(() => {
-    const element = containerRef.current
-    if (!element) return
-
-    const updateWidth = () => {
-      setContainerWidth(element.getBoundingClientRect().width)
-    }
-
-    updateWidth()
-    const observer = new ResizeObserver(updateWidth)
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
-
-  const measureRectangle = useCallback(
-    (value: string) => {
-      const measurer = measurerRef.current
-      if (!measurer) return value.length * 10
-      measurer.textContent = value
-      return measurer.getBoundingClientRect().width
-    },
-    [],
-  )
-
-  const maxRectangleWidth = containerWidth
-
-  const wrappedLines = useMemo(
-    () =>
-      lines.flatMap((line) =>
-        wrapRectangleLine(line, maxRectangleWidth, measureRectangle),
-      ),
-    [lines, maxRectangleWidth, measureRectangle],
-  )
-
-  return (
-    <div ref={containerRef} className={className}>
-      <span
-        ref={measurerRef}
-        aria-hidden
-        className={`pointer-events-none fixed -left-[9999px] top-0 ${RECTANGLE_THEMES[theme]}`}
-        style={style}
-      />
-      <div className="flex flex-col items-start gap-[5px]">
-        {wrappedLines.map((line, index) => (
-          <span
-            key={`${line}-${index}`}
-            className={RECTANGLE_THEMES[theme]}
-            style={style}
-          >
-            {line}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 const teamRoles = [
   {
@@ -149,9 +41,9 @@ const teamRoles = [
     id: 'technique',
     titleLines: ['Langage &', 'Technique'],
     summary:
-      'Une ingénieure d’études, professeure de français langue étrangère à l’université.',
+      'Une ingénieure d\u2019études, professeure de français langue étrangère à l\u2019université.',
   },
-]
+] as const
 
 export function HomeView() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -279,7 +171,7 @@ export function HomeView() {
       `}</style>
 
       {/* HERO */}
-      <section className="relative w-full h-[100svh] z-0 flex flex-col bg-black pt-[90px] lg:pt-[150px] overflow-hidden">
+      <section data-header-surface="dark" className="relative w-full h-[100svh] z-0 flex flex-col bg-black pt-[90px] lg:pt-[80px] min-[1440px]:pt-[150px] overflow-hidden">
         <div className="relative w-full flex-1 min-h-0 bg-black">
           <video
             ref={videoRef}
@@ -357,18 +249,17 @@ export function HomeView() {
       {/* CONTENU */}
       <div
         id="contenu"
-        className="relative z-30 scroll-mt-[80px] bg-black shadow-[0_-25px_50px_rgba(0,0,0,1)] lg:scroll-mt-[130px]"
+        className="relative z-30 scroll-mt-[80px] bg-black shadow-[0_-25px_50px_rgba(0,0,0,1)] lg:scroll-mt-[90px] min-[1440px]:scroll-mt-[130px]"
       >
         {/* SECTION EXPÉRIENCE */}
-        <section className="relative w-full py-16 lg:py-24 px-4 sm:px-6 lg:px-0 bg-[#f0f0eb] border-b border-neutral-300">
-          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+        <section data-header-surface="light" className="relative w-full py-16 xl:py-24 px-4 sm:px-6 lg:px-0 bg-white border-b border-neutral-300">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
             <div
-              className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-              style={{ top: '180px' }}
+              className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             >
               <h2 id="experience-title">
-                <HomeRectangleLines
-                  lines={['Vivez une', 'expérience', 'inoubliable.']}
+                <RectangleLines
+                  lines={['Vivez une', 'expérience', 'inoubliable']}
                   theme="lightOnDark"
                   className="uppercase"
                   style={TYPO_TITLE}
@@ -394,33 +285,31 @@ export function HomeView() {
                 className="mt-10 sm:mt-12 relative w-full animate-text-sweep"
                 style={{ animationDelay: '400ms' }}
               >
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-12 w-full items-start">
+                <div className="grid grid-cols-1 min-w-0 gap-8 md:grid-cols-2 md:gap-x-8 md:gap-y-8 lg:gap-x-6 xl:gap-x-10 w-full items-start">
                   <p
-                    className="text-black font-bold tracking-[0.01em]"
-                    style={TYPO_SUBTITLE}
+                    lang="fr"
+                    className={`min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
                   >
                     Plongez dans l&apos;univers passionnant du cinéma.
                     Imaginez-vous dans la peau des comédiens à l&apos;image,
                     face à la projection d&apos;extraits de films cultes avec
                     les textes sur{' '}
-                    <span className="inline-block w-fit whitespace-nowrap bg-black text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
-                      bande rythmo synchrone.
-                    </span>
+                    <span className="font-bold">bande rythmo synchrone.</span>
                   </p>
 
                   <p
-                    className="text-black font-bold tracking-[0.01em]"
-                    style={TYPO_SUBTITLE}
+                    lang="fr"
+                    className={`min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
                   >
                     Les dialogues défilent sous l&apos;image. Vous choisissez un
-                    personnage.{' '}
-                    <span className="inline-block w-fit whitespace-nowrap bg-black text-[#f0f0eb] font-bold tracking-[0.01em] px-[3px] py-px">
-                      Vous le «{'\u00A0'}doublez{'\u00A0'}».
-                    </span>
+                    personnage.
                     <br />
+                    <span className="font-bold">
+                      Vous le «{'\u00A0'}doublez{'\u00A0'}».
+                    </span>{' '}
                     Seul prérequis{'\u00A0'}: être lecteur. Toute l&apos;équipe
-                    de Tournez Bobines est là pour vous accompagner à la barre de
-                    doublage.
+                    de Tournez Bobines est là pour vous accompagner à la barre
+                    de doublage.
                   </p>
                 </div>
               </div>
@@ -429,13 +318,12 @@ export function HomeView() {
         </section>
 
         {/* SECTION ÉQUIPE */}
-        <section className="relative bg-[#050505] text-white py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10 overflow-visible">
-          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+        <section data-header-surface="dark" className="relative bg-black text-white py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10 overflow-visible">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
             <div
-              className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-              style={{ top: '180px' }}
+              className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
             >
-              <HomeRectangleLines
+              <RectangleLines
                 lines={['Qui', 'sommes', 'nous\u00A0?']}
                 theme="orange"
                 className="uppercase"
@@ -445,55 +333,44 @@ export function HomeView() {
 
             <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col overflow-visible">
               <div
-                className="relative w-full animate-text-sweep overflow-visible py-8 sm:py-12 lg:py-16"
+                className="relative w-full animate-text-sweep overflow-visible"
                 style={{ animationDelay: '200ms' }}
               >
-                <div className="relative w-full flex items-center justify-center min-h-[360px] sm:min-h-[440px] lg:min-h-[520px]">
-                  {/* Photo centrée — un peu plus large pour passer sous le logo */}
-                  <div className="relative z-10 w-[72%] sm:w-[68%] lg:w-[64%] aspect-[4/3] overflow-hidden bg-black rotate-[1.5deg] translate-x-[40px]">
-                    <img
-                      src={withBasePath("/Mâcon 2019 L'équipe.JPG")}
-                      alt="Qui sommes nous"
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-                  </div>
-
-                  {/* Citation — gauche */}
-                  <div className="absolute left-0 top-[4%] sm:top-[8%] z-20 pointer-events-none w-[42%] sm:w-[36%] md:w-[32%] lg:w-[30%] -rotate-2">
-                    <HomeRectangleLines
+                <div className="relative flex w-full items-start justify-start gap-8 sm:gap-10 xl:gap-12">
+                  <div className="min-w-0 max-w-[58%] -rotate-2 sm:max-w-[52%] lg:max-w-[48%]">
+                    <RectangleLines
                       lines={TEAM_ORIGIN_LINES}
                       theme="white"
-                      style={TYPO_TITLE}
+                      style={ORIGIN_RECTANGLE_STYLE}
                     />
                   </div>
 
-                  {/* Logo — droite, partiellement sur la photo (−30%) */}
-                  <div className="absolute right-[2%] sm:right-[4%] bottom-[2%] sm:bottom-[6%] z-20 pointer-events-none w-[24%] sm:w-[21%] lg:w-[20%] max-w-[210px] rotate-[7deg]">
+                  <div className="ml-12 w-[24%] shrink-0 rotate-[7deg] sm:ml-20 sm:w-[21%] lg:ml-28 lg:w-[20%] max-w-[210px]">
                     <DrawingLogo className="w-full h-auto" />
                   </div>
                 </div>
               </div>
 
               <div
-                className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
+                className="mt-10 sm:mt-14 xl:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
                 style={{ animationDelay: '400ms' }}
               >
-                <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 md:gap-14 lg:gap-16 w-full">
+                <div className="grid grid-cols-3 items-start gap-4 sm:gap-6 lg:gap-5 xl:gap-10 w-full min-w-0">
                   {teamRoles.map((role) => (
                     <div
                       key={role.id}
-                      className="relative flex flex-col text-left justify-start"
+                      className="relative flex min-w-0 flex-col text-left justify-start"
                     >
-                      <HomeRectangleLines
+                      <RectangleLines
                         lines={role.titleLines}
                         theme="orange"
-                        className="shrink-0 min-h-[calc(2*(1.15em+2px)+5px)]"
-                        style={TYPO_SUBTITLE}
+                        className={`shrink-0 min-h-[calc(2*(1.15em+2px)+5px)] ${TYPO_BLOCK_SUBTITLE_CLASS}`}
+                        lineClassName={TYPO_BLOCK_SUBTITLE_CLASS}
                       />
 
                       <p
-                        className="mt-6 font-bold tracking-[0.01em] text-white"
-                        style={TYPO_SUBTITLE}
+                        lang="fr"
+                        className={`mt-4 xl:mt-6 min-w-0 text-pretty text-white [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
                       >
                         {role.summary}
                       </p>

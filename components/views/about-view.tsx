@@ -4,32 +4,13 @@ import { useState } from 'react'
 
 import { VideoPlayButton } from '@/components/video-play-button'
 import { withBasePath } from '@/lib/paths'
+import { ContactCtaSection } from '@/components/contact-cta-section'
 import {
-  TYPO_BODY,
-  TYPO_BODY_CLASS,
-  TYPO_SUBTITLE,
+  TYPO_BLOCK_BODY_CLASS,
+  TYPO_BLOCK_SUBTITLE_CLASS,
   TYPO_TITLE,
   TYPO_TITLE_CLASS,
 } from '@/lib/typography'
-
-function AboutTextBlock({
-  children,
-  tone = 'light',
-}: {
-  children: string
-  tone?: 'light' | 'dark'
-}) {
-  return (
-    <p
-      className={`${TYPO_BODY_CLASS} ${
-        tone === 'light' ? 'text-black' : 'text-white'
-      }`}
-      style={TYPO_BODY}
-    >
-      {children}
-    </p>
-  )
-}
 
 const dubbingRoles = [
   {
@@ -55,16 +36,19 @@ const dubbingRoles = [
 const principleCards = [
   {
     id: 'experience',
+    titleLines: ['Un', 'espace'],
     summary:
       'Un véritable auditorium de doublage se déplace pour vous proposer de vivre en direct une expérience cinématographique dans les meilleures conditions.',
   },
   {
     id: 'immersion',
+    titleLines: ['Une', 'expérience'],
     summary:
       'À partir de nombreux extraits de films cultes, nous offrons au public la possibilité de se mettre, pendant un temps, dans la peau des comédiens à l’image.',
   },
   {
     id: 'moyens',
+    titleLines: ['Un', 'savoir-faire'],
     summary:
       'Grâce à des moyens techniques professionnels, le public peut choisir parmi plus de 200 extraits de films. La projection et la mise en situation sont alors possibles grâce au texte qui défile sous l’image sur une bande rythmo synchrone.',
   },
@@ -74,7 +58,7 @@ export function AboutView() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
   return (
-    <section className="relative w-full bg-[#050505] text-neutral-50 pt-[90px] lg:pt-[150px] border-t border-white/20 select-none">
+    <section data-header-surface="dark" className="relative w-full bg-black text-neutral-50 pt-[90px] lg:pt-[80px] min-[1440px]:pt-[150px] border-t border-white/20 select-none">
       <style jsx>{`
         @keyframes fadeUp {
           from {
@@ -97,23 +81,22 @@ export function AboutView() {
           SECTION 1 : QU'EST-CE QUE LE DOUBLAGE ?
           ========================================================= */}
 
-      <section className="relative bg-[#f3f4f6] text-neutral-950 py-16 lg:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 Qu’est-ce
               </span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 que le
               </span>
-              <span className="inline-block w-fit bg-black text-[#f3f4f6] pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 doublage{'\u00A0'}?
               </span>
             </div>
@@ -134,35 +117,37 @@ export function AboutView() {
             </div>
 
             <div
-              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
+              className="mt-10 sm:mt-14 xl:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 items-start gap-12 md:grid-cols-3 md:gap-16 lg:gap-20 w-full">
+              <div className="grid grid-cols-3 items-start gap-4 sm:gap-6 lg:gap-5 xl:gap-10 w-full min-w-0">
                 {dubbingRoles.map((role) => (
                   <div
                     key={role.id}
-                    className="relative flex flex-col text-left justify-start"
+                    className="relative flex min-w-0 flex-col text-left justify-start"
                   >
                     <div
-                      className="flex flex-col items-start gap-[5px] shrink-0"
+                      className={`flex flex-col items-start gap-[5px] shrink-0 ${TYPO_BLOCK_SUBTITLE_CLASS}`}
                       style={{
-                        ...TYPO_SUBTITLE,
                         minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
                       }}
                     >
                       {role.titleLines.map((line) => (
                         <span
                           key={line}
-                          className="inline-block w-fit bg-black text-[#f3f4f6] font-bold tracking-[0.01em] pl-[3px] pr-[43px] py-px"
+                          className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]"
                         >
                           {line}
                         </span>
                       ))}
                     </div>
 
-                    <div className="mt-8">
-                      <AboutTextBlock tone="light">{role.summary}</AboutTextBlock>
-                    </div>
+                    <p
+                      lang="fr"
+                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                    >
+                      {role.summary}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -175,20 +160,19 @@ export function AboutView() {
           SECTION LE PRINCIPE ET VIDÉO
           ========================================================= */}
 
-      <section className="relative w-full py-16 lg:py-24 px-4 sm:px-6 lg:px-0 bg-[#050505]">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:pr-[100px]">
+      <section data-header-surface="dark" className="relative w-full py-16 xl:py-24 px-4 sm:px-6 lg:px-0 bg-black">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
           <div
-            className="lg:col-span-4 lg:sticky z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
-            style={{ top: '180px' }}
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
           >
             <div
               className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
               style={TYPO_TITLE}
             >
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 Le
               </span>
-              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[43px] py-px">
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 principe
               </span>
             </div>
@@ -224,16 +208,37 @@ export function AboutView() {
             </div>
 
             <div
-              className="mt-10 sm:mt-14 lg:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
+              className="mt-10 sm:mt-14 xl:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
               style={{ animationDelay: '400ms' }}
             >
-              <div className="grid grid-cols-1 items-start gap-12 md:grid-cols-3 md:gap-16 lg:gap-20 w-full">
+              <div className="grid grid-cols-3 items-start gap-4 sm:gap-6 lg:gap-5 xl:gap-10 w-full min-w-0">
                 {principleCards.map((card) => (
                   <div
                     key={card.id}
-                    className="relative flex flex-col text-left justify-start"
+                    className="relative flex min-w-0 flex-col text-left justify-start"
                   >
-                    <AboutTextBlock tone="dark">{card.summary}</AboutTextBlock>
+                    <div
+                      className={`flex flex-col items-start gap-[5px] shrink-0 ${TYPO_BLOCK_SUBTITLE_CLASS}`}
+                      style={{
+                        minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
+                      }}
+                    >
+                      {card.titleLines.map((line) => (
+                        <span
+                          key={line}
+                          className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]"
+                        >
+                          {line}
+                        </span>
+                      ))}
+                    </div>
+
+                    <p
+                      lang="fr"
+                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-white [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                    >
+                      {card.summary}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -241,6 +246,8 @@ export function AboutView() {
           </div>
         </div>
       </section>
+
+      <ContactCtaSection tone="light" layout="singleLine" />
     </section>
   )
 }

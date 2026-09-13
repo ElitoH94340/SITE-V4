@@ -33,7 +33,7 @@ export const NAV_ITEMS: {
   },
   {
     id: 'events',
-    label: 'EVENEMENTS',
+    label: 'ÉVÉNEMENTS',
     href: '/evenements',
   },
 ]
