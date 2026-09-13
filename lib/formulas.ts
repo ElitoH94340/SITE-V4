@@ -20,15 +20,15 @@ export const FORMULAS: Formula[] = [
     title: "L'Immersion",
     videoId: 'spMb_CFn0hQ',
     summary:
-      'Vous devenez la voix d’un personnage en conditions réelles, guidé par une équipe professionnelle.',
+      'Devenez la voix d’un personnage en conditions réelles, guidé par une équipe professionnelle.',
     steps: [
       {
         num: '1',
-        text: "Vous devenez la voix d'un comédien de doublage pendant l'extrait choisi. À partir d'une vidéo-projection avec bande rythmo synchrone, vous réalisez votre prestation.",
+        text: "Devenez la voix d'un comédien de doublage pendant l'extrait choisi. À partir d'une vidéo-projection avec bande rythmo synchrone, réalisez votre prestation.",
       },
       {
         num: '2',
-        text: "Ce même extrait est diffusé simultanément sur un écran plasma d'entraînement. Vous êtes accompagné par une équipe expérimentée : un directeur artistique qui guide chaque prestation, un assistant technique et deux coordinatrices.",
+        text: "Cette même image est diffusée simultanément sur un écran plasma d'entraînement. Accompagnement par une équipe expérimentée : un directeur artistique qui guide chaque prestation, un assistant technique et deux coordinatrices.",
       },
     ],
   },
@@ -41,11 +41,11 @@ export const FORMULAS: Formula[] = [
     steps: [
       {
         num: '1',
-        text: "Vous devenez la voix d'un comédien de doublage pendant l'extrait choisi. À partir d'une vidéo-projection avec bande rythmo synchrone, vous réalisez votre prestation.",
+        text: "Devenez la voix d'un comédien de doublage pendant l'extrait choisi. À partir d'une vidéo-projection avec bande rythmo synchrone, réalisez votre prestation.",
       },
       {
         num: '2',
-        text: "Ce même extrait est diffusé simultanément sur un écran plasma d'entraînement. Vous êtes accompagné par une équipe expérimentée : un directeur artistique qui guide chaque prestation, un assistant technique et deux coordinatrices.",
+        text: "Cette même image est diffusée simultanément sur un écran plasma d'entraînement. Accompagnement par une équipe expérimentée : un directeur artistique qui guide chaque prestation, un assistant technique et deux coordinatrices.",
       },
       {
         num: '3',
@@ -59,15 +59,15 @@ export const FORMULAS: Formula[] = [
     title: 'La Captation',
     videoId: 'eB0vnr_s5cw',
     summary:
-      'Deux caméras filment votre prestation. Vous repartez avec une clé USB personnelle, en médaillon à l’écran.',
+      'Deux caméras filment votre prestation. Repartez avec une clé USB personnelle, en médaillon à l’écran.',
     steps: [
       {
         num: '1',
-        text: "Vous devenez la voix d'un comédien de doublage pendant l'extrait choisi. À partir d'une vidéo-projection avec bande rythmo synchrone, vous réalisez votre prestation.",
+        text: "Devenez la voix d'un comédien de doublage pendant l'extrait choisi. À partir d'une vidéo-projection avec bande rythmo synchrone, réalisez votre prestation.",
       },
       {
         num: '2',
-        text: "Ce même extrait est diffusé simultanément sur un écran plasma d'entraînement. Vous êtes accompagné par une équipe expérimentée : un directeur artistique qui guide chaque prestation, un assistant technique et deux coordinatrices.",
+        text: "Cette même image est diffusée simultanément sur un écran plasma d'entraînement. Accompagnement par une équipe expérimentée : un directeur artistique qui guide chaque prestation, un assistant technique et deux coordinatrices.",
       },
       {
         num: '3',
@@ -76,7 +76,7 @@ export const FORMULAS: Formula[] = [
       },
       {
         num: '4',
-        text: "En fin de session, vous repartez avec une clé USB personnelle de votre prestation de doublage. Vous vous découvrirez en médaillon interprétant la scène à l'écran.",
+        text: "En fin de session, repartez avec une clé USB personnelle de votre prestation de doublage, en médaillon interprétant la scène à l'écran.",
       },
     ],
   },

@@ -1,265 +1,420 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
-import { FORMULAS } from '@/lib/formulas'
+import { ContactCtaSection } from '@/components/contact-cta-section'
+import { VideoPlayButton } from '@/components/video-play-button'
+import { FORMULAS, type Formula, type FormulaId } from '@/lib/formulas'
 import { withBasePath } from '@/lib/paths'
+import {
+  TYPO_BLOCK_BODY_CLASS,
+  TYPO_BLOCK_SUBTITLE_CLASS,
+  TYPO_TITLE,
+  TYPO_TITLE_CLASS,
+} from '@/lib/typography'
+
+function getFormulaMedia(index: number) {
+  const videoSrc =
+    index === 0
+      ? '/T-B-Immersion.mp4'
+      : index === 1
+        ? '/T-B-Immersion-filmée.mp4'
+        : '/T-B-Captation.mp4'
+
+  const coverSrc =
+    index === 0
+      ? '/couverture-immersion.png'
+      : index === 1
+        ? '/couverture-immersion-filmee.png'
+        : '/couverture-captation.png'
+
+  return { videoSrc, coverSrc }
+}
+
+/** Photos au-dessus des vidéos — une par formule, distinctes du triptyque intro */
+const FORMULA_SECTION_PHOTOS = [
+  '/classe-5.png',
+  '/doublage-7.png',
+  '/technique-4.png',
+] as const
+
+const FORMULA_SECTION_THEMES = [
+  {
+    section: 'bg-black text-white border-b border-white/10',
+    chip: 'bg-white text-black',
+    body: 'text-white',
+  },
+  {
+    section: 'bg-white text-black border-b border-neutral-300',
+    chip: 'bg-black text-white',
+    body: 'text-black',
+  },
+  {
+    section: 'bg-black text-white border-b border-white/10',
+    chip: 'bg-white text-black',
+    body: 'text-white',
+  },
+] as const
+
+const FORMULA_TITLE_LINES = [
+  ["L'Immersion"],
+  ["L'Immersion", 'filmée'],
+  ['La', 'Captation'],
+] as const
+
+const FORMULA_DEVIS_CTA_CLASS = `${TYPO_TITLE_CLASS} block w-full max-w-full min-w-0 whitespace-nowrap uppercase leading-[1.1] pl-[3px] py-px pr-[clamp(12px,9cqi,23px)] text-[clamp(8px,4.8cqi,32px)] transition-colors duration-300 cursor-pointer hover:bg-[#f58220] hover:text-white xl:pr-[43px]`
+
+function FormulaChipLines({
+  lines,
+  chipClass,
+  style,
+  className = '',
+}: {
+  lines: readonly string[]
+  chipClass: string
+  style?: CSSProperties
+  className?: string
+}) {
+  return (
+    <div className={`flex flex-col items-start gap-[5px] uppercase ${className}`}>
+      {lines.map((line) => (
+        <span
+          key={line}
+          className={`inline-block w-fit whitespace-nowrap pl-[3px] pr-[23px] py-px xl:pr-[43px] ${TYPO_BLOCK_SUBTITLE_CLASS} ${chipClass}`}
+          style={style}
+        >
+          {line}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+/** Emplacement triptyque — brancher les images ici quand elles sont prêtes */
+const FORMULAS_INTRO_PHOTOS: [string | null, string | null, string | null] = [
+  '/nocturne-2.png',
+  '/barnum-2.png',
+  '/carreau-1.png',
+]
+
+function PhotoTriptych({
+  photos,
+  alt,
+  mainObjectPosition = 'center',
+}: {
+  photos: [string | null, string | null, string | null]
+  alt: string
+  mainObjectPosition?: string
+}) {
+  const [main, second, third] = photos
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full items-stretch">
+      <div className="relative w-full aspect-[3/4] overflow-hidden bg-black">
+        {main ? (
+          <img
+            src={withBasePath(main)}
+            alt={alt}
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: mainObjectPosition }}
+          />
+        ) : null}
+      </div>
+      <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5 min-h-0 md:h-full">
+        {[second, third].map((photo, index) => (
+          <div
+            key={`triptych-slot-${index + 2}`}
+            className="relative w-full aspect-[4/3] md:aspect-auto md:flex-1 md:min-h-0 overflow-hidden bg-black"
+          >
+            {photo ? (
+              <img
+                src={withBasePath(photo)}
+                alt={`${alt} ${index + 2}`}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function FormulaSection({
+  formula,
+  index,
+  isPlaying,
+  onPlay,
+  onPause,
+  animationDelay = '0ms',
+}: {
+  formula: Formula
+  index: number
+  isPlaying: boolean
+  onPlay: (formulaId: FormulaId) => void
+  onPause: (formulaId: FormulaId) => void
+  animationDelay?: string
+}) {
+  const theme = FORMULA_SECTION_THEMES[index]
+  const { videoSrc, coverSrc } = getFormulaMedia(index)
+  const photoSrc = FORMULA_SECTION_PHOTOS[index]
+  const titleLines = FORMULA_TITLE_LINES[index]
+  return (
+    <section
+      id={`formula-${formula.id}`}
+      data-header-surface={index === 1 ? 'light' : 'dark'}
+      className={`relative py-16 xl:py-24 px-4 sm:px-6 lg:px-0 scroll-mt-[120px] lg:scroll-mt-[90px] min-[1440px]:scroll-mt-[160px] overflow-visible ${theme.section}`}
+    >
+      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px] overflow-visible">
+        <div
+          className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+          style={{ animationDelay }}
+        >
+          <div
+            className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px] uppercase`}
+            style={TYPO_TITLE}
+          >
+            {titleLines.map((line) => (
+              <span
+                key={`${formula.id}-title-${line}`}
+                className={`inline-block w-fit whitespace-nowrap pl-[3px] pr-[23px] py-px xl:pr-[43px] ${theme.chip}`}
+              >
+                {line}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 min-w-0 overflow-visible animate-text-sweep flex flex-col gap-3 sm:gap-4 lg:gap-5"
+          style={{ animationDelay }}
+        >
+          <div className="grid w-full grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-5 items-start overflow-visible">
+            <div className="order-1 flex w-full shrink-0 flex-col gap-3 sm:gap-4 lg:gap-5 lg:order-none">
+              <div className="relative w-full aspect-video overflow-hidden bg-black cursor-pointer group">
+                {!isPlaying ? (
+                  <>
+                    <img
+                      src={withBasePath(coverSrc)}
+                      alt={`Couverture de ${formula.title}`}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      onClick={() => onPlay(formula.id)}
+                    />
+                    <div
+                      className="absolute inset-0 z-10 flex items-center justify-center"
+                      onClick={() => onPlay(formula.id)}
+                    >
+                      <VideoPlayButton
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onPlay(formula.id)
+                        }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <video
+                    id={`video-${formula.id}`}
+                    src={withBasePath(videoSrc)}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    controls
+                    autoPlay
+                    playsInline
+                    onPause={() => onPause(formula.id)}
+                  />
+                )}
+              </div>
+
+              <div className="relative w-full aspect-video overflow-hidden bg-black">
+                <img
+                  src={withBasePath(photoSrc)}
+                  alt={formula.title}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+            </div>
+
+            <div className="relative order-3 min-w-0 lg:order-none">
+              <span
+                className={`${TYPO_TITLE_CLASS} absolute left-0 top-1.5 z-10 inline-block w-fit -rotate-2 origin-top-left whitespace-nowrap uppercase leading-none pl-[3px] pr-[23px] py-px xl:pr-[43px] ${theme.chip}`}
+                style={TYPO_TITLE}
+              >
+                Déroulé
+              </span>
+
+              <div className="grid grid-cols-[auto_1fr] items-start gap-x-3 gap-y-3 pt-14 sm:gap-x-4 sm:gap-y-4 sm:pt-[3.75rem] lg:gap-x-4 lg:gap-y-3 lg:pt-12 xl:gap-x-5 xl:gap-y-5 xl:pt-16">
+                {formula.steps.map((step) => (
+                  <Fragment key={`${formula.id}-${step.num}`}>
+                    <span
+                      className={`inline-block w-fit shrink-0 whitespace-nowrap tabular-nums pl-[3px] pr-[23px] py-px xl:pr-[43px] ${theme.chip} ${TYPO_BLOCK_SUBTITLE_CLASS}`}
+                    >
+                      {step.num}.
+                    </span>
+                    <p
+                      className={`min-w-0 ${theme.body} ${TYPO_BLOCK_BODY_CLASS} max-xl:text-[14px] max-xl:leading-[1.35]`}
+                    >
+                      {step.highlight}
+                      {step.highlight && step.text ? ' ' : null}
+                      {step.text}
+                    </p>
+                  </Fragment>
+                ))}
+
+                <div className="col-start-2 min-w-0 w-full max-w-full @container">
+                  <Link
+                    href={`${withBasePath('/')}#contact`}
+                    className={`${FORMULA_DEVIS_CTA_CLASS} ${theme.chip}`}
+                  >
+                    Devis disponible sur demande
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
 
 export function FormulasView() {
-  const [activeFormulaId, setActiveFormulaId] = useState<string>(FORMULAS[0]?.id || '')
-  const [isPlaying, setIsPlaying] = useState<Record<string, boolean>>({})
+  const [playingId, setPlayingId] = useState<FormulaId | null>(null)
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '')
     if (!hash) return
 
-    const matchingFormula = FORMULAS.find((f) => f.id === hash)
-    if (matchingFormula) {
-      setActiveFormulaId(matchingFormula.id)
-    }
+    const matchingFormula = FORMULAS.find((formula) => formula.id === hash)
+    if (!matchingFormula) return
+
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`formula-${matchingFormula.id}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
   }, [])
 
-  const togglePlay = (e: React.MouseEvent, formulaId: string) => {
-    e.stopPropagation()
-    
-    if (activeFormulaId !== formulaId) {
-      setActiveFormulaId(formulaId)
-    }
+  const playFormula = (formulaId: FormulaId) => {
+    FORMULAS.forEach((formula) => {
+      if (formula.id === formulaId) return
+      const other = document.getElementById(
+        `video-${formula.id}`,
+      ) as HTMLVideoElement | null
+      other?.pause()
+    })
+    setPlayingId(formulaId)
+  }
 
-    const videoEl = document.getElementById(`video-${formulaId}`) as HTMLVideoElement | null
-    if (videoEl) {
-      if (videoEl.paused) {
-        FORMULAS.forEach((f) => {
-          if (f.id !== formulaId) {
-            const otherVideo = document.getElementById(`video-${f.id}`) as HTMLVideoElement | null
-            if (otherVideo && !otherVideo.paused) {
-              otherVideo.pause()
-            }
-          }
-        })
-        videoEl.play().catch(err => console.error("Erreur de lecture :", err))
-      } else {
-        videoEl.pause()
-      }
+  const pauseFormula = (formulaId: FormulaId) => {
+    const el = document.getElementById(
+      `video-${formulaId}`,
+    ) as HTMLVideoElement | null
+    if (el?.paused) {
+      setPlayingId((current) => (current === formulaId ? null : current))
     }
   }
 
   return (
-    <section className="relative min-h-screen w-full overflow-x-hidden bg-black pt-20 flex flex-col text-neutral-50 select-none">
+    <section data-header-surface="dark" className="relative w-full bg-black text-neutral-50 pt-[90px] lg:pt-[80px] min-[1440px]:pt-[150px] select-none">
       <style jsx>{`
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
         .animate-text-sweep {
           animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
         }
-        .bg-textured-paper {
-          background-color: #f3f4f6;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-          color: #171717;
-        }
       `}</style>
 
-      {/* HEADER PAGE */}
-      <div className="relative z-10 mx-auto w-full max-w-4xl px-5 pt-12 pb-8 sm:px-8">
-        <header className="animate-text-sweep text-center">
-          <p className="mb-2.5 text-[10px] font-semibold tracking-[0.3em] text-red-500 uppercase sm:text-xs">
-            Nos formules
-          </p>
-          <h1 className="text-balance font-serif text-3xl leading-tight tracking-tight italic drop-shadow-md sm:text-4xl lg:text-5xl">
-            Immersion, immersion filmée, captation
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-neutral-300">
-            Trois façons de vivre le doublage, de l&apos;expérience en direct à la captation filmée.
-            Le déroulé est identique : vous choisissez un extrait, vous vous entraînez, puis vous jouez la scène.
-          </p>
-        </header>
-      </div>
-
-      {/* ZONE 3 COLONNES FULL BLEED (SPLIT SCREEN) AVEC VIDEOS INTEGREES */}
-      <div id="comparateur-formules" className="w-full flex flex-col lg:flex-row items-stretch mt-8 lg:mt-12 border-t border-white/10 flex-1">
-        {FORMULAS.map((formula, index) => {
-          const isActive = activeFormulaId === formula.id
-          const isVideoPlaying = isPlaying[formula.id] || false
-
-          const videoSrc = withBasePath(
-            index === 0
-              ? '/T-B-Immersion.mp4'
-              : index === 1
-                ? '/T-B-Immersion-filmée.mp4'
-                : '/T-B-Captation.mp4',
-          )
-
-          const coverSrc = withBasePath(
-            index === 0
-              ? '/couverture-immersion.png'
-              : index === 1
-                ? '/couverture-immersion-filmée.png'
-                : '/couverture-captation.png',
-          )
-
-          let colTheme = {
-            bg: 'bg-black text-white',
-            title: 'text-neutral-100',
-            num: 'text-neutral-700',
-            line: 'bg-neutral-800',
-            highlight: 'text-white',
-            text: 'text-neutral-400',
-            border: 'border-white/10',
-          }
-
-          if (index === 0) {
-            colTheme = {
-              bg: 'bg-white text-neutral-900',
-              title: 'text-neutral-900',
-              num: 'text-neutral-300',
-              line: 'bg-neutral-300',
-              highlight: 'text-neutral-900',
-              text: 'text-neutral-600',
-              border: 'border-neutral-200',
-            }
-          } else if (index === 1) {
-            colTheme = {
-              bg: 'bg-textured-paper text-neutral-900',
-              title: 'text-neutral-900',
-              num: 'text-neutral-400',
-              line: 'bg-neutral-400',
-              highlight: 'text-neutral-900',
-              text: 'text-neutral-700',
-              border: 'border-neutral-300',
-            }
-          }
-
-          return (
+      {/* INTRO */}
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300 overflow-visible">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px] overflow-visible">
+          <div
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+          >
             <div
-              key={formula.id}
-              id={`formula-${formula.id}`}
-              onClick={() => {
-                if (!isActive) setActiveFormulaId(formula.id)
-              }}
-              className={`relative flex-1 flex flex-col pb-16 lg:pb-20 transition-all duration-500 cursor-default overflow-hidden ${colTheme.bg}`}
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
             >
-              {/* Formes d'arrière-plan (Index 1) */}
-              {index === 1 && (
-                <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden opacity-65">
-                  <div className="absolute top-[10%] left-[5%] w-[320px] h-[320px] bg-gradient-to-tr from-neutral-400/50 via-neutral-300/40 to-neutral-500/50 rounded-[30%_70%_60%_40%/50%_50%_50%_50%] blur-[45px] transform rotate-12 scale-110" />
-                  <div className="absolute top-[50%] left-[60%] w-[360px] h-[360px] bg-gradient-to-bl from-neutral-500/50 via-neutral-400/45 to-neutral-300/50 rounded-[60%_40%_30%_70%/40%_60%_40%_60%] blur-[40px] transform -rotate-45 scale-90" />
-                  <div className="absolute top-[20%] left-[70%] w-[300px] h-[300px] bg-gradient-to-r from-neutral-600/45 via-neutral-400/40 to-neutral-300/40 rounded-[50%_50%_40%_60%/60%_40%_50%_50%] blur-[50px] transform rotate-45 scale-125" />
-                  <div className="absolute top-[60%] left-[15%] w-[290px] h-[290px] bg-gradient-to-tl from-neutral-300/45 via-neutral-500/40 to-neutral-600/35 rounded-[40%_60%_30%_70%/50%_50%_70%_30%] blur-[45px] transform -rotate-12 scale-105" />
-                  <div className="absolute top-[35%] left-[35%] w-[340px] h-[340px] bg-gradient-to-br from-neutral-300/40 via-neutral-500/45 to-neutral-400/45 rounded-[70%_30%_50%_50%/30%_70%_50%_50%] blur-[45px] transform rotate-90 scale-95" />
-                </div>
-              )}
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                Nos
+              </span>
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                formules
+              </span>
+            </div>
+          </div>
 
-              {/* LECTEUR VIDÉO */}
-              <div className="relative z-10 w-full mb-10 shadow-2xl flex flex-col">
-                <div 
-                  className={`relative w-full aspect-video overflow-hidden flex items-center justify-center bg-black ${!isVideoPlaying ? 'cursor-pointer' : ''}`}
-                  onClick={(e) => {
-                    if (!isVideoPlaying) togglePlay(e, formula.id)
-                  }}
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col overflow-visible">
+            <div
+              className="relative w-full animate-text-sweep overflow-visible"
+              style={{ animationDelay: '200ms' }}
+            >
+              <PhotoTriptych
+                photos={FORMULAS_INTRO_PHOTOS}
+                alt="Nos formules"
+              />
+
+              <div className="absolute left-[-4%] sm:left-[-3%] top-[52%] sm:top-[55%] z-20 pointer-events-none w-[70%] sm:w-[58%] lg:w-[48%] -translate-y-1/2 -rotate-2">
+                <div
+                  className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px] uppercase`}
+                  style={TYPO_TITLE}
                 >
-                  <video
-                    id={`video-${formula.id}`}
-                    className={`absolute inset-0 h-full w-full outline-none transition-all duration-700 ${isActive ? 'object-contain' : 'object-cover'}`}
-                    src={videoSrc}
-                    preload="metadata"
-                    playsInline
-                    controls={isActive}
-                    onPlay={() => setIsPlaying(prev => ({ ...prev, [formula.id]: true }))}
-                    onPause={() => setIsPlaying(prev => ({ ...prev, [formula.id]: false }))}
-                  />
-
-                  <div 
-                    className={`absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-500 ${
-                      isVideoPlaying ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                    }`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={coverSrc} 
-                      alt={`Couverture de ${formula.title}`} 
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-
-                    <div className="absolute inset-0 bg-black/10 transition-colors duration-300" />
-                    
-                    <button
-                      type="button"
-                      onClick={(e) => togglePlay(e, formula.id)}
-                      className="pointer-events-auto relative z-20 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white shadow-xl transition-all duration-300 hover:border-red-500 hover:bg-red-600 hover:shadow-[0_0_30px_rgba(220,38,38,0.5)]"
-                      aria-label={`Lancer la vidéo ${formula.title}`}
-                    >
-                      <svg className="h-8 w-8 sm:h-10 sm:w-10 fill-current ml-1" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </button>
-                  </div>
+                  <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                    Immersion
+                  </span>
+                  <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                    Immersion filmée
+                  </span>
+                  <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                    Captation
+                  </span>
                 </div>
-              </div>
-
-              {/* CONTENU TEXTUEL */}
-              <div className="relative z-10 flex flex-col flex-1 px-6 sm:px-12 lg:px-10 xl:px-16 w-full">
-                
-                {/* TITRE DE LA COLONNE */}
-                <div className="mb-10 text-center flex items-center justify-center">
-                  <h2 className={`text-balance font-serif text-3xl leading-tight tracking-tight italic drop-shadow-md sm:text-4xl lg:text-5xl transition-transform duration-500 ${colTheme.title}`}>
-                    {formula.title}
-                  </h2>
-                </div>
-
-                {/* Déroulé / Étapes */}
-                <div className="flex-1 space-y-5 max-w-sm mx-auto w-full group">
-                  {formula.steps.map((step) => (
-                    <div key={step.num} className="flex items-start gap-3.5 text-left">
-                      <div className="flex shrink-0 items-center justify-end w-4">
-                        <span className={`font-serif text-lg italic transition-colors duration-300 group-hover:${colTheme.highlight.split(' ')[0]} ${colTheme.num}`}>
-                          {step.num}
-                        </span>
-                      </div>
-                      <div className="mt-3 flex w-4 shrink-0 items-center">
-                        <div className={`h-px w-full transition-colors duration-300 group-hover:bg-red-500/50 ${colTheme.line}`} />
-                      </div>
-                      <div className="pt-0.5 text-pretty text-base leading-relaxed">
-                        {step.highlight && (
-                          <span className={`mb-1 block font-medium ${colTheme.highlight}`}>
-                            {step.highlight}
-                          </span>
-                        )}
-                        {step.text && (
-                          <span className={`block ${colTheme.text}`}>
-                            {step.text}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Mention devis modifiée avec la classe rouge demandée */}
-                <div className={`mt-12 pt-5 border-t text-center transition-colors duration-300 ${colTheme.border}`}>
-                  <p className="mb-2.5 text-[10px] font-semibold tracking-[0.3em] text-red-500 uppercase sm:text-xs">
-                    Devis disponible sur demande
-                  </p>
-                </div>
-
               </div>
             </div>
-          )
-        })}
-      </div>
 
-      {/* CTA FINAL */}
-      <div className="w-full bg-black py-16 text-center border-t border-white/10">
-        <Link
-          href="/qui-sommes-nous?to=contact"
-          scroll={false}
-          className="inline-flex cursor-pointer items-center justify-center rounded-full border border-white/20 bg-white/5 px-8 py-4 text-sm font-medium tracking-wide text-neutral-200 shadow-2xl backdrop-blur-md transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white hover:shadow-[0_0_30px_rgba(220,38,38,0.4)]"
-        >
-          Contactez-nous pour votre projet
-        </Link>
-      </div>
+            <div className="mt-10 sm:mt-14 xl:mt-16 flex flex-col gap-6 xl:gap-8">
+              <p
+                className={`text-pretty text-black animate-text-sweep ${TYPO_BLOCK_BODY_CLASS}`}
+                style={{ animationDelay: '350ms' }}
+              >
+                De l&apos;expérience en direct à la captation filmée, le déroulé
+                est identique{'\u00A0'}: choisissez un extrait, entraînez-vous,
+                puis jouez la scène.
+              </p>
+              <div
+                className="animate-text-sweep"
+                style={{ animationDelay: '500ms' }}
+              >
+                <span className={`inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px] ${TYPO_BLOCK_SUBTITLE_CLASS}`}>
+                  Trois façons de vivre le doublage{'\u00A0'}:
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {FORMULAS.map((formula, index) => (
+        <FormulaSection
+          key={formula.id}
+          formula={formula}
+          index={index}
+          isPlaying={playingId === formula.id}
+          onPlay={playFormula}
+          onPause={pauseFormula}
+          animationDelay={`${200 + index * 120}ms`}
+        />
+      ))}
+
+      <ContactCtaSection tone="light" />
     </section>
   )
 }

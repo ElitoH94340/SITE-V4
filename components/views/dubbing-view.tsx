@@ -1,23 +1,252 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import Link from 'next/link'
-import { FormulaFrame } from '@/components/formula-frame'
 import { VideoPlayButton } from '@/components/video-play-button'
 import { FORMULAS } from '@/lib/formulas'
 import { withBasePath } from '@/lib/paths'
+import { ContactCtaSection } from '@/components/contact-cta-section'
+import { RectangleLines } from '@/components/rectangle-lines'
+import {
+  CHIP_PAD_CLASS,
+  TYPO_BLOCK_BODY_CLASS,
+  TYPO_BLOCK_SUBTITLE_CLASS,
+  TYPO_SUBTITLE,
+  TYPO_TITLE,
+  TYPO_TITLE_CLASS,
+} from '@/lib/typography'
 
 const HEADER_PHOTOS = [
-  '/adultes-souriants.png',
-  '/Mardeuil 2018.png',
-  '/sourires-enfants.jpg',
+  '/doublage-6.png',
+  '/senior-1.png',
+  '/enfants-3.png',
 ]
 
 const MATERIAL_PHOTOS = [
-  '/005.jpg',
-  '/006.jpg',
-  '/007.jpg',
+  '/technique-2.png',
+  '/barnum-1.png',
+  '/experience-1.png',
 ]
+
+const offerTexts = [
+  <>
+    Plongez dans l&apos;univers étonnant du doublage et vivez cette{' '}
+    <span className="font-bold">expérience unique</span>
+    {' '}dans les conditions d&apos;un véritable studio.
+  </>,
+  <>
+    Mairies, institutions, entreprises publiques et privées, nous vous
+    proposons différentes{' '}
+    <span className="font-bold">animations tous publics</span>
+    {', adaptées à vos événements, dans des lieux dédiés ou sous un barnum.'}
+  </>,
+]
+
+const objectives = [
+  {
+    id: 'federer',
+    num: '1',
+    lines: ['Fédérer un', 'groupe de', 'collaborateurs.'],
+  },
+  {
+    id: 'dimension',
+    num: '2',
+    lines: [
+      'Donner une',
+      'dimension festive',
+      '&\u00A0cinématographique',
+      'à un événement.',
+    ],
+  },
+]
+
+const howItWorksSteps = [
+  {
+    num: '1',
+    linesLaptop: ['Prérequis : être lecteur.'],
+    linesDesktop: ['Prérequis : être lecteur.'],
+  },
+  {
+    num: '2',
+    linesLaptop: [
+      'Plus de 200 extraits de films cultes',
+      'sont à votre disposition,',
+      'avec différents degrés de difficulté.',
+    ],
+    linesDesktop: [
+      'Plus de 200 extraits de films cultes sont à votre disposition,',
+      'avec différents degrés de difficulté.',
+    ],
+  },
+  {
+    num: '3',
+    linesLaptop: ['Choisissez le film,', 'l\u2019extrait et le personnage.'],
+    linesDesktop: ['Choisissez le film, l\u2019extrait', 'et le personnage.'],
+  },
+  { num: '4', linesLaptop: ['Entraînez-vous.'], linesDesktop: ['Entraînez-vous.'] },
+  {
+    num: '5',
+    linesLaptop: ['Une fois prêts, jouez la scène,', 'seul(e) ou à plusieurs.'],
+    linesDesktop: ['Une fois prêts, jouez la scène,', 'seul(e) ou à plusieurs.'],
+  },
+]
+
+const HOW_IT_WORKS_BODY_CLASS =
+  'text-[18px] 2xl:text-[24px] leading-[1.4] font-normal tracking-[0.01em]'
+
+function NumberedLinesBlock({
+  num,
+  lines,
+  textStyle,
+  textClassName,
+  textTheme = 'plainWhite',
+  compact = false,
+  disableWrap = true,
+}: {
+  num: string
+  lines: readonly string[]
+  textStyle?: CSSProperties
+  textClassName?: string
+  textTheme?: 'plainWhite' | 'plainWhiteBody'
+  compact?: boolean
+  disableWrap?: boolean
+}) {
+  return (
+    <div
+      className={`flex w-full min-w-0 flex-col items-start ${compact ? 'gap-[3px]' : 'gap-[5px]'}`}
+    >
+      <span
+        className={`inline-block w-fit bg-white text-black font-bold tracking-[0.01em] ${CHIP_PAD_CLASS}`}
+        style={TYPO_TITLE}
+      >
+        {num}.
+      </span>
+      <RectangleLines
+        lines={lines}
+        theme={textTheme}
+        className="w-full min-w-0"
+        lineClassName={textClassName}
+        style={textStyle}
+        disableWrap={disableWrap}
+      />
+    </div>
+  )
+}
+
+function HowItWorksStep({
+  step,
+  variant,
+}: {
+  step: (typeof howItWorksSteps)[number]
+  variant: 'laptop' | 'desktop'
+}) {
+  const isDesktop = variant === 'desktop'
+  return (
+    <NumberedLinesBlock
+      num={step.num}
+      lines={isDesktop ? step.linesDesktop : step.linesLaptop}
+      textTheme="plainWhiteBody"
+      textClassName={HOW_IT_WORKS_BODY_CLASS}
+      compact
+      disableWrap={false}
+    />
+  )
+}
+
+const howItWorksLaptopPlacement = [
+  { step: howItWorksSteps[0], className: 'col-start-1 row-start-1 pr-4 sm:pr-8 lg:pr-10' },
+  { step: howItWorksSteps[1], className: 'col-start-1 row-start-2 pr-4 sm:pr-8 lg:pr-10' },
+  { step: howItWorksSteps[2], className: 'col-start-1 row-start-3 pr-4 sm:pr-8 lg:pr-10' },
+  { step: howItWorksSteps[3], className: 'col-start-2 row-start-1 pl-4 sm:pl-8 lg:pl-10' },
+  { step: howItWorksSteps[4], className: 'col-start-2 row-start-2 pl-4 sm:pl-8 lg:pl-10' },
+] as const
+
+const howItWorksNote =
+  "(Le déroulé est identique pour l'immersion, l'immersion filmée ou la captation)"
+
+const materialCards = [
+  {
+    id: 'regie',
+    titleLines: ['Régie &', 'Synchronisation'],
+    lines: [
+      <>Station haute performance et logiciel{' '}
+          Mosaic (Noblurway)
+      </>,
+      <>pour une bande rythmo fluide et une sync image/son sans latence.</>,
+    ],
+  },
+  {
+    id: 'projection',
+    titleLines: ['Retour &', 'Projection'],
+    lines: [
+      <>
+        Vidéoprojection Full HD sur toile géante{' '}
+          (200×200{'\u00A0'}cm)
+      </>,
+      <>et moniteurs jusqu’à 160{'\u00A0'}cm pour un retour immersif.</>,
+    ],
+  },
+  {
+    id: 'son',
+    titleLines: ['Son &', 'Captation'],
+    lines: [
+      <>Micros canon de studio, barre de doublage pro</>,
+      <>
+        et captation multi-angles en{' '}
+          4K.
+      </>,
+    ],
+  },
+]
+
+function PhotoTriptych({
+  photos,
+  alt,
+  mainObjectPosition = 'center',
+  reversed = false,
+}: {
+  photos: string[]
+  alt: string
+  mainObjectPosition?: string
+  reversed?: boolean
+}) {
+  const [main, second, third] = photos
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full items-stretch">
+      <div
+        className={`relative w-full aspect-[3/4] overflow-hidden bg-black ${
+          reversed ? 'order-1 md:order-2' : ''
+        }`}
+      >
+        <img
+          src={withBasePath(main)}
+          alt={alt}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: mainObjectPosition }}
+        />
+      </div>
+      <div
+        className={`flex flex-col gap-3 sm:gap-4 lg:gap-5 min-h-0 md:h-full ${
+          reversed ? 'order-2 md:order-1' : ''
+        }`}
+      >
+        {[second, third].map((photo, index) => (
+          <div
+            key={photo}
+            className="relative w-full aspect-[4/3] md:aspect-auto md:flex-1 md:min-h-0 overflow-hidden bg-black"
+          >
+            <img
+              src={withBasePath(photo)}
+              alt={`${alt} ${index + 2}`}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export function DubbingView() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
@@ -25,171 +254,124 @@ export function DubbingView() {
   const [isHowItWorksVideoPlaying, setIsHowItWorksVideoPlaying] = useState(false)
 
   return (
-    <>
-      <section className="relative w-full bg-black text-neutral-50 overflow-x-hidden pt-20 pb-12 select-none">
-        
-        <style jsx>{`
-          @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .animate-text-sweep {
-            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    <section data-header-surface="dark" className="relative w-full bg-black text-neutral-50 pt-[90px] lg:pt-[80px] min-[1440px]:pt-[150px] select-none">
+      <style jsx>{`
+        @keyframes fadeUp {
+          from {
             opacity: 0;
+            transform: translateY(30px);
           }
-
-          @keyframes pulseGlow {
-            0%, 100% { opacity: 0.4; box-shadow: 0 0 10px rgba(220, 38, 38, 0.4); }
-            50% { opacity: 1; box-shadow: 0 0 20px rgba(220, 38, 38, 0.8); }
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
-          .animate-pulse-glow {
-            animation: pulseGlow 2s ease-in-out infinite;
-          }
+        }
+        .animate-text-sweep {
+          animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          opacity: 0;
+        }
+      `}</style>
 
-          @keyframes thermalChaos1 {
-            0% { transform: translate(-10%, -10%) rotate(0deg) scale(1); }
-            25% { transform: translate(80vw, 30vh) rotate(90deg) scale(1.4); }
-            50% { transform: translate(30vw, 85vh) rotate(180deg) scale(0.8); }
-            75% { transform: translate(70vw, 60vh) rotate(270deg) scale(1.2); }
-            100% { transform: translate(-10%, -10%) rotate(360deg) scale(1); }
-          }
+      {/* 1 — UNE OFFRE LUDIQUE (gris) */}
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
+          <div
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+          >
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                Une offre
+              </span>
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                ludique
+              </span>
+            </div>
+          </div>
 
-          @keyframes thermalChaos2 {
-            0% { transform: translate(90vw, 80vh) rotate(0deg) scale(1.2); }
-            25% { transform: translate(10vw, 20vh) rotate(-100deg) scale(0.7); }
-            50% { transform: translate(75vw, 40vh) rotate(-180deg) scale(1.3); }
-            75% { transform: translate(20vw, 70vh) rotate(-260deg) scale(0.9); }
-            100% { transform: translate(90vw, 80vh) rotate(-360deg) scale(1.2); }
-          }
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
+            <div
+              className="relative w-full animate-text-sweep"
+              style={{ animationDelay: '200ms' }}
+            >
+              <PhotoTriptych photos={HEADER_PHOTOS} alt="Une offre ludique" />
+            </div>
 
-          @keyframes thermalChaos3 {
-            0% { transform: translate(40vw, 100vh) rotate(45deg) scale(0.8); }
-            30% { transform: translate(10vw, 40vh) rotate(160deg) scale(1.5); }
-            60% { transform: translate(85vw, 15vh) rotate(250deg) scale(0.9); }
-            100% { transform: translate(40vw, 100vh) rotate(405deg) scale(0.8); }
-          }
-
-          @keyframes thermalChaos4 {
-            0% { transform: translate(20vw, -20vh) rotate(-30deg) scale(1.1); }
-            35% { transform: translate(70vw, 90vh) rotate(-150deg) scale(0.8); }
-            70% { transform: translate(5vw, 50vh) rotate(-240deg) scale(1.4); }
-            100% { transform: translate(20vw, -20vh) rotate(-390deg) scale(1.1); }
-          }
-
-          @keyframes thermalChaos5 {
-            0% { transform: translate(70vw, 20vh) rotate(15deg) scale(0.9); }
-            40% { transform: translate(30vw, 70vh) rotate(190deg) scale(1.3); }
-            80% { transform: translate(90vw, 80vh) rotate(290deg) scale(0.7); }
-            100% { transform: translate(70vw, 20vh) rotate(375deg) scale(0.9); }
-          }
-
-          .animate-thermal-1 { animation: thermalChaos1 44s infinite ease-in-out; }
-          .animate-thermal-2 { animation: thermalChaos2 52s infinite ease-in-out; }
-          .animate-thermal-3 { animation: thermalChaos3 38s infinite ease-in-out; }
-          .animate-thermal-4 { animation: thermalChaos4 62s infinite ease-in-out; }
-          .animate-thermal-5 { animation: thermalChaos5 48s infinite ease-in-out; }
-
-          .bg-textured-paper {
-            background-color: #f3f4f6;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-            color: #171717;
-          }
-        `}</style>
-
-        {/* CONTENEUR PRINCIPAL */}
-        <div className="relative z-10 mx-auto max-w-7xl px-5 pt-8 sm:px-8 w-full">
-          
-          <header className="text-center animate-text-sweep mb-8">
-            <p className="mb-2.5 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-red-500">
-              Doublage pour tous
-            </p>
-            <h1 className="text-balance font-serif italic text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight drop-shadow-md mb-0">
-              Une offre ludique
-            </h1>
-          </header>
-
-          <div className="mx-auto max-w-4xl w-full">
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 w-full animate-text-sweep" style={{ animationDelay: '200ms' }}>
-              <div className="relative w-full aspect-[3/4] md:aspect-auto md:h-full border border-white/10 bg-neutral-900/40 p-2 sm:p-3 shadow-2xl backdrop-blur-md">
-                <div className="relative h-full w-full overflow-hidden border border-white/10 bg-black">
-                  <img 
-                    src={withBasePath(HEADER_PHOTOS[0])} 
-                    alt="Animation 1" 
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-6">
-                {HEADER_PHOTOS.slice(1, 3).map((photo, index) => (
-                  <div key={index} className="relative w-full aspect-video border border-white/10 bg-neutral-900/40 p-2 sm:p-3 shadow-2xl backdrop-blur-md">
-                    <div className="relative h-full w-full overflow-hidden border border-white/10 bg-black">
-                      <img 
-                        src={withBasePath(photo)} 
-                        alt={`Animation ${index + 2}`} 
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
-                    </div>
-                  </div>
+            <div
+              className="mt-10 sm:mt-14 xl:mt-16 relative w-full animate-text-sweep"
+              style={{ animationDelay: '400ms' }}
+            >
+              <div className="grid grid-cols-1 min-w-0 gap-8 md:grid-cols-2 md:gap-x-8 md:gap-y-8 lg:gap-x-6 xl:gap-x-10 w-full items-start">
+                {offerTexts.map((text, index) => (
+                  <p
+                    key={index}
+                    lang="fr"
+                    className={`min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                  >
+                    {text}
+                  </p>
                 ))}
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 pb-0 text-pretty text-base leading-relaxed text-neutral-300 w-full animate-text-sweep" style={{ animationDelay: '400ms' }}>
-              <p>
-                Plongez dans l&apos;univers étonnant du doublage et vivez cette expérience unique dans les conditions d&apos;un véritable studio.
-              </p>
-              <p>
-                Mairies, institutions, entreprises publiques et privées, nous vous proposons différentes animations tous publics, adaptées à vos événements, dans des lieux dédiés ou sous un barnum.
-              </p>
-            </div>
           </div>
         </div>
+      </section>
 
-        {/* SECTION NOS OBJECTIFS */}
-        <div className="w-full mt-12 bg-white py-14 px-5 sm:px-8 border-t border-neutral-200 relative">
-          <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center w-full">
-            
-            <div className="w-full text-center mb-8">
-              <h2 className="text-balance font-serif italic text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight drop-shadow-sm text-neutral-900 mb-4">
-                Nos objectifs
-              </h2>
-              
-              <ul className="flex flex-col items-center gap-5 text-black font-serif italic text-2xl sm:text-3xl tracking-normal text-balance list-none mb-0">
-                <li>
-                  <span className="text-black mr-3">—</span> 
-                  Fédérer un groupe de <span className="text-red-500 font-medium">collaborateurs</span> 
-                  <span className="text-black ml-3">—</span>
-                </li>
-                <li>
-                  <span className="text-black mr-3">—</span> 
-                  Donner une dimension <span className="text-red-500 font-medium">festive et cinématographique</span> à un événement 
-                  <span className="text-black ml-3">—</span>
-                </li>
-              </ul>
+      {/* 2 — NOS OBJECTIFS (noir) */}
+      <section data-header-surface="dark" className="relative bg-black text-white py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
+          <div
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+          >
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                Nos
+              </span>
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                objectifs
+              </span>
             </div>
+          </div>
 
-            <div className="w-full">
-              <div className="relative w-full border border-neutral-300 bg-neutral-900/10 p-2 sm:p-3 shadow-xl backdrop-blur-md">
-                <div 
-                  className="relative h-full w-full aspect-video overflow-hidden border border-neutral-300 bg-black flex items-center justify-center cursor-pointer group"
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
+            <div
+              className="relative grid w-full min-w-0 grid-cols-1 items-start gap-4 sm:gap-5 animate-text-sweep md:grid-cols-[minmax(0,1.4fr)_minmax(0,2.6fr)] md:items-stretch lg:gap-6"
+              style={{ animationDelay: '200ms' }}
+            >
+              <div className="order-2 flex w-full min-w-0 flex-col gap-8 sm:gap-10 md:order-1 md:h-full md:justify-start md:gap-6 lg:gap-5 2xl:justify-between 2xl:gap-0">
+                {objectives.map((objective) => (
+                  <NumberedLinesBlock
+                    key={objective.id}
+                    num={objective.num}
+                    lines={objective.lines}
+                    textStyle={TYPO_TITLE}
+                  />
+                ))}
+              </div>
+
+              <div className="relative order-1 aspect-video w-full shrink-0 overflow-hidden bg-black md:order-2">
+                <div
+                  className="absolute inset-0 flex cursor-pointer items-center justify-center group"
                   onClick={() => setIsVideoPlaying(true)}
                 >
                   {!isVideoPlaying ? (
                     <>
-                      <img 
-                        src={withBasePath('/couverture-doublage-pour-tous.jpg')} 
-                        alt="Présentation Vidéo" 
-                        className="absolute inset-0 h-full w-full object-cover opacity-90 md:scale-105"
+                      <img
+                        src={withBasePath('/couverture-doublage-pour-tous.jpg')}
+                        alt="Présentation Vidéo"
+                        className="absolute inset-0 h-full w-full object-cover md:scale-105"
                       />
-                      <div className="absolute inset-0 bg-black/20 transition-colors duration-300 group-hover:bg-transparent" />
                       <VideoPlayButton />
                     </>
                   ) : (
                     <video
                       src={withBasePath('/Doublage-Pour-Tous.mp4')}
-                      className="absolute inset-0 h-full w-full object-cover"
+                      className="absolute inset-0 h-full w-full object-contain"
                       controls
                       autoPlay
                     />
@@ -197,38 +379,45 @@ export function DubbingView() {
                 </div>
               </div>
             </div>
-            
           </div>
         </div>
+      </section>
 
-        {/* SECTION S'AMUSER À DOUBLER */}
-        <div className="w-full bg-textured-paper py-14 px-5 sm:px-8 border-b border-neutral-300 overflow-hidden relative">
-          <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden opacity-65">
-            <div className="absolute top-0 left-0 w-[280px] h-[280px] bg-gradient-to-tr from-neutral-400/50 via-neutral-300/40 to-neutral-500/50 rounded-[30%_70%_60%_40%/50%_50%_50%_50%] blur-[45px] animate-thermal-1" />
-            <div className="absolute top-0 left-0 w-[260px] h-[260px] bg-gradient-to-bl from-neutral-500/50 via-neutral-400/45 to-neutral-300/50 rounded-[60%_40%_30%_70%/40%_60%_40%_60%] blur-[40px] animate-thermal-2" />
-            <div className="absolute top-0 left-0 w-[300px] h-[300px] bg-gradient-to-r from-neutral-600/45 via-neutral-400/40 to-neutral-300/40 rounded-[50%_50%_40%_60%/60%_40%_50%_50%] blur-[50px] animate-thermal-3" />
-            <div className="absolute top-0 left-0 w-[270px] h-[270px] bg-gradient-to-tl from-neutral-300/45 via-neutral-500/40 to-neutral-600/35 rounded-[40%_60%_30%_70%/50%_50%_70%_30%] blur-[45px] animate-thermal-4" />
-            <div className="absolute top-0 left-0 w-[290px] h-[290px] bg-gradient-to-br from-neutral-300/40 via-neutral-500/45 to-neutral-400/45 rounded-[70%_30%_50%_50%/30%_70%_50%_50%] blur-[45px] animate-thermal-5" />
+      {/* 3 — S'AMUSER À DOUBLER (gris) */}
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
+          <div
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+          >
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                S&apos;amuser
+              </span>
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                à doubler
+              </span>
+            </div>
           </div>
 
-          <div className="relative z-10 mx-auto max-w-4xl w-full">
-            <h2 className="text-center text-balance font-serif italic text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-neutral-900 drop-shadow-sm mb-8">
-              S&apos;amuser à doubler
-            </h2>
-
-            <div className="relative w-full border border-neutral-300 bg-neutral-200/50 p-2 sm:p-3 shadow-xl backdrop-blur-md">
-              <div 
-                className="relative h-full w-full aspect-video overflow-hidden border border-neutral-300 bg-black flex items-center justify-center cursor-pointer group"
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0">
+            <div
+              className="relative w-full animate-text-sweep"
+              style={{ animationDelay: '200ms' }}
+            >
+              <div
+                className="relative w-full aspect-video overflow-hidden bg-black flex items-center justify-center cursor-pointer group"
                 onClick={() => setIsVideo1Playing(true)}
               >
                 {!isVideo1Playing ? (
                   <>
-                    <img 
-                      src={withBasePath('/couverture-s-amuser-a-doubler.webp')} 
-                      alt="S'amuser à doubler" 
-                      className="absolute inset-0 h-full w-full object-cover opacity-90 md:scale-105"
+                    <img
+                      src={withBasePath('/couverture-s-amuser-a-doubler.webp')}
+                      alt="S'amuser à doubler"
+                      className="absolute inset-0 h-full w-full object-cover md:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/25 transition-colors duration-300 group-hover:bg-transparent" />
                     <VideoPlayButton />
                   </>
                 ) : (
@@ -243,221 +432,254 @@ export function DubbingView() {
             </div>
           </div>
         </div>
+      </section>
 
-        {/* COMMENT ÇA MARCHE ? */}
-        <div className="w-full py-14 px-5 sm:px-8">
-          <div className="relative z-15 max-w-4xl mx-auto">
-            
-            <div className="relative w-full p-6 sm:p-10 overflow-hidden backdrop-blur-[2px] mb-8">
-              <div className="absolute top-3 left-3 w-10 h-10 border-t-2 border-l-2 border-neutral-400/70 pointer-events-none" />
-              <div className="absolute top-3 right-3 w-10 h-10 border-t-2 border-r-2 border-neutral-400/70 pointer-events-none" />
-              <div className="absolute bottom-3 left-3 w-10 h-10 border-b-2 border-l-2 border-neutral-400/70 pointer-events-none" />
-              <div className="absolute bottom-3 right-3 w-10 h-10 border-b-2 border-r-2 border-neutral-400/70 pointer-events-none" />
-
-              <div className="absolute top-1/2 left-0 w-3 h-px bg-neutral-500/50 -translate-y-1/2 pointer-events-none" />
-              <div className="absolute top-1/2 right-0 w-3 h-px bg-neutral-500/50 -translate-y-1/2 pointer-events-none" />
-              <div className="absolute top-0 left-1/2 w-px h-3 bg-neutral-500/50 -translate-x-1/2 pointer-events-none" />
-              <div className="absolute bottom-0 left-1/2 w-px h-3 bg-neutral-500/50 -translate-x-1/2 pointer-events-none" />
-
-              <div className="relative z-10 max-w-xl mx-auto pt-6 pb-2 text-center">
-                <h2 className="text-balance font-serif italic text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-white mb-3">
-                  Comment ça marche ?
-                </h2>
-                <p className="mb-8 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-red-500">
-                  L&apos;immersion & la captation
-                </p>
-
-                <div className="space-y-6 text-left">
-                  {[
-                    { num: '1', text: 'Prérequis : être lecteur.' },
-                    { num: '2', text: 'Plus de 200 extraits de films cultes sont à votre disposition, avec différents degrés de difficulté.' },
-                    { num: '3', text: 'Vous choisissez le film, l\'extrait et le personnage.' },
-                    { num: '4', text: 'Vous vous entraînez.' },
-                    { num: '5', text: 'Quand vous êtes prêts, vous jouez la scène, que vous soyez seul(e) ou à plusieurs.' }
-                  ].map((step) => (
-                    <div key={step.num} className="flex items-center gap-4 sm:gap-6 group cursor-default">
-                      <div className="relative flex items-center justify-end shrink-0 w-6 h-6">
-                        <span className="absolute font-serif italic text-xl sm:text-2xl text-neutral-300 transition-all duration-300 group-hover:opacity-0 group-hover:scale-50">
-                          {step.num}
-                        </span>
-                        <div className="absolute flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 scale-50">
-                          <div className="w-3 h-3 rounded-full bg-red-600 animate-pulse-glow" />
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center shrink-0 w-12 sm:w-16">
-                        <div className="w-full h-px bg-neutral-700 transition-colors duration-300 group-hover:bg-neutral-400"></div>
-                      </div>
-
-                      <p className="text-balance text-neutral-300 text-[16px] leading-[1.618] font-light transition-colors duration-300 group-hover:text-white">
-                        {step.text}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="max-w-4xl mx-auto w-full">
-              <div className="relative w-full border border-white/10 bg-neutral-900/40 p-2 sm:p-3 shadow-2xl backdrop-blur-md">
-                <div 
-                  className="relative h-full w-full aspect-video overflow-hidden border border-white/10 bg-black flex items-center justify-center cursor-pointer group"
-                  onClick={() => setIsHowItWorksVideoPlaying(true)}
-                >
-                  {!isHowItWorksVideoPlaying ? (
-                    <>
-                      <img 
-                        src={withBasePath('/couverture-le-deroule.jpg')}
-                        alt="Comment ça marche"
-                        className="absolute inset-0 h-full w-full object-cover opacity-80 md:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black/25 transition-colors duration-300 group-hover:bg-transparent" />
-                      <VideoPlayButton />
-                    </>
-                  ) : (
-                    <video
-                      src={withBasePath('/le-deroule.mp4')}
-                      className="absolute inset-0 h-full w-full object-cover"
-                      controls
-                      autoPlay
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        {/* SECTION NOTRE MATÉRIEL */}
-        <div className="w-full bg-white py-14 border-y border-neutral-200 relative">
-          <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-8">
-            <div className="mb-8 text-center">
-              <h2 className="text-balance font-serif italic text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight drop-shadow-sm text-neutral-900 mb-0">
-                Notre matériel
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 lg:gap-14 text-left">
-              <div className="flex h-full flex-col px-2 py-4">
-                <div className="mb-4 flex items-center justify-center border-b border-neutral-300 pb-4 w-full">
-                  <h3 className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-red-500">
-                    RÉGIE & SYNCHRONISATION
-                  </h3>
-                </div>
-                <p className="flex-1 text-balance text-neutral-600 text-[16px] leading-[1.618] font-light text-center mb-0">
-                  Station de calcul haute performance (i7, carte graphique dédiée) alimentée par le logiciel de référence Mosaic par Noblurway, garantissant un défilement ultra-fluide de la bande rythmo et une synchronisation image/son sans aucune latence.
-                </p>
-              </div>
-
-              <div className="flex h-full flex-col px-2 py-4">
-                <div className="mb-4 flex items-center justify-center border-b border-neutral-300 pb-4 w-full">
-                  <h3 className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-red-500">
-                    PROJECTION & RETOUR
-                  </h3>
-                </div>
-                <p className="flex-1 text-balance text-neutral-600 text-[16px] leading-[1.618] font-light text-center mb-0">
-                  Dispositif d&apos;affichage modulable combinant vidéoprojection Full HD sur toile géante (300×200 cm) et moniteurs très haute définition jusqu&apos;à 160 cm, assurant une lisibilité parfaite de la bande rythmo et un retour vidéo immersif pour le public.
-                </p>
-              </div>
-
-              <div className="flex h-full flex-col px-2 py-4">
-                <div className="mb-4 flex items-center justify-center border-b border-neutral-300 pb-4 w-full">
-                  <h3 className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-red-500">
-                    PRISE DE SON & CAPTATION
-                  </h3>
-                </div>
-                <p className="flex-1 text-balance text-neutral-600 text-[16px] leading-[1.618] font-light text-center mb-0">
-                  Microphones canon directifs de studio, barre de doublage professionnelle et captation vidéo multi-angles (caméra 4K et modules embarqués) pour enregistrer fidèlement les voix et immortaliser les performances en direct.
-                </p>
-              </div>
+      {/* 4 — COMMENT ÇA MARCHE ? (noir) */}
+      <section data-header-surface="dark" className="relative bg-black text-white py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-white/10">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
+          <div
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+          >
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                Comment
+              </span>
+              <span className="inline-block w-fit bg-white text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                ça marche{'\u00A0'}?
+              </span>
             </div>
           </div>
-        </div>
 
-        {/* SECTION TRIPTYQUE MATÉRIEL */}
-        <div className="w-full bg-textured-paper py-14 relative z-10 border-t-0 overflow-hidden">
-          <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden opacity-65">
-            <div className="absolute top-0 left-0 w-[290px] h-[290px] bg-gradient-to-br from-neutral-500/50 via-neutral-600/45 to-neutral-400/50 rounded-[40%_60%_70%_30%/50%_40%_60%_50%] blur-[45px] animate-thermal-3" />
-            <div className="absolute top-0 left-0 w-[260px] h-[260px] bg-gradient-to-tr from-neutral-300/50 via-neutral-500/45 to-neutral-600/45 rounded-[70%_30%_40%_60%/40%_60%_50%_50%] blur-[40px] animate-thermal-4" />
-            <div className="absolute top-0 left-0 w-[280px] h-[280px] bg-gradient-to-bl from-neutral-400/40 via-neutral-600/45 to-neutral-500/50 rounded-[50%_50%_30%_70%/60%_50%_40%_50%] blur-[50px] animate-thermal-1" />
-            <div className="absolute top-0 left-0 w-[270px] h-[270px] bg-gradient-to-r from-neutral-600/45 via-neutral-500/40 to-neutral-400/45 rounded-[30%_70%_50%_50%/70%_30%_40%_60%] blur-[45px] animate-thermal-2" />
-            <div className="absolute top-0 left-0 w-[300px] h-[300px] bg-gradient-to-tl from-neutral-500/35 via-neutral-400/40 to-neutral-600/45 rounded-[60%_40%_60%_40%/40%_60%_40%_60%] blur-[50px] animate-thermal-5" />
-          </div>
-
-          <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-8">
-            <div className="mx-auto max-w-4xl w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                <div className="relative w-full aspect-[3/4] md:aspect-auto md:h-full border border-neutral-300 bg-neutral-200/40 p-2 sm:p-3 shadow-xl backdrop-blur-md">
-                  <div className="relative h-full w-full overflow-hidden border border-neutral-300 bg-black">
-                    <img 
-                      src={withBasePath(MATERIAL_PHOTOS[0])} 
-                      alt="Matériel 1" 
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
+            <div
+              className="relative w-full animate-text-sweep"
+              style={{ animationDelay: '200ms' }}
+            >
+              {/* Mobile — liste simple */}
+              <div className="flex w-full min-w-0 flex-col gap-y-10 sm:hidden">
+                {howItWorksSteps.map((step) => (
+                  <div key={step.num} className="min-w-0 w-full">
+                    <HowItWorksStep step={step} variant="laptop" />
                   </div>
-                </div>
+                ))}
+              </div>
 
-                <div className="flex flex-col gap-6">
-                  {MATERIAL_PHOTOS.slice(1, 3).map((photo, index) => (
-                    <div key={index} className="relative w-full aspect-video border border-neutral-300 bg-neutral-200/40 p-2 sm:p-3 shadow-xl backdrop-blur-md">
-                      <div className="relative h-full w-full overflow-hidden border border-neutral-300 bg-black">
-                        <img 
-                          src={withBasePath(photo)} 
-                          alt={`Matériel ${index + 2}`} 
-                          className="absolute inset-0 h-full w-full object-cover"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              {/* Laptop — 2 colonnes, 5 aligné sur la même ligne que 2 */}
+              <div className="hidden w-full min-w-0 grid-cols-2 grid-rows-[auto_auto_auto] items-start gap-x-6 gap-y-6 sm:grid lg:gap-x-6 lg:gap-y-6 2xl:hidden">
+                {howItWorksLaptopPlacement.map(({ step, className }) => (
+                  <div key={step.num} className={`min-w-0 w-full overflow-hidden ${className}`}>
+                    <HowItWorksStep step={step} variant="laptop" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Bureau — grille 3 × 2 */}
+              <div className="hidden w-full min-w-0 grid-cols-3 grid-rows-2 items-start gap-x-14 gap-y-16 2xl:grid">
+                {howItWorksSteps.map((step) => (
+                  <div key={step.num} className="min-w-0 w-full overflow-hidden">
+                    <HowItWorksStep step={step} variant="desktop" />
+                  </div>
+                ))}
+                <div className="min-w-0" aria-hidden="true" />
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* SECTION NOS FORMULES */}
-        <div className="w-full bg-black py-14 relative z-10" id="formulas">
-          <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
-            
-            <div className="mb-8 text-center">
-              <h2 className="text-balance font-serif italic text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-white drop-shadow-md mb-4">
-                Nos formules
-              </h2>
-              <p className="text-pretty text-base leading-relaxed text-neutral-400 max-w-2xl mx-auto mb-0">
-                Trois expériences, un même déroulé. Cliquez pour découvrir le détail de chaque formule.
+            <div
+              className="relative mt-3 w-full animate-text-sweep sm:mt-4 lg:mt-5"
+              style={{ animationDelay: '400ms' }}
+            >
+              <div
+                className="relative w-full aspect-video overflow-hidden bg-black flex items-center justify-center cursor-pointer group"
+                onClick={() => setIsHowItWorksVideoPlaying(true)}
+              >
+                {!isHowItWorksVideoPlaying ? (
+                  <>
+                    <img
+                      src={withBasePath('/couverture-le-deroule.png')}
+                      alt="Comment ça marche"
+                      className="absolute inset-0 h-full w-full object-cover md:scale-105"
+                    />
+                    <VideoPlayButton />
+                  </>
+                ) : (
+                  <video
+                    src={withBasePath('/le-deroule.mp4')}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    controls
+                    autoPlay
+                  />
+                )}
+              </div>
+
+              <p
+                lang="fr"
+                className={`mt-4 sm:mt-5 xl:mt-8 w-full text-pretty text-neutral-400 italic 2xl:whitespace-nowrap ${HOW_IT_WORKS_BODY_CLASS}`}
+              >
+                {howItWorksNote}
               </p>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="grid grid-cols-1 items-stretch gap-10 md:grid-cols-3 lg:gap-14 text-left">
+      {/* 5 — NOTRE MATÉRIEL (gris) */}
+      <section data-header-surface="light" className="relative bg-white text-neutral-950 py-16 xl:py-24 px-4 sm:px-6 lg:px-0 border-b border-neutral-300">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
+          <div
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+          >
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                Notre
+              </span>
+              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                matériel
+              </span>
+            </div>
+          </div>
+
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
+            <div
+              className="relative w-full animate-text-sweep"
+              style={{ animationDelay: '200ms' }}
+            >
+              <PhotoTriptych
+                photos={MATERIAL_PHOTOS}
+                alt="Notre matériel"
+                mainObjectPosition="70% center"
+                reversed
+              />
+            </div>
+
+            <div
+              className="mt-10 sm:mt-14 xl:mt-16 relative w-full animate-text-sweep cursor-default pointer-events-none"
+              style={{ animationDelay: '400ms' }}
+            >
+              <div className="grid grid-cols-3 items-start gap-4 sm:gap-6 lg:gap-5 xl:gap-10 w-full min-w-0">
+                {materialCards.map((card) => (
+                  <div
+                    key={card.id}
+                    className="relative flex min-w-0 flex-col text-left justify-start"
+                  >
+                    <div
+                      className={`flex flex-col items-start gap-[5px] shrink-0 ${TYPO_BLOCK_SUBTITLE_CLASS}`}
+                      style={{
+                        minHeight: 'calc(2 * (1.15em + 2px) + 5px)',
+                      }}
+                    >
+                      {card.titleLines.map((line) => (
+                        <span
+                          key={line}
+                          className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]"
+                        >
+                          {line}
+                        </span>
+                      ))}
+                    </div>
+
+                    <p
+                      lang="fr"
+                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                    >
+                      {card.lines.map((line, index) => (
+                        <span key={index}>
+                          {index > 0 ? ' ' : null}
+                          {line}
+                        </span>
+                      ))}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6 — NOS FORMULES (noir) */}
+      <section
+        data-header-surface="dark"
+        className="relative bg-black text-white py-16 xl:py-24 px-4 sm:px-6 lg:px-0"
+        id="formulas"
+      >
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start lg:pr-[100px]">
+          <div
+            className="lg:col-span-4 lg:sticky site-sticky-offset z-30 animate-text-sweep lg:pl-[45px] pointer-events-none self-start"
+          >
+            <div
+              className={`${TYPO_TITLE_CLASS} flex flex-col items-start gap-[5px]`}
+              style={TYPO_TITLE}
+            >
+              <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                Nos
+              </span>
+              <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
+                formules
+              </span>
+            </div>
+          </div>
+
+          <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
+            <p
+              lang="fr"
+              className={`mb-8 sm:mb-10 xl:mb-12 min-w-0 text-pretty text-white [hyphens:auto] animate-text-sweep ${TYPO_BLOCK_BODY_CLASS}`}
+            >
+              Trois expériences, un même déroulé. Cliquez pour découvrir le
+              détail de chaque formule.
+            </p>
+
+            <div
+              className="grid grid-cols-1 items-stretch gap-3 sm:gap-4 2xl:grid-cols-3 2xl:gap-8 w-full min-w-0 animate-text-sweep"
+              style={{ animationDelay: '200ms' }}
+            >
               {FORMULAS.map((formula) => (
                 <Link
                   key={formula.id}
                   href={`/formules#${formula.id}`}
-                  className="block h-full cursor-pointer no-underline group"
+                  className="group block cursor-pointer no-underline 2xl:h-full"
                 >
-                  <FormulaFrame>
-                    <div className="flex h-full flex-col items-center text-center px-6 py-6 sm:py-8">
-                      <div className="mb-4 flex items-center justify-center border-b border-white/10 pb-4 w-full transition-colors duration-300 group-hover:border-transparent">
-                        <h3 className="font-serif italic text-2xl sm:text-3xl tracking-tight text-neutral-100 drop-shadow-sm">
-                          {formula.title}
-                        </h3>
+                  <div className="relative isolate flex flex-col items-start overflow-hidden border-[3px] border-white bg-black p-5 text-left transition-[border-color,background-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:p-6 2xl:h-full 2xl:p-8 group-hover:border-[#f58220] group-hover:bg-[#f58220]">
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute -inset-[3px] z-0 bg-[#f58220] transition-[clip-path] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] [clip-path:polygon(0_100%,0_100%,0_100%)] group-hover:[clip-path:polygon(0_100%,230%_100%,0_-130%)]"
+                    />
+                    <div className="relative z-10 flex w-full flex-col items-start 2xl:h-full">
+                      <h3
+                        className="font-bold tracking-[0.01em] text-white leading-[1.15] shrink-0 transition-colors duration-500 group-hover:text-black 2xl:min-h-[calc(2*1.15em)]"
+                        style={TYPO_SUBTITLE}
+                      >
+                        {formula.title}
+                      </h3>
+                      <div className="flex items-start pt-4 sm:pt-5 2xl:flex-1 2xl:pt-10">
+                        <p
+                          lang="fr"
+                          className={`text-pretty text-white transition-colors duration-500 group-hover:text-black ${TYPO_BLOCK_BODY_CLASS}`}
+                        >
+                          {formula.summary}
+                        </p>
                       </div>
-                      <p className="flex-1 text-balance text-neutral-300 text-[16px] leading-[1.618] font-light group-hover:text-white transition-colors duration-300">
-                        {formula.summary}
-                      </p>
-                      <p className="mt-8 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-red-500 mb-0">
+                      <p
+                        className="mt-4 sm:mt-5 mb-0 inline-block w-fit shrink-0 bg-[#f58220] text-black font-bold tracking-[0.01em] pl-[3px] pr-[23px] py-px xl:pr-[43px] uppercase transition-colors duration-500 group-hover:bg-white group-hover:text-black 2xl:mt-8"
+                        style={TYPO_SUBTITLE}
+                      >
                         Découvrir
                       </p>
                     </div>
-                  </FormulaFrame>
+                  </div>
                 </Link>
               ))}
             </div>
           </div>
         </div>
-
       </section>
-    </>
+
+      <ContactCtaSection tone="light" />
+    </section>
   )
 }
