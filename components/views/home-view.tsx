@@ -183,10 +183,10 @@ export function HomeView() {
       <section data-header-surface="dark" className="relative z-0 flex w-full min-h-[100svh] flex-col bg-black pt-[90px] min-[1024px]:max-[1439px]:pt-[80px] min-[1440px]:pt-[150px]">
         <div className="flex w-full flex-col items-center px-4 pt-6 sm:px-8 sm:pt-10">
           <h1 className="text-center text-[26px] font-bold leading-[1.2] tracking-[0.01em] text-white animate-fade-in-delay">
-            T.B. Clap action
+            Lorem ipsum dolor sit amet consectetur adipiscing
           </h1>
 
-          <div className="relative mt-8 aspect-video w-full max-w-[calc(70svh*16/9)] sm:mt-10">
+          <div className="relative mt-8 aspect-video w-full max-w-[calc(70svh*16/9)] overflow-hidden bg-black sm:mt-10">
             <video
               ref={videoRef}
               autoPlay
@@ -194,8 +194,7 @@ export function HomeView() {
               playsInline
               onEnded={() => setHasEnded(true)}
               onPlay={() => setHasEnded(false)}
-              className="absolute inset-0 h-full w-full object-contain"
-              title="T.B. Clap action"
+              className="absolute inset-0 h-full w-full scale-[1.05] border-0 bg-black object-cover outline-none"
             >
               <source
                 src={withBasePath('/TB_VIDEO_PRESENTATION.mp4')}
