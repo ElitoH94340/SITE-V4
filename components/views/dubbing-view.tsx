@@ -44,19 +44,17 @@ const offerTexts = [
 
 const objectives = [
   {
-    id: 'federer',
-    num: '1',
-    lines: ['Fédérer un', 'groupe de', 'collaborateurs.'],
-  },
-  {
     id: 'dimension',
-    num: '2',
     lines: [
       'Donner une',
       'dimension festive',
       '&\u00A0cinématographique',
       'à un événement.',
     ],
+  },
+  {
+    id: 'rassembler',
+    lines: ['Rassembler', 'autour d\u2019un', 'projet commun.'],
   },
 ]
 
@@ -86,8 +84,8 @@ const howItWorksSteps = [
   { num: '4', linesLaptop: ['Entraînez-vous.'], linesDesktop: ['Entraînez-vous.'] },
   {
     num: '5',
-    linesLaptop: ['Une fois prêts, jouez la scène,', 'seul(e) ou à plusieurs.'],
-    linesDesktop: ['Une fois prêts, jouez la scène,', 'seul(e) ou à plusieurs.'],
+    linesLaptop: ['Jouez la scène,', 'seul(e) ou à plusieurs.'],
+    linesDesktop: ['Jouez la scène,', 'seul(e) ou à plusieurs.'],
   },
 ]
 
@@ -103,7 +101,7 @@ function NumberedLinesBlock({
   compact = false,
   disableWrap = true,
 }: {
-  num: string
+  num?: string
   lines: readonly string[]
   textStyle?: CSSProperties
   textClassName?: string
@@ -115,12 +113,14 @@ function NumberedLinesBlock({
     <div
       className={`flex w-full min-w-0 flex-col items-start ${compact ? 'gap-[3px]' : 'gap-[5px]'}`}
     >
-      <span
-        className={`inline-block w-fit bg-white text-black font-bold tracking-[0.01em] ${CHIP_PAD_CLASS}`}
-        style={TYPO_TITLE}
-      >
-        {num}.
-      </span>
+      {num ? (
+        <span
+          className={`inline-block w-fit bg-white text-black font-bold tracking-[0.01em] ${CHIP_PAD_CLASS}`}
+          style={TYPO_TITLE}
+        >
+          {num}.
+        </span>
+      ) : null}
       <RectangleLines
         lines={lines}
         theme={textTheme}
@@ -162,7 +162,7 @@ const howItWorksLaptopPlacement = [
 ] as const
 
 const howItWorksNote =
-  "(Le déroulé est identique pour l'immersion, l'immersion filmée ou la captation)"
+  "Le déroulé est identique pour l'immersion, l'immersion filmée et la captation."
 
 const materialCards = [
   {
@@ -308,7 +308,7 @@ export function DubbingView() {
                   <p
                     key={index}
                     lang="fr"
-                    className={`min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                    className={`min-w-0 text-pretty text-black [hyphens:none] ${TYPO_BLOCK_BODY_CLASS}`}
                   >
                     {text}
                   </p>
@@ -347,7 +347,6 @@ export function DubbingView() {
                 {objectives.map((objective) => (
                   <NumberedLinesBlock
                     key={objective.id}
-                    num={objective.num}
                     lines={objective.lines}
                     textStyle={TYPO_TITLE}
                   />
@@ -516,7 +515,7 @@ export function DubbingView() {
 
               <p
                 lang="fr"
-                className={`mt-4 sm:mt-5 xl:mt-8 w-full text-pretty text-neutral-400 italic 2xl:whitespace-nowrap ${HOW_IT_WORKS_BODY_CLASS}`}
+                className={`mt-4 sm:mt-5 xl:mt-8 w-full text-pretty text-neutral-400 2xl:whitespace-nowrap ${HOW_IT_WORKS_BODY_CLASS}`}
               >
                 {howItWorksNote}
               </p>
@@ -585,7 +584,7 @@ export function DubbingView() {
 
                     <p
                       lang="fr"
-                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-black [hyphens:none] ${TYPO_BLOCK_BODY_CLASS}`}
                     >
                       {card.lines.map((line, index) => (
                         <span key={index}>
@@ -620,7 +619,7 @@ export function DubbingView() {
                 Nos
               </span>
               <span className="inline-block w-fit bg-[#f58220] text-black pl-[3px] pr-[23px] py-px xl:pr-[43px]">
-                formules
+                offres
               </span>
             </div>
           </div>
@@ -628,10 +627,10 @@ export function DubbingView() {
           <div className="lg:col-span-8 w-full px-4 sm:px-6 lg:px-0 flex flex-col">
             <p
               lang="fr"
-              className={`mb-8 sm:mb-10 xl:mb-12 min-w-0 text-pretty text-white [hyphens:auto] animate-text-sweep ${TYPO_BLOCK_BODY_CLASS}`}
+              className={`mb-8 sm:mb-10 xl:mb-12 min-w-0 text-pretty text-white [hyphens:none] animate-text-sweep ${TYPO_BLOCK_BODY_CLASS}`}
             >
               Trois expériences, un même déroulé. Cliquez pour découvrir le
-              détail de chaque formule.
+              détail de chaque offre.
             </p>
 
             <div

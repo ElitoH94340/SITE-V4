@@ -604,7 +604,7 @@ function FactoryDashList({ items }: { items: string[] }) {
           </span>
           <p
             lang="fr"
-            className={`m-0 min-w-0 flex-1 text-pretty leading-[1.3] text-black max-2xl:hyphens-none max-2xl:[overflow-wrap:normal] max-2xl:[word-break:normal] 2xl:leading-[1.25] 2xl:hyphens-auto ${TYPO_BLOCK_SUBTEXT_CLASS}`}
+            className={`m-0 min-w-0 flex-1 text-pretty leading-[1.3] text-black hyphens-none max-2xl:[overflow-wrap:normal] max-2xl:[word-break:normal] 2xl:leading-[1.25] ${TYPO_BLOCK_SUBTEXT_CLASS}`}
           >
             {formatListItemText(item)}
           </p>
@@ -757,7 +757,7 @@ function FactoryModulePanel({
             {currentModule.desc ? (
               <p
                 lang="fr"
-                className={`mt-auto w-full min-w-0 text-pretty leading-[1.25] text-white italic max-2xl:hyphens-none max-2xl:[overflow-wrap:normal] max-2xl:[word-break:normal] 2xl:hyphens-auto ${TYPO_BLOCK_SUBTEXT_CLASS}`}
+                className={`mt-auto w-full min-w-0 text-pretty leading-[1.25] text-white italic hyphens-none max-2xl:[overflow-wrap:normal] max-2xl:[word-break:normal] ${TYPO_BLOCK_SUBTEXT_CLASS}`}
               >
                 {currentModule.desc}
               </p>
@@ -805,7 +805,7 @@ function FactoryModulePanel({
           <div className="col-span-2 flex w-full min-w-0 flex-col bg-black py-3 text-white sm:py-4">
             <p
               lang="fr"
-              className={`text-pretty leading-[1.25] text-white [hyphens:auto] ${TYPO_BLOCK_SUBTITLE_CLASS}`}
+              className={`text-pretty leading-[1.25] text-white [hyphens:none] ${TYPO_BLOCK_SUBTITLE_CLASS}`}
             >
               {currentModule.subDesc}
             </p>
@@ -919,10 +919,7 @@ export function FactoryView() {
               style={TYPO_TITLE}
             >
               <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
-                La
-              </span>
-              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
-                fabrique
+                Fabrique
               </span>
               <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 à doublage

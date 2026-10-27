@@ -23,12 +23,12 @@ export const NAV_ITEMS: {
   },
   {
     id: 'factory',
-    label: 'LA FABRIQUE',
+    label: 'FABRIQUE À DOUBLAGE',
     href: '/fabrique',
   },
   {
     id: 'formulas',
-    label: 'NOS FORMULES',
+    label: 'NOS OFFRES',
     href: '/formules',
   },
   {

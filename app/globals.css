@@ -240,6 +240,8 @@
   body {
     margin: 0;
     padding: 0;
+    hyphens: none;
+    -webkit-hyphens: none;
   }
 
   body {

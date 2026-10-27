@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Volume2, VolumeX, ChevronDown, ChevronUp } from 'lucide-react'
+import { Volume2, VolumeX, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react'
 import { ContactSection } from '@/components/contact-section'
 import { DrawingLogo } from '@/components/drawing-logo'
 import {
@@ -49,6 +49,7 @@ export function HomeView() {
   const videoRef = useRef<HTMLVideoElement>(null)
 
   const [isMuted, setIsMuted] = useState(true)
+  const [hasEnded, setHasEnded] = useState(false)
   const [isAtTop, setIsAtTop] = useState(true)
   const [hasScrolled, setHasScrolled] = useState(false)
   const [isNearBottom, setIsNearBottom] = useState(false)
@@ -58,6 +59,14 @@ export function HomeView() {
       videoRef.current.muted = !videoRef.current.muted
       setIsMuted(videoRef.current.muted)
     }
+  }
+
+  const replayVideo = () => {
+    const video = videoRef.current
+    if (!video) return
+    video.currentTime = 0
+    setHasEnded(false)
+    void video.play()
   }
 
   const handleScrollButtonClick = () => {
@@ -171,43 +180,64 @@ export function HomeView() {
       `}</style>
 
       {/* HERO */}
-      <section data-header-surface="dark" className="relative w-full h-[100svh] z-0 flex flex-col bg-black pt-[90px] lg:pt-[80px] min-[1440px]:pt-[150px] overflow-hidden">
-        <div className="relative w-full flex-1 min-h-0 bg-black">
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 h-full w-full object-cover"
-          >
-            <source
-              src={withBasePath('/TB_VIDEO_PRESENTATION.mp4')}
-              type="video/mp4"
-            />
-          </video>
-        </div>
+      <section data-header-surface="dark" className="relative z-0 flex w-full min-h-[100svh] flex-col bg-black pt-[90px] min-[1024px]:max-[1439px]:pt-[80px] min-[1440px]:pt-[150px]">
+        <div className="flex w-full flex-col items-center px-4 pt-6 sm:px-8 sm:pt-10">
+          <h1 className="text-center text-[26px] font-bold leading-[1.2] tracking-[0.01em] text-white animate-fade-in-delay">
+            T.B. Clap action
+          </h1>
 
-        {/* BOUTON SON */}
-        <div className="absolute top-[100px] right-6 z-50 lg:top-[155px] lg:right-10">
-          <button
-            onClick={toggleMute}
-            className="flex items-center justify-center rounded-none border-0 bg-transparent p-0 text-[#f58220] transition-opacity duration-300 hover:opacity-80 cursor-pointer animate-fade-in-delay"
-            aria-label={isMuted ? 'Activer le son' : 'Coupure son'}
-            style={{ animationDelay: '0.4s' }}
-          >
-            {isMuted ? (
-              <VolumeX className="size-10 sm:size-12" strokeWidth={2} />
-            ) : (
-              <Volume2 className="size-10 sm:size-12" strokeWidth={2} />
+          <div className="relative mt-8 aspect-video w-full max-w-[calc(70svh*16/9)] sm:mt-10">
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              onEnded={() => setHasEnded(true)}
+              onPlay={() => setHasEnded(false)}
+              className="absolute inset-0 h-full w-full object-contain"
+              title="T.B. Clap action"
+            >
+              <source
+                src={withBasePath('/TB_VIDEO_PRESENTATION.mp4')}
+                type="video/mp4"
+              />
+            </video>
+
+            {hasEnded && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/35">
+                <button
+                  type="button"
+                  onClick={replayVideo}
+                  className="flex items-center gap-3 border border-white/20 bg-white/10 px-5 py-3 text-white backdrop-blur-md transition-colors duration-300 hover:border-[#f58220] hover:bg-[#f58220] cursor-pointer"
+                  aria-label="Revoir la vidéo"
+                >
+                  <RotateCcw className="size-5" strokeWidth={2} />
+                  <span className="text-sm font-medium uppercase tracking-[0.18em]">
+                    Revoir
+                  </span>
+                </button>
+              </div>
             )}
-          </button>
+
+            <button
+              onClick={toggleMute}
+              className="absolute top-3 right-3 z-30 flex items-center justify-center rounded-none border-0 bg-transparent p-0 text-[#f58220] transition-opacity duration-300 hover:opacity-80 cursor-pointer animate-fade-in-delay sm:top-4 sm:right-4"
+              aria-label={isMuted ? 'Activer le son' : 'Coupure son'}
+              style={{ animationDelay: '0.4s' }}
+            >
+              {isMuted ? (
+                <VolumeX className="size-10 sm:size-12" strokeWidth={2} />
+              ) : (
+                <Volume2 className="size-10 sm:size-12" strokeWidth={2} />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* BOUTON SCROLL INITIAL */}
         {isAtTop && (
           <div
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto animate-fade-in-delay"
+            className="mt-auto flex justify-center pb-6 pt-8 pointer-events-auto animate-fade-in-delay"
             style={{
               animationDelay: hasScrolled ? '0s' : '0.8s',
             }}
@@ -288,7 +318,7 @@ export function HomeView() {
                 <div className="grid grid-cols-1 min-w-0 gap-8 md:grid-cols-2 md:gap-x-8 md:gap-y-8 lg:gap-x-6 xl:gap-x-10 w-full items-start">
                   <p
                     lang="fr"
-                    className={`min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                    className={`min-w-0 text-pretty text-black [hyphens:none] ${TYPO_BLOCK_BODY_CLASS}`}
                   >
                     Plongez dans l&apos;univers passionnant du cinéma.
                     Imaginez-vous dans la peau des comédiens à l&apos;image,
@@ -299,7 +329,7 @@ export function HomeView() {
 
                   <p
                     lang="fr"
-                    className={`min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                    className={`min-w-0 text-pretty text-black [hyphens:none] ${TYPO_BLOCK_BODY_CLASS}`}
                   >
                     Les dialogues défilent sous l&apos;image. Vous choisissez un
                     personnage.
@@ -370,7 +400,7 @@ export function HomeView() {
 
                       <p
                         lang="fr"
-                        className={`mt-4 xl:mt-6 min-w-0 text-pretty text-white [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                        className={`mt-4 xl:mt-6 min-w-0 text-pretty text-white [hyphens:none] ${TYPO_BLOCK_BODY_CLASS}`}
                       >
                         {role.summary}
                       </p>

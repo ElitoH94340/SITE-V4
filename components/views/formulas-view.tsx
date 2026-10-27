@@ -262,7 +262,7 @@ function FormulaSection({
 
                 <div className="col-start-2 min-w-0 w-full max-w-full @container">
                   <Link
-                    href={`${withBasePath('/')}#contact`}
+                    href="/#contact"
                     className={`${FORMULA_DEVIS_CTA_CLASS} ${theme.chip}`}
                   >
                     Devis disponible sur demande
@@ -347,7 +347,7 @@ export function FormulasView() {
                 Nos
               </span>
               <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
-                formules
+                offres
               </span>
             </div>
           </div>
@@ -359,7 +359,7 @@ export function FormulasView() {
             >
               <PhotoTriptych
                 photos={FORMULAS_INTRO_PHOTOS}
-                alt="Nos formules"
+                alt="Nos offres"
               />
 
               <div className="absolute left-[-4%] sm:left-[-3%] top-[52%] sm:top-[55%] z-20 pointer-events-none w-[70%] sm:w-[58%] lg:w-[48%] -translate-y-1/2 -rotate-2">

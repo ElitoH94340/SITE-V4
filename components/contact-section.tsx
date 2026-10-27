@@ -105,20 +105,17 @@ function ContactInfoEntry({
 function ContactPersonBlock({
   tone,
   name,
-  role,
   phone,
   phoneHref,
 }: {
   tone: 'light' | 'dark'
   name: string
-  role: string
   phone: string
   phoneHref: string
 }) {
   return (
     <div className="flex min-w-0 flex-col items-start gap-[5px]">
       <ContactInfoLabel tone={tone}>{name}</ContactInfoLabel>
-      <span className={`block ${TYPO_BLOCK_BODY_CLASS}`}>{role}</span>
       <a
         href={phoneHref}
         className={`text-[#f58220] hover:opacity-80 transition-opacity ${TYPO_BLOCK_BODY_CLASS}`}
@@ -224,14 +221,12 @@ function ContactInfoCard({
             <ContactPersonBlock
               tone={tone}
               name="Véronique ATTISSO"
-              role="(contact pédagogique)"
               phone="06 13 64 72 59"
               phoneHref="tel:+33613647259"
             />
             <ContactPersonBlock
               tone={tone}
               name="Jean-Jacques PRON"
-              role="(contact technique)"
               phone="06 82 83 10 34"
               phoneHref="tel:+33682831034"
             />
@@ -248,7 +243,6 @@ function ContactInfoCard({
           <ContactPersonBlock
             tone={tone}
             name="Véronique ATTISSO"
-            role="(contact pédagogique)"
             phone="06 13 64 72 59"
             phoneHref="tel:+33613647259"
           />
@@ -256,7 +250,6 @@ function ContactInfoCard({
           <ContactPersonBlock
             tone={tone}
             name="Jean-Jacques PRON"
-            role="(contact technique)"
             phone="06 82 83 10 34"
             phoneHref="tel:+33682831034"
           />

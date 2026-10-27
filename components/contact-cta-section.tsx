@@ -39,9 +39,9 @@ export function ContactCtaSection({
   const contactText = (
     <p
       lang="fr"
-      className={`max-w-xl text-pretty [hyphens:auto] lg:max-w-none lg:whitespace-nowrap ${theme.body} ${TYPO_BLOCK_BODY_CLASS}`}
+      className={`max-w-xl text-pretty [hyphens:none] lg:max-w-none lg:whitespace-nowrap ${theme.body} ${TYPO_BLOCK_BODY_CLASS}`}
     >
-      Pour obtenir plus d&apos;informations, écrivez-nous ou téléphonez-nous.
+      Pour d'avantage d'informations, écrivez ou téléphonez.
     </p>
   )
   const contactButton = (

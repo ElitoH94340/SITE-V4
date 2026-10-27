@@ -79,10 +79,10 @@ const LUDIC_EVENTS: EventItem[] = [
   },
   {
     id: 'l7',
-    title: 'Festival de doublage Apt face au virus',
+    title: 'Festival de doublage Apt',
     date: '14/08/2020',
     desc: 'Apt',
-    longText: 'Festival de doublage Apt face au virus.\nLe 14 août 2020.',
+    longText: 'Festival de doublage Apt.\nLe 14 août 2020.',
     videoId: 'GdG4JR9Ht5k',
   },
   {
@@ -763,10 +763,7 @@ export function EventsView() {
               style={TYPO_TITLE}
             >
               <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
-                La
-              </span>
-              <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
-                fabrique
+                Fabrique
               </span>
               <span className="inline-block w-fit bg-black text-white pl-[3px] pr-[23px] py-px xl:pr-[43px]">
                 à doublage

@@ -144,7 +144,7 @@ export function AboutView() {
 
                     <p
                       lang="fr"
-                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-black [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-black [hyphens:none] ${TYPO_BLOCK_BODY_CLASS}`}
                     >
                       {role.summary}
                     </p>
@@ -235,7 +235,7 @@ export function AboutView() {
 
                     <p
                       lang="fr"
-                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-white [hyphens:auto] ${TYPO_BLOCK_BODY_CLASS}`}
+                      className={`mt-4 xl:mt-6 min-w-0 text-pretty text-white [hyphens:none] ${TYPO_BLOCK_BODY_CLASS}`}
                     >
                       {card.summary}
                     </p>
