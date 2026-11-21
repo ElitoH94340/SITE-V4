@@ -41,7 +41,7 @@ export function ContactCtaSection({
       lang="fr"
       className={`max-w-xl text-pretty [hyphens:none] lg:max-w-none lg:whitespace-nowrap ${theme.body} ${TYPO_BLOCK_BODY_CLASS}`}
     >
-      Pour d'avantage d'informations, écrivez ou téléphonez.
+      Pour davantage d'informations, écrivez ou téléphonez.
     </p>
   )
   const contactButton = (

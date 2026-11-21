@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, type FormEvent } from 'react'
 import {
   TYPO_BLOCK_BODY_BOLD_CLASS,
   TYPO_BLOCK_BODY_CLASS,
@@ -7,6 +8,9 @@ import {
   TYPO_TITLE,
 } from '@/lib/typography'
 import { withBasePath } from '@/lib/paths'
+
+const CONTACT_EMAIL = 'contact@doublagetournezbobines.fr'
+const CONTACT_FORM_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT_EMAIL}`
 
 const CONTACT_CARD_CLASS =
   'w-full min-w-0 bg-white p-6 sm:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.1)] animate-text-sweep'
@@ -105,17 +109,20 @@ function ContactInfoEntry({
 function ContactPersonBlock({
   tone,
   name,
+  role,
   phone,
   phoneHref,
 }: {
   tone: 'light' | 'dark'
   name: string
+  role: string
   phone: string
   phoneHref: string
 }) {
   return (
     <div className="flex min-w-0 flex-col items-start gap-[5px]">
       <ContactInfoLabel tone={tone}>{name}</ContactInfoLabel>
+      <span className={`block ${TYPO_BLOCK_BODY_CLASS}`}>{role}</span>
       <a
         href={phoneHref}
         className={`text-[#f58220] hover:opacity-80 transition-opacity ${TYPO_BLOCK_BODY_CLASS}`}
@@ -129,19 +136,23 @@ function ContactPersonBlock({
 function ContactField({
   label,
   id,
+  name,
   type = 'text',
   multiline = false,
   rows = 4,
   grow = false,
   className = '',
+  required = true,
 }: {
   label: string
   id: string
+  name: string
   type?: string
   multiline?: boolean
   rows?: number
   grow?: boolean
   className?: string
+  required?: boolean
 }) {
   return (
     <label
@@ -155,15 +166,17 @@ function ContactField({
         {multiline ? (
           <textarea
             id={id}
-            name={id}
+            name={name}
             rows={rows}
+            required={required}
             className={`${CONTACT_INPUT_CLASS} resize-none ${grow ? 'min-h-[88px] flex-1' : ''} ${className}`}
           />
         ) : (
           <input
             id={id}
-            name={id}
+            name={name}
             type={type}
+            required={required}
             className={`${CONTACT_INPUT_CLASS} ${className}`}
           />
         )}
@@ -221,12 +234,14 @@ function ContactInfoCard({
             <ContactPersonBlock
               tone={tone}
               name="Véronique ATTISSO"
+              role="responsable pédagogique"
               phone="06 13 64 72 59"
               phoneHref="tel:+33613647259"
             />
             <ContactPersonBlock
               tone={tone}
               name="Jean-Jacques PRON"
+              role="responsable technique"
               phone="06 82 83 10 34"
               phoneHref="tel:+33682831034"
             />
@@ -243,6 +258,7 @@ function ContactInfoCard({
           <ContactPersonBlock
             tone={tone}
             name="Véronique ATTISSO"
+            role="responsable pédagogique"
             phone="06 13 64 72 59"
             phoneHref="tel:+33613647259"
           />
@@ -250,6 +266,7 @@ function ContactInfoCard({
           <ContactPersonBlock
             tone={tone}
             name="Jean-Jacques PRON"
+            role="responsable technique"
             phone="06 82 83 10 34"
             phoneHref="tel:+33682831034"
           />
@@ -273,6 +290,71 @@ function ContactForm({
   idPrefix: string
   stacked?: boolean
 }) {
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>(
+    'idle',
+  )
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const form = event.currentTarget
+
+    if (!form.checkValidity()) {
+      form.reportValidity()
+      return
+    }
+
+    const formData = new FormData(form)
+    const payload = {
+      name: String(formData.get('name') ?? '').trim(),
+      email: String(formData.get('email') ?? '').trim(),
+      organisation: String(formData.get('organisation') ?? '').trim(),
+      subject: String(formData.get('subject') ?? '').trim(),
+      message: String(formData.get('message') ?? '').trim(),
+      _subject: `Tournez Bobines — ${String(formData.get('subject') ?? '').trim() || 'Nouveau message'}`,
+      _template: 'table',
+      _captcha: 'false',
+    }
+
+    if (
+      !payload.name ||
+      !payload.email ||
+      !payload.organisation ||
+      !payload.subject ||
+      !payload.message
+    ) {
+      setStatus('error')
+      setErrorMessage('Merci de remplir tous les champs.')
+      return
+    }
+
+    setStatus('sending')
+    setErrorMessage('')
+
+    try {
+      const response = await fetch(CONTACT_FORM_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        throw new Error('send_failed')
+      }
+
+      form.reset()
+      setStatus('success')
+    } catch {
+      setStatus('error')
+      setErrorMessage(
+        "L'envoi a échoué. Réessayez ou écrivez à contact@doublagetournezbobines.fr.",
+      )
+    }
+  }
+
   return (
     <div
       className={CONTACT_CARD_CLASS}
@@ -282,35 +364,57 @@ function ContactForm({
         className={`flex flex-col gap-5 sm:gap-5 xl:gap-6 ${
           stacked ? '' : 'lg:min-h-[420px] 2xl:min-h-0 2xl:h-full'
         }`}
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={handleSubmit}
+        noValidate
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-5 xl:gap-6">
-          <ContactField label="nom" id={`${idPrefix}-name`} />
+          <ContactField
+            label="nom"
+            id={`${idPrefix}-name`}
+            name="name"
+          />
           <ContactField
             label="email"
             id={`${idPrefix}-email`}
+            name="email"
             type="email"
           />
         </div>
         <ContactField
           label="entreprise / établissement"
           id={`${idPrefix}-org`}
+          name="organisation"
         />
-        <ContactField label="sujet" id={`${idPrefix}-subject`} />
+        <ContactField
+          label="sujet"
+          id={`${idPrefix}-subject`}
+          name="subject"
+        />
         <ContactField
           label="message"
           id={`${idPrefix}-message`}
+          name="message"
           multiline
           rows={4}
           grow
         />
 
+        {status === 'success' ? (
+          <p className={`text-black ${TYPO_BLOCK_BODY_CLASS}`}>
+            Message envoyé. Nous vous répondrons bientôt.
+          </p>
+        ) : null}
+        {status === 'error' ? (
+          <p className={`text-black ${TYPO_BLOCK_BODY_CLASS}`}>{errorMessage}</p>
+        ) : null}
+
         <button
           type="submit"
-          className={`${CONTACT_SUBMIT_BUTTON_CLASS} ${stacked ? 'self-end' : ''}`}
+          disabled={status === 'sending'}
+          className={`${CONTACT_SUBMIT_BUTTON_CLASS} ${stacked ? 'self-end' : ''} disabled:cursor-wait disabled:opacity-70`}
           style={TYPO_TITLE}
         >
-          envoyer
+          {status === 'sending' ? 'envoi…' : 'envoyer'}
         </button>
       </form>
     </div>

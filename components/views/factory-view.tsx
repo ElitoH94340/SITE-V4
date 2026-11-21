@@ -814,7 +814,7 @@ function FactoryModulePanel({
       </div>
 
       <Link
-        href={withBasePath('/formules')}
+        href="/formules/"
         className={`${TYPO_TITLE_CLASS} inline-block w-fit shrink-0 self-start whitespace-nowrap uppercase leading-none bg-white pl-[3px] pr-[23px] py-px xl:pr-[43px] text-black no-underline transition-colors duration-300 cursor-pointer hover:bg-[#f58220] hover:text-white`}
         style={TYPO_TITLE}
       >
