@@ -134,7 +134,7 @@ const TABS: Tab[] = [
         titleLines: ['Découverte', 'immersion / adaptation'],
         subDesc: 'Plusieurs séances de travail en co-organisation avec les professeurs d’anglais et de français.',
         media: {
-          video: '/lycée-module-1.mp4',
+          video: '/lycée-module-2.mp4',
           photo: '/couverture-lycee-2.png',
         },
         objectives: [
@@ -150,8 +150,8 @@ const TABS: Tab[] = [
         title: 'Entraînement au grand oral du bac',
         titleLines: ['Entraînement', 'au grand oral', 'du bac'],
         media: {
-          video: '/lycée-module-2.mp4',
-          photo: '/couverture-lycee-3.png',
+          video: '/lycée-module-1.mp4',
+          photo: '/couverture-lycee-1.png',
         },
         objectives: [
           'Travailler la posture',
@@ -168,8 +168,8 @@ const TABS: Tab[] = [
         subDesc:
           'Découvrir un métier de la post-production : adaptateur dialoguiste.',
         media: {
-          video: '/lycée-module-1.mp4',
-          photo: '/couverture-lycee-1.png',
+          video: '/TB-Grand-Oral.mp4',
+          photo: '/couverture-lycee-grand-oral.jpg',
         },
         objectives: [
           "Explorer le jeu d'acteur et l'interprétation face au micro",

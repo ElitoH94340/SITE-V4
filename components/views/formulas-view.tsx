@@ -18,7 +18,7 @@ function getFormulaMedia(index: number) {
     index === 0
       ? '/T-B-Immersion.mp4'
       : index === 1
-        ? '/T-B-Immersion-filmée.mp4'
+        ? '/T-B-Immersion-filmee.mp4'
         : '/T-B-Captation.mp4'
 
   const coverSrc =
